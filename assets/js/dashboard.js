@@ -2,6 +2,25 @@
 let currentPeriod = '30d';
 let currentClient = null;
 
+// Animated counter
+function animateValue(el, target, duration = 1800) {
+  if (!el || isNaN(target)) { if (el) el.textContent = target; return; }
+  const isFloat = String(target).includes('.');
+  let start = 0;
+  const startTime = performance.now();
+  function update(now) {
+    const elapsed = now - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const ease = 1 - Math.pow(1 - progress, 3); // easeOutCubic
+    const current = start + (target - start) * ease;
+    el.textContent = isFloat
+      ? current.toLocaleString('pt-PT', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
+      : Math.round(current).toLocaleString('pt-PT');
+    if (progress < 1) requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+}
+
 async function initDashboard(slug) {
   currentClient = CLIENTS[slug];
   if (!currentClient) return;
@@ -72,10 +91,21 @@ function renderDashboard(client, chatbot, messaging, clicks) {
 
   content.innerHTML = html;
 
-  // Init charts after DOM render
+  // Init charts + animate counters after DOM render
   requestAnimationFrame(() => {
     if (chatbot) initChatbotCharts(client, chatbot);
     if (messaging) initMessagingCharts(messaging);
+    // Animate all KPI values
+    document.querySelectorAll('[data-count]').forEach(el => {
+      const val = parseFloat(el.dataset.count);
+      const suffix = el.dataset.suffix || '';
+      const originalAnimate = animateValue;
+      animateValue(el, val);
+      // Add suffix after animation
+      if (suffix) {
+        setTimeout(() => { el.textContent += suffix; }, 1900);
+      }
+    });
   });
 }
 
@@ -94,46 +124,46 @@ function renderChatbotSection(client, data, clicks) {
   }[currentPeriod] || '30 dias';
 
   return `
-    <div class="section-title">
+    <div class="section-title fade-in fade-in-1">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7066A8" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
       Agente IA
     </div>
     <div class="kpi-grid">
-      <div class="kpi-card">
+      <div class="kpi-card glass fade-in fade-in-2">
         <div class="kpi-label">Conversas</div>
-        <div class="kpi-value">${formatNumber(total)}</div>
+        <div class="kpi-value" data-count="${total}">0</div>
         <div class="kpi-sub">${periodLabel}</div>
       </div>
-      <div class="kpi-card">
+      <div class="kpi-card glass fade-in fade-in-3">
         <div class="kpi-label">Taxa Resolução IA</div>
-        <div class="kpi-value ${aiRateClass}">${formatPercent(aiRate)}</div>
+        <div class="kpi-value ${aiRateClass}" data-count="${aiRate}" data-suffix="%">0</div>
         <div class="kpi-sub">sem intervenção humana</div>
       </div>
-      <div class="kpi-card">
+      <div class="kpi-card glass fade-in fade-in-4">
         <div class="kpi-label">Mensagens IA</div>
-        <div class="kpi-value">${formatNumber(msgsAI)}</div>
+        <div class="kpi-value" data-count="${msgsAI}">0</div>
         <div class="kpi-sub">${formatNumber(msgsHuman)} humanas</div>
       </div>
       ${totalClicks ? `
-      <div class="kpi-card">
+      <div class="kpi-card glass fade-in fade-in-5">
         <div class="kpi-label">Cliques em Produtos</div>
-        <div class="kpi-value">${formatNumber(totalClicks)}</div>
+        <div class="kpi-value" data-count="${totalClicks}">0</div>
         <div class="kpi-sub">links partilhados pelo agente</div>
       </div>` : ''}
     </div>
     <div class="charts-grid">
       ${client.channels.length > 1 ? `
-      <div class="chart-card">
+      <div class="chart-card glass fade-in fade-in-5">
         <h3>Conversas por Canal</h3>
-        <div class="chart-container"><canvas id="chart-channels"></canvas></div>
+        <div class="chart-container" id="chart-channels"></div>
       </div>` : ''}
-      <div class="chart-card">
-        <h3>Resolução: IA vs Humano</h3>
-        <div class="chart-container"><canvas id="chart-ai-human"></canvas></div>
+      <div class="chart-card glass fade-in fade-in-5">
+        <h3>Resolução IA</h3>
+        <div class="chart-container" id="chart-ai-human"></div>
       </div>
-      <div class="chart-card">
+      <div class="chart-card glass fade-in fade-in-6">
         <h3>Distribuição Horária</h3>
-        <div class="chart-container"><canvas id="chart-hours"></canvas></div>
+        <div class="chart-container" id="chart-hours"></div>
       </div>
     </div>
   `;
@@ -162,47 +192,47 @@ function renderMessagingSection(client, data, clicks) {
   });
 
   return `
-    <div class="section-title">
+    <div class="section-title fade-in fade-in-1">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7066A8" stroke-width="2"><path d="M22 2L11 13"></path><path d="M22 2L15 22L11 13L2 9L22 2Z"></path></svg>
       Mensagens Automáticas
     </div>
     <div class="kpi-grid">
-      <div class="kpi-card">
+      <div class="kpi-card glass fade-in fade-in-2">
         <div class="kpi-label">Mensagens Enviadas</div>
-        <div class="kpi-value">${formatNumber(totalMsgs)}</div>
+        <div class="kpi-value" data-count="${totalMsgs}">0</div>
         ${growth.messages ? `<div class="kpi-sub growth ${growth.messages >= 0 ? 'up' : 'down'}">${growth.messages >= 0 ? '↑' : '↓'} ${Math.abs(growth.messages).toFixed(1)}% vs período anterior</div>` : ''}
       </div>
-      <div class="kpi-card">
+      <div class="kpi-card glass fade-in fade-in-3">
         <div class="kpi-label">Cliques</div>
-        <div class="kpi-value">${formatNumber(totalClicks)}</div>
+        <div class="kpi-value" data-count="${totalClicks}">0</div>
         <div class="kpi-sub">taxa: ${formatPercent(clickRate)}</div>
       </div>
       ${totalOrders > 0 ? `
-      <div class="kpi-card">
+      <div class="kpi-card glass fade-in fade-in-4">
         <div class="kpi-label">Encomendas Atribuídas</div>
-        <div class="kpi-value">${formatNumber(totalOrders)}</div>
+        <div class="kpi-value" data-count="${totalOrders}">0</div>
         ${growth.orders ? `<div class="kpi-sub growth ${growth.orders >= 0 ? 'up' : 'down'}">${growth.orders >= 0 ? '↑' : '↓'} ${Math.abs(growth.orders).toFixed(1)}%</div>` : ''}
       </div>
-      <div class="kpi-card">
+      <div class="kpi-card glass fade-in fade-in-5">
         <div class="kpi-label">Receita Atribuída</div>
-        <div class="kpi-value">${formatNumber(totalRevenue)}€</div>
+        <div class="kpi-value" data-count="${totalRevenue}" data-suffix="€">0</div>
         ${growth.revenue ? `<div class="kpi-sub growth ${growth.revenue >= 0 ? 'up' : 'down'}">${growth.revenue >= 0 ? '↑' : '↓'} ${Math.abs(growth.revenue).toFixed(1)}%</div>` : ''}
       </div>` : `
-      <div class="kpi-card">
+      <div class="kpi-card glass fade-in fade-in-4">
         <div class="kpi-label">Operacionais</div>
-        <div class="kpi-value">${formatNumber(totalOp)}</div>
+        <div class="kpi-value" data-count="${totalOp}">0</div>
       </div>
-      <div class="kpi-card">
+      <div class="kpi-card glass fade-in fade-in-5">
         <div class="kpi-label">Marketing</div>
-        <div class="kpi-value">${formatNumber(totalMk)}</div>
+        <div class="kpi-value" data-count="${totalMk}">0</div>
       </div>`}
     </div>
     <div class="charts-grid">
-      <div class="chart-card">
+      <div class="chart-card glass fade-in fade-in-5">
         <h3>Distribuição por Tipo</h3>
-        <div class="chart-container"><canvas id="chart-msg-types"></canvas></div>
+        <div class="chart-container" id="chart-msg-types"></div>
       </div>
-      <div class="chart-card">
+      <div class="chart-card glass fade-in fade-in-6">
         <h3>Detalhe por Categoria</h3>
         ${tableRows ? `
         <table class="data-table">

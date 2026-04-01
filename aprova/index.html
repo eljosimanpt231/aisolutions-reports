@@ -3,22 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a0a1a">
   <title>Reports | AI Solutions</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../assets/css/main.css">
 </head>
 <body>
+
+  <!-- Animated Background -->
+  <div class="bg-gradient"></div>
+  <div class="glow-orb glow-orb-1"></div>
+  <div class="glow-orb glow-orb-2"></div>
 
   <!-- Password Gate -->
   <div id="password-overlay" class="password-overlay">
     <div class="password-box">
       <img src="../assets/img/logo.png" alt="AI Solutions">
       <h2 id="client-name">—</h2>
-      <p>Introduza o código de acesso para ver o report.</p>
+      <p>Introduza o código de acesso para consultar o report.</p>
       <form id="password-form">
         <input type="password" id="password-input" placeholder="Código de acesso" autocomplete="off">
-        <button type="submit">Aceder</button>
+        <button type="submit">Aceder ao Report</button>
         <div id="password-error" class="password-error"></div>
       </form>
     </div>
@@ -33,11 +39,11 @@
         <span class="badge">Report</span>
       </div>
       <div class="period-selector">
-        <button class="period-btn" data-period="7d">7 dias</button>
-        <button class="period-btn" data-period="15d">15 dias</button>
-        <button class="period-btn active" data-period="30d">30 dias</button>
-        <button class="period-btn" data-period="this-month">Este mês</button>
-        <button class="period-btn" data-period="last-month">Mês anterior</button>
+        <button class="period-btn" data-period="7d">7D</button>
+        <button class="period-btn" data-period="15d">15D</button>
+        <button class="period-btn active" data-period="30d">30D</button>
+        <button class="period-btn" data-period="this-month">Este Mês</button>
+        <button class="period-btn" data-period="last-month">Mês Anterior</button>
       </div>
     </header>
 
@@ -49,11 +55,11 @@
     </main>
 
     <footer class="footer">
-      Powered by AI Solutions &mdash; Dados atualizados em tempo real
+      Powered by AI Solutions &mdash; Dados em tempo real
     </footer>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/utils.js"></script>
   <script src="../assets/js/api.js"></script>
@@ -62,7 +68,6 @@
   <script src="../assets/js/dashboard.js"></script>
   <script src="../assets/js/auth.js"></script>
   <script>
-    // Set dashboard title after auth
     const origInit = initDashboard;
     initDashboard = function(slug) {
       document.getElementById('dashboard-title').textContent = CLIENTS[slug]?.name || '';
