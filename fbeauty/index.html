@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reports | AI Solutions</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+
+  <!-- Password Gate -->
+  <div id="password-overlay" class="password-overlay">
+    <div class="password-box">
+      <img src="../assets/img/logo.png" alt="AI Solutions">
+      <h2 id="client-name">—</h2>
+      <p>Introduza o código de acesso para ver o report.</p>
+      <form id="password-form">
+        <input type="password" id="password-input" placeholder="Código de acesso" autocomplete="off">
+        <button type="submit">Aceder</button>
+        <div id="password-error" class="password-error"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Dashboard -->
+  <div id="dashboard" style="display:none">
+    <header class="header">
+      <div class="header-left">
+        <img src="../assets/img/logo.png" alt="AI Solutions">
+        <h1 id="dashboard-title">—</h1>
+        <span class="badge">Report</span>
+      </div>
+      <div class="period-selector">
+        <button class="period-btn" data-period="7d">7 dias</button>
+        <button class="period-btn" data-period="15d">15 dias</button>
+        <button class="period-btn active" data-period="30d">30 dias</button>
+        <button class="period-btn" data-period="this-month">Este mês</button>
+        <button class="period-btn" data-period="last-month">Mês anterior</button>
+      </div>
+    </header>
+
+    <main class="container" id="dashboard-content">
+      <div class="loading">
+        <div class="spinner"></div>
+        A carregar dados...
+      </div>
+    </main>
+
+    <footer class="footer">
+      Powered by AI Solutions &mdash; Dados atualizados em tempo real
+    </footer>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+  <script src="../assets/js/config.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/charts.js"></script>
+  <script src="../assets/js/dashboard.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script>
+    // Set dashboard title after auth
+    const origInit = initDashboard;
+    initDashboard = function(slug) {
+      document.getElementById('dashboard-title').textContent = CLIENTS[slug]?.name || '';
+      return origInit(slug);
+    };
+  </script>
+</body>
+</html>
