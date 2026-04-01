@@ -313,6 +313,50 @@ body {
   margin: 24px 0;
 }
 
+/* ---- Tags ---- */
+.tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.tag-op {
+  background: #ecfdf5;
+  color: #065f46;
+}
+
+.tag-mk {
+  background: #ede9fe;
+  color: #5b21b6;
+}
+
+/* ---- Growth Indicators ---- */
+.growth {
+  font-weight: 500;
+}
+
+.growth.up {
+  color: var(--success);
+}
+
+.growth.down {
+  color: var(--danger);
+}
+
+/* ---- Table Tweaks ---- */
+.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.no-data {
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 40px 0;
+}
+
 /* ---- Footer ---- */
 .footer {
   text-align: center;
