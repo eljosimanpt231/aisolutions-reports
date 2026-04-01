@@ -286,6 +286,62 @@ body {
   background: rgba(255, 255, 255, 0.04);
 }
 
+/* ---- Custom Date Range ---- */
+.period-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.custom-range {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: fadeInUp 0.3s ease;
+}
+
+.date-input {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 7px 12px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.75rem;
+  outline: none;
+  transition: var(--transition);
+  color-scheme: dark;
+}
+
+.date-input:focus {
+  border-color: rgba(var(--primary-rgb), 0.5);
+  box-shadow: 0 0 12px rgba(var(--primary-rgb), 0.15);
+}
+
+.date-sep {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.date-apply {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 7px 16px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: var(--transition);
+}
+
+.date-apply:hover {
+  box-shadow: 0 4px 15px rgba(var(--primary-rgb), 0.3);
+  transform: translateY(-1px);
+}
+
 /* ---- Container ---- */
 .container {
   max-width: 1280px;

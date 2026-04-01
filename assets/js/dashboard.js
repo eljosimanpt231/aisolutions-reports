@@ -30,18 +30,53 @@ async function initDashboard(slug) {
 }
 
 function setupPeriodSelector() {
+  const customRange = document.getElementById('custom-range');
+  const dateStart = document.getElementById('date-start');
+  const dateEnd = document.getElementById('date-end');
+  const dateApply = document.getElementById('date-apply');
+
+  // Set default date values
+  const today = new Date();
+  const thirtyAgo = new Date(today);
+  thirtyAgo.setDate(today.getDate() - 30);
+  dateEnd.value = formatDate(today);
+  dateStart.value = formatDate(thirtyAgo);
+
   document.querySelectorAll('.period-btn').forEach(btn => {
     btn.addEventListener('click', async () => {
       document.querySelector('.period-btn.active')?.classList.remove('active');
       btn.classList.add('active');
+
+      if (btn.dataset.period === 'custom') {
+        customRange.style.display = 'flex';
+        return;
+      }
+
+      customRange.style.display = 'none';
       currentPeriod = btn.dataset.period;
+      customStartDate = null;
+      customEndDate = null;
       await loadData();
     });
   });
+
+  dateApply.addEventListener('click', async () => {
+    if (dateStart.value && dateEnd.value) {
+      customStartDate = dateStart.value;
+      customEndDate = dateEnd.value;
+      currentPeriod = 'custom';
+      await loadData();
+    }
+  });
 }
 
+let customStartDate = null;
+let customEndDate = null;
+
 async function loadData() {
-  const { start, end } = getDateRange(currentPeriod);
+  const { start, end } = (currentPeriod === 'custom' && customStartDate && customEndDate)
+    ? { start: customStartDate, end: customEndDate }
+    : getDateRange(currentPeriod);
   const slug = getClientSlug();
   const client = CLIENTS[slug];
 

@@ -38,12 +38,21 @@
         <h1 id="dashboard-title">—</h1>
         <span class="badge">Report</span>
       </div>
-      <div class="period-selector">
-        <button class="period-btn" data-period="7d">7D</button>
-        <button class="period-btn" data-period="15d">15D</button>
-        <button class="period-btn active" data-period="30d">30D</button>
-        <button class="period-btn" data-period="this-month">Este Mês</button>
-        <button class="period-btn" data-period="last-month">Mês Anterior</button>
+      <div class="period-controls">
+        <div class="period-selector">
+          <button class="period-btn" data-period="7d">7D</button>
+          <button class="period-btn" data-period="15d">15D</button>
+          <button class="period-btn active" data-period="30d">30D</button>
+          <button class="period-btn" data-period="this-month">Este Mês</button>
+          <button class="period-btn" data-period="last-month">Mês Anterior</button>
+          <button class="period-btn" data-period="custom" id="custom-btn">Personalizado</button>
+        </div>
+        <div class="custom-range" id="custom-range" style="display:none">
+          <input type="date" id="date-start" class="date-input">
+          <span class="date-sep">—</span>
+          <input type="date" id="date-end" class="date-input">
+          <button class="date-apply" id="date-apply">Aplicar</button>
+        </div>
       </div>
     </header>
 
