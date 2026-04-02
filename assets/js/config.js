@@ -10,7 +10,7 @@ const API_BASE = 'https://hooks.aisolutions.pt/webhook';
 const INSIGHTS = {
   rrcustoms: {
     month: 'Março 2026',
-    text: `<strong>766 mensagens automáticas</strong> enviadas este mês, gerando <strong>212 cliques</strong> e <strong>29 encomendas atribuídas</strong> (795,61€ em receita). A taxa de cliques das campanhas de Upsell (38,9%) supera significativamente os Carrinhos Abandonados (14,8%), sugerindo que os clientes respondem melhor a recomendações de produtos complementares. O agente IA resolveu <strong>55%</strong> das conversas sem intervenção humana — há margem para melhorar com respostas mais completas sobre prazos de entrega e políticas de devolução, que são os temas mais escalados.`
+    text: `O agente processou <strong>222 conversas</strong> nos 3 canais (WA: 158, IG: 50, FB: 14) com uma taxa de resolução de <strong>56,3%</strong>. No lado das mensagens automáticas, foram enviadas <strong>766 mensagens</strong> (408 Upsell + 358 Carrinho Abandonado) gerando <strong>395 cliques</strong> em produtos e <strong>35 encomendas atribuídas</strong> (1.025,60€). As campanhas de Upsell continuam a superar os Carrinhos Abandonados em taxa de clique.`
   },
   hco: {
     month: 'Março 2026',
@@ -55,7 +55,7 @@ const CLIENTS = {
     name: 'RR Customs',
     password: 'rrcustoms2026',
     services: ['chatbot', 'messaging'],
-    channels: ['whatsapp'],
+    channels: ['whatsapp', 'facebook', 'instagram'],
     schema: 'rr_customs',
     domainId: 4,
     msgTables: {
