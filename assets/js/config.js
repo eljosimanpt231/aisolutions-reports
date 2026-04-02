@@ -45,8 +45,8 @@ const INSIGHTS = {
     text: `Primeira semana em produção. A IA processou <strong>64 conversas</strong>, identificando automaticamente <strong>clientes existentes</strong> (que são encaminhados diretamente) e <strong>novos leads</strong> (onde recolhe dados: NIF, matrícula, data de nascimento, morada). Este trabalho de triagem e recolha de informação poupa tempo significativo à equipa antes mesmo de iniciar o atendimento.`
   },
   purarrituals: {
-    month: 'Março 2026',
-    text: `O agente processou <strong>365 conversas</strong> no primeiro mês completo em produção. Com uma taxa de resolução de <strong>35%</strong>, o agente responde autonomamente a questões sobre produtos, ingredientes e disponibilidade. As restantes 65% são encaminhadas para a equipa — à medida que a base de conhecimento cresce, esta taxa tende a melhorar.`
+    month: 'Março 2026 (desde dia 26)',
+    text: `Primeira semana em produção com resultados promissores. O agente processou <strong>96 conversas</strong> com uma taxa de resolução de <strong>67,7%</strong> — resolvendo autonomamente questões sobre produtos, ingredientes e disponibilidade. As restantes 32% são encaminhadas para a equipa para questões mais complexas ou personalizadas.`
   }
 };
 
@@ -165,7 +165,7 @@ const CLIENTS = {
     channels: ['chatwoot'],
     schema: 'pura_rituals',
     domainId: null,
-    startDate: '2026-02-27'  // primeiras msgs IA 27/2, WA pode ser mais tarde
+    startDate: '2026-03-26'  // IA estável a partir de 26/3 (100% sessões com IA)
   },
   aprova: {
     name: 'Aprova',
