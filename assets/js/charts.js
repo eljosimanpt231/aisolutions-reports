@@ -43,18 +43,19 @@ const baseChartOptions = {
 };
 
 function initChatbotCharts(client, data) {
-  // Channels bar chart
-  if (client.channels.length > 1 && document.getElementById('chart-channels')) {
-    const channelData = data.channels || {};
-    const channelColors = client.channels.map(c => COLORS[c] || COLORS.primary);
-    const channelNames = client.channels.map(c => ({
-      whatsapp: 'WhatsApp', instagram: 'Instagram', facebook: 'Facebook'
+  // Channels bar chart — use actual channels from API data, not config
+  const activeChannels = Object.keys(data.channels || {});
+  if (activeChannels.length > 1 && document.getElementById('chart-channels')) {
+    const channelData = data.channels;
+    const channelNames = activeChannels.map(c => ({
+      whatsapp: 'WhatsApp', instagram: 'Instagram', facebook: 'Facebook', chatwoot: 'Chat'
     }[c] || c));
+    const channelColors = activeChannels.map(c => COLORS[c] || COLORS.primary);
 
     new ApexCharts(document.getElementById('chart-channels'), {
       ...baseChartOptions,
       chart: { ...baseChartOptions.chart, type: 'bar', height: 260 },
-      series: [{ name: 'Conversas', data: client.channels.map(c => channelData[c]?.conversations || 0) }],
+      series: [{ name: 'Conversas', data: activeChannels.map(c => channelData[c]?.conversations || 0) }],
       xaxis: { categories: channelNames },
       colors: channelColors,
       plotOptions: {
@@ -156,16 +157,18 @@ function initMessagingCharts(data) {
   const items = [];
   const labels = [];
   const colors = [];
+  const opColors = ['#00D4AA', '#00B894', '#55E6C1', '#7DCEA0'];
+  const mkColors = ['#7066A8', '#9B8FD0', '#B8B0E0', '#FFB547'];
 
-  (data.operacionais || []).forEach(r => {
-    labels.push(r.tipo || r.categoria);
+  (data.operacionais || []).forEach((r, i) => {
+    labels.push(r.tipo);
     items.push(r.total);
-    colors.push(COLORS.accent);
+    colors.push(opColors[i % opColors.length]);
   });
-  (data.automaticas || []).forEach(r => {
-    labels.push(r.tipo || r.categoria);
+  (data.automaticas || []).forEach((r, i) => {
+    labels.push(r.tipo);
     items.push(r.total);
-    colors.push(COLORS.primary);
+    colors.push(mkColors[i % mkColors.length]);
   });
 
   new ApexCharts(document.getElementById('chart-msg-types'), {
@@ -173,7 +176,7 @@ function initMessagingCharts(data) {
     chart: { ...baseChartOptions.chart, type: 'donut', height: 280 },
     series: items,
     labels: labels,
-    colors: colors.length > 2 ? [COLORS.accent, '#00B894', '#55E6C1', COLORS.primary, COLORS.primaryLight, COLORS.warning] : [COLORS.accent, COLORS.primary],
+    colors: colors,
     plotOptions: {
       pie: {
         donut: {
