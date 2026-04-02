@@ -137,7 +137,8 @@ const CLIENTS = {
     schema: 'ecodrive',
     domainId: null,
     hasLeads: true,
-    context: 'leads'  // show lead metrics
+    context: 'leads',
+    startDate: '2026-01-08'  // IA ativa desde 8/1
   },
   odiseguros: {
     name: 'OdiSeguros',
@@ -145,15 +146,17 @@ const CLIENTS = {
     services: ['chatbot'],
     channels: ['whatsapp'],
     schema: 'odiseguros',
-    domainId: null
+    domainId: null,
+    startDate: '2026-03-25'  // IA ativa desde 25/3
   },
   purarrituals: {
     name: 'Pura Rituals',
     password: 'purarrituals2026',
     services: ['chatbot'],
-    channels: ['whatsapp'],
-    schema: null,  // TODO: verificar
-    domainId: null
+    channels: ['chatwoot'],
+    schema: 'pura_rituals',
+    domainId: null,
+    startDate: '2026-02-27'  // primeiras msgs IA 27/2, WA pode ser mais tarde
   },
   aprova: {
     name: 'Aprova',

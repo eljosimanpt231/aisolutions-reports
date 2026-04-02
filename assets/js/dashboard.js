@@ -33,11 +33,20 @@ function setupPeriodSelector() {
   const dateStart = document.getElementById('date-start');
   const dateEnd = document.getElementById('date-end');
   const dateApply = document.getElementById('date-apply');
+  const slug = getClientSlug();
+  const clientConf = CLIENTS[slug];
   const today = new Date();
   const thirtyAgo = new Date(today);
   thirtyAgo.setDate(today.getDate() - 30);
+
+  // Enforce client start date
+  const minDate = clientConf?.startDate || '2025-01-01';
+  const effectiveStart = thirtyAgo < new Date(minDate) ? minDate : formatDate(thirtyAgo);
+
   dateEnd.value = formatDate(today);
-  dateStart.value = formatDate(thirtyAgo);
+  dateStart.value = effectiveStart;
+  dateStart.min = minDate;
+  dateEnd.min = minDate;
 
   document.querySelectorAll('.period-btn').forEach(btn => {
     btn.addEventListener('click', async () => {
@@ -60,11 +69,16 @@ function setupPeriodSelector() {
 }
 
 async function loadData() {
-  const { start, end } = (currentPeriod === 'custom' && customStartDate && customEndDate)
+  let { start, end } = (currentPeriod === 'custom' && customStartDate && customEndDate)
     ? { start: customStartDate, end: customEndDate }
     : getDateRange(currentPeriod);
   const slug = getClientSlug();
   const client = CLIENTS[slug];
+
+  // Enforce client start date — never query before IA went live
+  if (client.startDate && start < client.startDate) {
+    start = client.startDate;
+  }
   showLoading();
   _cache = { key: null, data: null }; // clear cache
 
