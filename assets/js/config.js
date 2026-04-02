@@ -39,6 +39,14 @@ const INSIGHTS = {
   teclasdavida: {
     month: 'Março 2026',
     text: `<strong>986 conversas</strong> de qualificação de crédito processadas via WhatsApp. O agente identifica clientes elegíveis para crédito pessoal e encaminha os leads qualificados. Volume consistente com os meses anteriores.`
+  },
+  odiseguros: {
+    month: 'Março 2026 (desde dia 25)',
+    text: `Primeira semana em produção. A IA processou <strong>64 conversas</strong>, identificando automaticamente <strong>clientes existentes</strong> (que são encaminhados diretamente) e <strong>novos leads</strong> (onde recolhe dados: NIF, matrícula, data de nascimento, morada). Este trabalho de triagem e recolha de informação poupa tempo significativo à equipa antes mesmo de iniciar o atendimento.`
+  },
+  purarrituals: {
+    month: 'Março 2026',
+    text: `O agente processou <strong>365 conversas</strong> no primeiro mês completo em produção. Com uma taxa de resolução de <strong>35%</strong>, o agente responde autonomamente a questões sobre produtos, ingredientes e disponibilidade. As restantes 65% são encaminhadas para a equipa — à medida que a base de conhecimento cresce, esta taxa tende a melhorar.`
   }
 };
 
@@ -147,7 +155,8 @@ const CLIENTS = {
     channels: ['whatsapp'],
     schema: 'odiseguros',
     domainId: null,
-    startDate: '2026-03-25'  // IA ativa desde 25/3
+    startDate: '2026-03-25',
+    context: 'qualificador'  // lead qualification bot, not resolution bot
   },
   purarrituals: {
     name: 'Pura Rituals',

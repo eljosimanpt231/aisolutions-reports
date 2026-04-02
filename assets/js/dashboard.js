@@ -151,7 +151,12 @@ function renderChatbotSection(client, data, clicks) {
   // Conversas — always shown
   kpiCards += kpiCard('Conversas', total, periodLabel, 2);
 
-  if (context === 'porteiro') {
+  if (context === 'qualificador') {
+    // OdiSeguros: lead qualification bot — IA talks to everyone, classifies, hands off
+    kpiCards += kpiCard('Mensagens IA', msgsAI, 'qualificação + recolha dados', 3);
+    kpiCards += kpiCard('Clientes Existentes', withHuman, 'identificados pela IA', 4);
+    kpiCards += kpiCard('Novos Leads', aiOnly, 'qualificados para seguimento', 5, 'positive');
+  } else if (context === 'porteiro') {
     // Lojinha Bebé: focus on "handled without human"
     kpiCards += kpiCard('Resolvidas Sem Humano', aiOnly, `de ${total} conversas`, 3, aiRate >= 50 ? 'positive' : '');
     kpiCards += kpiCardPercent('% Sem Intervenção', aiRate, 4, aiRate >= 50 ? 'positive' : 'warning');
@@ -174,7 +179,11 @@ function renderChatbotSection(client, data, clicks) {
   if (activeChannels.length > 1) {
     chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Conversas por Canal</h3><div class="chart-container" id="chart-channels"></div></div>`;
   }
-  chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>${context === 'porteiro' ? 'Sem Humano vs Com Humano' : 'Resolução IA'}</h3><div class="chart-container" id="chart-ai-human"></div></div>`;
+  if (context === 'qualificador') {
+    chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Novos vs Existentes</h3><div class="chart-container" id="chart-ai-human"></div></div>`;
+  } else {
+    chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>${context === 'porteiro' ? 'Sem Humano vs Com Humano' : 'Resolução IA'}</h3><div class="chart-container" id="chart-ai-human"></div></div>`;
+  }
 
   const hasHourly = data.hourly_distribution?.some(h => h.count > 0);
   if (hasHourly) {

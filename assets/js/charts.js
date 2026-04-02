@@ -82,12 +82,17 @@ function initChatbotCharts(client, data) {
     const total = aiOnly + withHuman;
     const aiPercent = total > 0 ? Math.round((aiOnly / total) * 100) : 0;
     const isPorteiro = client.context === 'porteiro';
-    const label = isPorteiro ? 'Sem Humano' : 'Resolução IA';
+    const isQualificador = client.context === 'qualificador';
+    const label = isQualificador ? 'Novos Leads' : isPorteiro ? 'Sem Humano' : 'Resolução IA';
+    // For qualificador: invert — show % of NEW leads (ai_only) vs existing (with_human)
+    const displayPercent = isQualificador
+      ? (total > 0 ? Math.round((aiOnly / total) * 100) : 0)
+      : aiPercent;
 
     new ApexCharts(document.getElementById('chart-ai-human'), {
       ...baseChartOptions,
       chart: { ...baseChartOptions.chart, type: 'radialBar', height: 280 },
-      series: [aiPercent],
+      series: [displayPercent],
       plotOptions: {
         radialBar: {
           startAngle: -135,
@@ -103,7 +108,7 @@ function initChatbotCharts(client, data) {
           }
         }
       },
-      colors: [aiPercent >= 70 ? COLORS.accent : aiPercent >= 50 ? COLORS.warning : COLORS.danger],
+      colors: [isQualificador ? COLORS.accent : (aiPercent >= 70 ? COLORS.accent : aiPercent >= 50 ? COLORS.warning : COLORS.danger)],
       labels: [label],
       stroke: { lineCap: 'round' }
     }).render();
