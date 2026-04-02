@@ -30,7 +30,7 @@ const INSIGHTS = {
   },
   nowfitness: {
     month: 'Março 2026',
-    text: `O agente de Instagram processou <strong>176 conversas</strong> de qualificação de leads. O sistema identifica e qualifica potenciais clientes interessados em planos de treino, encaminhando os mais promissores para a equipa.`
+    text: `O sistema processou <strong>38 comentários</strong> no Instagram, gerando automaticamente <strong>20 DMs</strong> para iniciar conversas de qualificação. De <strong>180 utilizadores únicos</strong> que interagiram, <strong>5 registaram-se como leads</strong> (3 Pilates, 2 PT). Foram ainda enviados <strong>111 follow-ups</strong> automáticos para manter o engagement com contactos anteriores. A taxa de conversão de 2,8% é típica de Instagram lead gen — cada lead vale consideravelmente mais do que o custo por mensagem.`
   },
   lojinhabebe: {
     month: 'Março 2026',
@@ -126,7 +126,7 @@ const CLIENTS = {
     channels: ['instagram'],
     schema: 'now_fitness_studio',
     domainId: null,
-    context: 'leads'  // show lead/conversion metrics
+    context: 'lead_gen'  // Instagram lead generation: comments → DMs → leads
   },
   lojinhabebe: {
     name: 'Lojinha Bebé',

@@ -43,6 +43,32 @@ const baseChartOptions = {
 };
 
 function initChatbotCharts(client, data) {
+  // Now Fitness: funnel chart
+  if (client.context === 'lead_gen' && document.getElementById('chart-funnel')) {
+    const comments = data.total_comments || 0;
+    const dms = data.dms_initiated || 0;
+    const users = data.unique_users || data.total_conversations || 0;
+    const leads = data.total_leads || 0;
+
+    new ApexCharts(document.getElementById('chart-funnel'), {
+      ...baseChartOptions,
+      chart: { ...baseChartOptions.chart, type: 'bar', height: 260 },
+      series: [{ name: 'Volume', data: [comments, dms, users, leads] }],
+      xaxis: { categories: ['Comentários', 'DMs Enviadas', 'Conversas', 'Leads'] },
+      colors: [COLORS.primaryLight],
+      plotOptions: {
+        bar: { borderRadius: 8, columnWidth: '55%', distributed: true, dataLabels: { position: 'top' } }
+      },
+      dataLabels: { enabled: true, offsetY: -20, style: { fontSize: '13px', fontWeight: 700, colors: ['#e8e6f0'] } },
+      legend: { show: false },
+      fill: {
+        type: 'gradient',
+        gradient: { shade: 'dark', type: 'vertical', shadeIntensity: 0.3, opacityFrom: 1, opacityTo: 0.7 }
+      }
+    }).render();
+    return; // skip standard charts
+  }
+
   // Channels bar chart — use actual channels from API data, not config
   const activeChannels = Object.keys(data.channels || {});
   if (activeChannels.length > 1 && document.getElementById('chart-channels')) {

@@ -156,6 +156,24 @@ function renderChatbotSection(client, data, clicks) {
     kpiCards += kpiCard('Mensagens IA', msgsAI, 'qualificação + recolha dados', 3);
     kpiCards += kpiCard('Clientes Existentes', withHuman, 'identificados pela IA', 4);
     kpiCards += kpiCard('Novos Leads', aiOnly, 'qualificados para seguimento', 5, 'positive');
+  } else if (context === 'lead_gen') {
+    // Now Fitness: comments → DMs → leads funnel
+    const t = data;
+    const totalLeads = t.total_leads || 0;
+    const uniqueUsers = t.unique_users || total;
+    const comments = t.total_comments || 0;
+    const dmsStarted = t.dms_initiated || 0;
+    const convRate = t.conversion_rate || 0;
+    const followUps = t.total_follow_ups || 0;
+    const pilates = t.pilates_leads || 0;
+    const pt = t.pt_leads || 0;
+
+    kpiCards = ''; // reset
+    kpiCards += kpiCard('Utilizadores Únicos', uniqueUsers, periodLabel, 2);
+    kpiCards += kpiCard('Leads Registados', totalLeads, pilates > 0 || pt > 0 ? `Pilates: ${pilates} | PT: ${pt}` : '', 3, 'positive');
+    kpiCards += kpiCardPercent('Taxa Conversão', convRate, 4, convRate >= 10 ? 'positive' : convRate >= 5 ? '' : 'warning');
+    if (comments > 0) kpiCards += kpiCard('Comentários', comments, `${dmsStarted} DMs enviadas`, 5);
+    if (followUps > 0) kpiCards += kpiCard('Follow-ups', followUps, 'mensagens de acompanhamento', 6);
   } else if (context === 'porteiro') {
     // Lojinha Bebé: focus on "handled without human"
     kpiCards += kpiCard('Resolvidas Sem Humano', aiOnly, `de ${total} conversas`, 3, aiRate >= 50 ? 'positive' : '');
@@ -179,7 +197,10 @@ function renderChatbotSection(client, data, clicks) {
   if (activeChannels.length > 1) {
     chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Conversas por Canal</h3><div class="chart-container" id="chart-channels"></div></div>`;
   }
-  if (context === 'qualificador') {
+  if (context === 'lead_gen') {
+    // Now Fitness: show funnel chart instead of AI resolution
+    chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Funil de Conversão</h3><div class="chart-container" id="chart-funnel"></div></div>`;
+  } else if (context === 'qualificador') {
     chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Novos vs Existentes</h3><div class="chart-container" id="chart-ai-human"></div></div>`;
   } else {
     chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>${context === 'porteiro' ? 'Sem Humano vs Com Humano' : 'Resolução IA'}</h3><div class="chart-container" id="chart-ai-human"></div></div>`;

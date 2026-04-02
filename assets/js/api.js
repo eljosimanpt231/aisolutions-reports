@@ -60,7 +60,16 @@ function transformChatbot(raw) {
     hourly_distribution: hourly,
     // Extra fields (EcoDrive leads, Now Fitness leads)
     leads_total: parseInt(t.leads_total) || 0,
-    leads_period: parseInt(t.leads_period) || 0
+    leads_period: parseInt(t.leads_period) || 0,
+    // Now Fitness specific
+    unique_users: parseInt(t.unique_users) || 0,
+    total_leads: parseInt(t.total_leads) || 0,
+    pilates_leads: parseInt(t.pilates_leads) || 0,
+    pt_leads: parseInt(t.pt_leads) || 0,
+    conversion_rate: parseFloat(t.conversion_rate) || 0,
+    total_comments: parseInt(t.total_comments) || 0,
+    dms_initiated: parseInt(t.dms_initiated) || 0,
+    total_follow_ups: parseInt(t.total_follow_ups) || 0
   };
 }
 
