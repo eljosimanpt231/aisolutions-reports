@@ -120,6 +120,14 @@ function renderDashboard(client, chatbot, messaging, clicks) {
     html += renderMessagingSection(client, messaging, clicks);
   }
 
+  // Insights section
+  const slug = getClientSlug();
+  const insight = typeof INSIGHTS !== 'undefined' ? INSIGHTS[slug] : null;
+  if (insight) {
+    if (html) html += '<hr class="section-divider">';
+    html += renderInsightsSection(insight);
+  }
+
   if (!html) {
     html = '<div class="loading"><p>Sem dados disponíveis para o período selecionado.</p></div>';
   }
@@ -275,6 +283,24 @@ function renderMessagingSection(client, data, clicks) {
           <tbody>${tableRows}</tbody>
         </table>` : '<p class="no-data">Sem dados para este período.</p>'}
       </div>
+    </div>
+  `;
+}
+
+function renderInsightsSection(insight) {
+  return `
+    <div class="section-title fade-in fade-in-1">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00D4AA" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+      Insights
+    </div>
+    <div class="insights-card glass fade-in fade-in-2">
+      <div class="insights-header">
+        <span class="insights-badge">AI Analysis</span>
+      </div>
+      <div class="insights-content">
+        ${insight.text}
+      </div>
+      <div class="insights-date">Análise de ${insight.month}</div>
     </div>
   `;
 }

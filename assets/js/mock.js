@@ -1,5 +1,5 @@
 // Mock data for design preview — remove when n8n webhooks are live
-const MOCK_MODE = true;
+const MOCK_MODE = false;
 
 const MOCK_CHATBOT = {
   total_conversations: 287,
