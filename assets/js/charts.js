@@ -75,12 +75,14 @@ function initChatbotCharts(client, data) {
     }).render();
   }
 
-  // AI vs Human radial
+  // AI vs Human radial — adapts label per client context
   if (document.getElementById('chart-ai-human')) {
     const aiOnly = data.conversations_ai_only || 0;
     const withHuman = data.conversations_with_human || 0;
     const total = aiOnly + withHuman;
     const aiPercent = total > 0 ? Math.round((aiOnly / total) * 100) : 0;
+    const isPorteiro = client.context === 'porteiro';
+    const label = isPorteiro ? 'Sem Humano' : 'Resolução IA';
 
     new ApexCharts(document.getElementById('chart-ai-human'), {
       ...baseChartOptions,
@@ -96,25 +98,13 @@ function initChatbotCharts(client, data) {
             strokeWidth: '100%'
           },
           dataLabels: {
-            name: {
-              show: true,
-              fontSize: '13px',
-              color: COLORS.text,
-              offsetY: -10
-            },
-            value: {
-              show: true,
-              fontSize: '36px',
-              fontWeight: 700,
-              color: '#e8e6f0',
-              offsetY: 5,
-              formatter: (v) => v + '%'
-            }
+            name: { show: true, fontSize: '13px', color: COLORS.text, offsetY: -10 },
+            value: { show: true, fontSize: '36px', fontWeight: 700, color: '#e8e6f0', offsetY: 5, formatter: (v) => v + '%' }
           }
         }
       },
       colors: [aiPercent >= 70 ? COLORS.accent : aiPercent >= 50 ? COLORS.warning : COLORS.danger],
-      labels: ['Resolução IA'],
+      labels: [label],
       stroke: { lineCap: 'round' }
     }).render();
   }

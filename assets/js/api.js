@@ -57,7 +57,10 @@ function transformChatbot(raw) {
     conversations_ai_only: parseInt(t.conversations_ai_only) || 0,
     conversations_with_human: parseInt(t.conversations_with_human) || 0,
     channels,
-    hourly_distribution: hourly
+    hourly_distribution: hourly,
+    // Extra fields (EcoDrive leads, Now Fitness leads)
+    leads_total: parseInt(t.leads_total) || 0,
+    leads_period: parseInt(t.leads_period) || 0
   };
 }
 

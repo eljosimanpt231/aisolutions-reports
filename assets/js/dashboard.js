@@ -8,13 +8,11 @@ let customEndDate = null;
 function animateValue(el, target, duration = 1800) {
   if (!el || isNaN(target)) { if (el) el.textContent = target; return; }
   const isFloat = String(target).includes('.');
-  let start = 0;
   const startTime = performance.now();
   function update(now) {
-    const elapsed = now - startTime;
-    const progress = Math.min(elapsed / duration, 1);
+    const progress = Math.min((now - startTime) / duration, 1);
     const ease = 1 - Math.pow(1 - progress, 3);
-    const current = start + (target - start) * ease;
+    const current = target * ease;
     el.textContent = isFloat
       ? current.toLocaleString('pt-PT', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
       : Math.round(current).toLocaleString('pt-PT');
@@ -35,7 +33,6 @@ function setupPeriodSelector() {
   const dateStart = document.getElementById('date-start');
   const dateEnd = document.getElementById('date-end');
   const dateApply = document.getElementById('date-apply');
-
   const today = new Date();
   const thirtyAgo = new Date(today);
   thirtyAgo.setDate(today.getDate() - 30);
@@ -46,22 +43,16 @@ function setupPeriodSelector() {
     btn.addEventListener('click', async () => {
       document.querySelector('.period-btn.active')?.classList.remove('active');
       btn.classList.add('active');
-      if (btn.dataset.period === 'custom') {
-        customRange.style.display = 'flex';
-        return;
-      }
+      if (btn.dataset.period === 'custom') { customRange.style.display = 'flex'; return; }
       customRange.style.display = 'none';
       currentPeriod = btn.dataset.period;
-      customStartDate = null;
-      customEndDate = null;
+      customStartDate = null; customEndDate = null;
       await loadData();
     });
   });
-
   dateApply.addEventListener('click', async () => {
     if (dateStart.value && dateEnd.value) {
-      customStartDate = dateStart.value;
-      customEndDate = dateEnd.value;
+      customStartDate = dateStart.value; customEndDate = dateEnd.value;
       currentPeriod = 'custom';
       await loadData();
     }
@@ -72,21 +63,16 @@ async function loadData() {
   const { start, end } = (currentPeriod === 'custom' && customStartDate && customEndDate)
     ? { start: customStartDate, end: customEndDate }
     : getDateRange(currentPeriod);
-
   const slug = getClientSlug();
   const client = CLIENTS[slug];
-
   showLoading();
+  _cache = { key: null, data: null }; // clear cache
 
-  // Single API call (cached)
   const [chatbot, messaging, clicks] = await Promise.all([
     (client.services.includes('chatbot') && client.schema) ? getChatbotMetrics(client.schema, start, end) : null,
     (client.services.includes('messaging') && client.schema) ? getMessagingMetrics(client.schema, start, end) : null,
     getClickMetrics(client.domainId, start, end)
   ]);
-
-  // Invalidate cache for next period change
-  _cache = { key: null, data: null };
 
   renderDashboard(client, chatbot, messaging, clicks);
 }
@@ -98,28 +84,24 @@ function showLoading() {
 function renderDashboard(client, chatbot, messaging, clicks) {
   const content = document.getElementById('dashboard-content');
   let html = '';
+  const slug = getClientSlug();
 
   if (client.services.includes('chatbot') && chatbot) {
     html += renderChatbotSection(client, chatbot, clicks);
   }
-
   if (client.services.includes('messaging') && messaging) {
     if (html) html += '<hr class="section-divider">';
     html += renderMessagingSection(client, messaging);
   }
 
   // Insights
-  const slug = getClientSlug();
   const insight = typeof INSIGHTS !== 'undefined' ? INSIGHTS[slug] : null;
   if (insight) {
     if (html) html += '<hr class="section-divider">';
     html += renderInsightsSection(insight);
   }
 
-  if (!html) {
-    html = '<div class="loading"><p>Sem dados disponíveis para o período selecionado.</p></div>';
-  }
-
+  if (!html) html = '<div class="loading"><p>Sem dados disponíveis para o período selecionado.</p></div>';
   content.innerHTML = html;
 
   requestAnimationFrame(() => {
@@ -134,61 +116,64 @@ function renderDashboard(client, chatbot, messaging, clicks) {
   });
 }
 
-// ---- Chatbot Section ----
+// ---- Chatbot Section (adapts per client context) ----
 function renderChatbotSection(client, data, clicks) {
   const total = data.total_conversations;
   const aiRate = data.ai_resolution_rate;
   const msgsAI = data.messages_ai;
   const msgsHuman = data.messages_human;
+  const aiOnly = data.conversations_ai_only;
+  const withHuman = data.conversations_with_human;
   const kuttClicks = clicks?.total_clicks || 0;
-  const aiRateClass = aiRate >= 70 ? 'positive' : aiRate >= 50 ? '' : 'warning';
-  const activeChannels = Object.keys(data.channels);
+  const activeChannels = Object.keys(data.channels || {});
+  const context = client.context || 'standard';
+  const leads = data.leads_total || data.leads_period || 0;
 
-  const periodLabel = { '7d': '7 dias', '15d': '15 dias', '30d': '30 dias', 'this-month': 'este mês', 'last-month': 'mês anterior', 'custom': 'período personalizado' }[currentPeriod] || '30 dias';
+  const periodLabel = { '7d': '7 dias', '15d': '15 dias', '30d': '30 dias', 'this-month': 'este mês', 'last-month': 'mês anterior', 'custom': 'personalizado' }[currentPeriod] || '30 dias';
+
+  // Adapt KPIs based on client context
+  let kpiCards = '';
+
+  // Conversas — always shown
+  kpiCards += kpiCard('Conversas', total, periodLabel, 2);
+
+  if (context === 'porteiro') {
+    // Lojinha Bebé: focus on "handled without human"
+    kpiCards += kpiCard('Resolvidas Sem Humano', aiOnly, `de ${total} conversas`, 3, aiRate >= 50 ? 'positive' : '');
+    kpiCards += kpiCardPercent('% Sem Intervenção', aiRate, 4, aiRate >= 50 ? 'positive' : 'warning');
+  } else if (context === 'leads') {
+    // EcoDrive / Now Fitness: focus on leads
+    if (leads > 0) kpiCards += kpiCard('Leads Recolhidos', leads, periodLabel, 3, 'positive');
+    kpiCards += kpiCardPercent('Taxa Resolução IA', aiRate, leads > 0 ? 4 : 3, aiRate >= 70 ? 'positive' : aiRate >= 50 ? '' : 'warning');
+  } else {
+    // Standard: RR, HCO, Teclas, OdiSeguros
+    kpiCards += kpiCardPercent('Taxa Resolução IA', aiRate, 3, aiRate >= 70 ? 'positive' : aiRate >= 50 ? '' : 'warning');
+    kpiCards += kpiCard('Mensagens IA', msgsAI, `${formatNumber(msgsHuman)} humanas`, 4);
+  }
+
+  if (kuttClicks > 0) {
+    kpiCards += kpiCard('Cliques em Produtos', kuttClicks, 'links partilhados pelo agente', 5);
+  }
+
+  // Charts
+  let chartsHtml = '';
+  if (activeChannels.length > 1) {
+    chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Conversas por Canal</h3><div class="chart-container" id="chart-channels"></div></div>`;
+  }
+  chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>${context === 'porteiro' ? 'Sem Humano vs Com Humano' : 'Resolução IA'}</h3><div class="chart-container" id="chart-ai-human"></div></div>`;
+
+  const hasHourly = data.hourly_distribution?.some(h => h.count > 0);
+  if (hasHourly) {
+    chartsHtml += `<div class="chart-card glass fade-in fade-in-6"><h3>Distribuição Horária</h3><div class="chart-container" id="chart-hours"></div></div>`;
+  }
 
   return `
     <div class="section-title fade-in fade-in-1">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7066A8" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
       Agente IA
     </div>
-    <div class="kpi-grid">
-      <div class="kpi-card glass fade-in fade-in-2">
-        <div class="kpi-label">Conversas</div>
-        <div class="kpi-value" data-count="${total}">0</div>
-        <div class="kpi-sub">${periodLabel}</div>
-      </div>
-      <div class="kpi-card glass fade-in fade-in-3">
-        <div class="kpi-label">Taxa Resolução IA</div>
-        <div class="kpi-value ${aiRateClass}" data-count="${aiRate}" data-suffix="%">0</div>
-        <div class="kpi-sub">sem intervenção humana</div>
-      </div>
-      <div class="kpi-card glass fade-in fade-in-4">
-        <div class="kpi-label">Mensagens IA</div>
-        <div class="kpi-value" data-count="${msgsAI}">0</div>
-        <div class="kpi-sub">${formatNumber(msgsHuman)} humanas</div>
-      </div>
-      ${kuttClicks > 0 ? `
-      <div class="kpi-card glass fade-in fade-in-5">
-        <div class="kpi-label">Cliques em Produtos</div>
-        <div class="kpi-value" data-count="${kuttClicks}">0</div>
-        <div class="kpi-sub">links partilhados pelo agente</div>
-      </div>` : ''}
-    </div>
-    <div class="charts-grid">
-      ${activeChannels.length > 1 ? `
-      <div class="chart-card glass fade-in fade-in-5">
-        <h3>Conversas por Canal</h3>
-        <div class="chart-container" id="chart-channels"></div>
-      </div>` : ''}
-      <div class="chart-card glass fade-in fade-in-5">
-        <h3>Resolução IA</h3>
-        <div class="chart-container" id="chart-ai-human"></div>
-      </div>
-      <div class="chart-card glass fade-in fade-in-6">
-        <h3>Distribuição Horária</h3>
-        <div class="chart-container" id="chart-hours"></div>
-      </div>
-    </div>
+    <div class="kpi-grid">${kpiCards}</div>
+    <div class="charts-grid">${chartsHtml}</div>
   `;
 }
 
@@ -199,8 +184,9 @@ function renderMessagingSection(client, data) {
   const totalMsgs = data.messages_sent;
   const totalOrders = data.total_orders;
   const totalRevenue = data.total_revenue;
+  const hasOp = totalOp > 0;
+  const hasAuto = totalAuto > 0;
 
-  // Build detail table
   let tableRows = '';
   data.operacionais.forEach(r => {
     tableRows += `<tr><td>${r.tipo}</td><td><span class="tag tag-op">Operacional</span></td><td class="num">${formatNumber(r.total)}</td></tr>`;
@@ -209,51 +195,21 @@ function renderMessagingSection(client, data) {
     tableRows += `<tr><td>${r.tipo}</td><td><span class="tag tag-mk">Marketing</span></td><td class="num">${formatNumber(r.total)}</td></tr>`;
   });
 
-  const hasOp = totalOp > 0;
-  const hasAuto = totalAuto > 0;
-  const hasBoth = hasOp && hasAuto;
+  let kpiCards = kpiCard('Total Mensagens', totalMsgs, '', 2);
+  if (hasOp) kpiCards += kpiCard('Operacionais', totalOp, hasOp && hasAuto ? 'morada, MB, MBWay' : '', 3);
+  if (hasAuto) kpiCards += kpiCard('Marketing', totalAuto, hasOp && hasAuto ? 'carrinhos, upsell' : '', hasOp ? 4 : 3);
+  if (totalOrders > 0) kpiCards += kpiCard('Encomendas', totalOrders, `${formatNumber(totalRevenue)}€ receita`, 5);
 
   return `
     <div class="section-title fade-in fade-in-1">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7066A8" stroke-width="2"><path d="M22 2L11 13"></path><path d="M22 2L15 22L11 13L2 9L22 2Z"></path></svg>
       Mensagens Automáticas
     </div>
-    <div class="kpi-grid">
-      <div class="kpi-card glass fade-in fade-in-2">
-        <div class="kpi-label">Total Mensagens</div>
-        <div class="kpi-value" data-count="${totalMsgs}">0</div>
-      </div>
-      ${hasOp ? `
-      <div class="kpi-card glass fade-in fade-in-3">
-        <div class="kpi-label">Operacionais</div>
-        <div class="kpi-value" data-count="${totalOp}">0</div>
-        <div class="kpi-sub">${hasBoth ? 'morada, MB, MBWay' : ''}</div>
-      </div>` : ''}
-      ${hasAuto ? `
-      <div class="kpi-card glass fade-in fade-in-${hasOp ? '4' : '3'}">
-        <div class="kpi-label">Marketing</div>
-        <div class="kpi-value" data-count="${totalAuto}">0</div>
-        <div class="kpi-sub">${hasBoth ? 'carrinhos, upsell' : ''}</div>
-      </div>` : ''}
-      ${totalOrders > 0 ? `
-      <div class="kpi-card glass fade-in fade-in-5">
-        <div class="kpi-label">Encomendas Atribuídas</div>
-        <div class="kpi-value" data-count="${totalOrders}">0</div>
-        <div class="kpi-sub">${formatNumber(totalRevenue)}€ receita</div>
-      </div>` : ''}
-    </div>
+    <div class="kpi-grid">${kpiCards}</div>
     <div class="charts-grid">
-      <div class="chart-card glass fade-in fade-in-5">
-        <h3>Distribuição por Tipo</h3>
-        <div class="chart-container" id="chart-msg-types"></div>
-      </div>
-      <div class="chart-card glass fade-in fade-in-6">
-        <h3>Detalhe por Categoria</h3>
-        ${tableRows ? `
-        <table class="data-table">
-          <thead><tr><th>Categoria</th><th>Tipo</th><th>Total</th></tr></thead>
-          <tbody>${tableRows}</tbody>
-        </table>` : '<p class="no-data">Sem dados para este período.</p>'}
+      <div class="chart-card glass fade-in fade-in-5"><h3>Distribuição por Tipo</h3><div class="chart-container" id="chart-msg-types"></div></div>
+      <div class="chart-card glass fade-in fade-in-6"><h3>Detalhe por Categoria</h3>
+        ${tableRows ? `<table class="data-table"><thead><tr><th>Categoria</th><th>Tipo</th><th>Total</th></tr></thead><tbody>${tableRows}</tbody></table>` : '<p class="no-data">Sem dados.</p>'}
       </div>
     </div>
   `;
@@ -267,13 +223,28 @@ function renderInsightsSection(insight) {
       Insights
     </div>
     <div class="insights-card glass fade-in fade-in-2">
-      <div class="insights-header">
-        <span class="insights-badge">AI Analysis</span>
-      </div>
-      <div class="insights-content">
-        ${insight.text}
-      </div>
+      <div class="insights-header"><span class="insights-badge">AI Analysis</span></div>
+      <div class="insights-content">${insight.text}</div>
       <div class="insights-date">Análise de ${insight.month}</div>
     </div>
   `;
+}
+
+// ---- KPI Card Helpers ----
+function kpiCard(label, value, sub, fadeN, colorClass) {
+  return `
+    <div class="kpi-card glass fade-in fade-in-${fadeN}">
+      <div class="kpi-label">${label}</div>
+      <div class="kpi-value ${colorClass || ''}" data-count="${value}">0</div>
+      ${sub ? `<div class="kpi-sub">${sub}</div>` : ''}
+    </div>`;
+}
+
+function kpiCardPercent(label, value, fadeN, colorClass) {
+  return `
+    <div class="kpi-card glass fade-in fade-in-${fadeN}">
+      <div class="kpi-label">${label}</div>
+      <div class="kpi-value ${colorClass || ''}" data-count="${value}" data-suffix="%">0</div>
+      <div class="kpi-sub">sem intervenção humana</div>
+    </div>`;
 }

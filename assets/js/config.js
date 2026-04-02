@@ -117,7 +117,8 @@ const CLIENTS = {
     services: ['chatbot'],
     channels: ['instagram'],
     schema: 'now_fitness_studio',
-    domainId: null
+    domainId: null,
+    context: 'leads'  // show lead/conversion metrics
   },
   lojinhabebe: {
     name: 'Lojinha Bebé',
@@ -125,15 +126,18 @@ const CLIENTS = {
     services: ['chatbot'],
     channels: ['facebook', 'instagram'],
     schema: 'lojinha_bebe',
-    domainId: null
+    domainId: null,
+    context: 'porteiro'  // show "Conversas Só IA" framing
   },
   ecodrive: {
     name: 'EcoDrive',
     password: 'ecodrive2026',
     services: ['chatbot'],
-    channels: ['whatsapp'],
+    channels: ['chatwoot'],
     schema: 'ecodrive',
-    domainId: null
+    domainId: null,
+    hasLeads: true,
+    context: 'leads'  // show lead metrics
   },
   odiseguros: {
     name: 'OdiSeguros',
