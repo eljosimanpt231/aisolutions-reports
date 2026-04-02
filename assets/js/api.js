@@ -23,7 +23,9 @@ async function fetchData(slug, start, end) {
 
 // ---- Transform chatbot data ----
 function transformChatbot(raw) {
-  if (!raw?.totals?.total_conversations) return null;
+  if (!raw?.totals) return null;
+  // Accept either total_conversations (standard) or unique_users (Now Fitness lead gen)
+  if (!raw.totals.total_conversations && !raw.totals.unique_users) return null;
 
   const t = raw.totals;
   const channels = {};
