@@ -51,11 +51,6 @@ function transformChatbot(raw) {
     hourly.push({ hour: h, count });
   }
 
-  // EcoDrive extras — these come from the parent data object, not from raw (chatbot)
-  // They'll be injected after transformChatbot is called
-  const platforms = [];
-  const responseTime = null;
-
   return {
     total_conversations: parseInt(t.total_conversations) || parseInt(t.unique_users) || 0,
     ai_resolution_rate: parseFloat(t.resolution_rate_pct) || 0,
@@ -65,13 +60,10 @@ function transformChatbot(raw) {
     conversations_with_human: parseInt(t.conversations_with_human) || 0,
     channels,
     hourly_distribution: hourly,
-    // Extra fields (EcoDrive leads, Now Fitness leads)
-    leads_total: parseInt(t.leads_total) || 0,
-    leads_period: parseInt(t.leads_period) || 0,
-    // EcoDrive extras
-    platforms,
-    response_time: responseTime,
-    leads_period: leads?.period || parseInt(t.leads_period) || 0,
+    // EcoDrive extras (injected later by getChatbotMetrics)
+    platforms: [],
+    response_time: null,
+    leads_period: 0,
     // Now Fitness specific
     unique_users: parseInt(t.unique_users) || 0,
     total_leads: parseInt(t.total_leads) || 0,
