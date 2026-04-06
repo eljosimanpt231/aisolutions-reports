@@ -88,6 +88,21 @@ async function loadData() {
     getClickMetrics(client.domainId, start, end)
   ]);
 
+  // DEBUG — temporary visual debug for EcoDrive
+  const slug = getClientSlug();
+  if (slug === 'ecodrive' || slug === 'lojinhabebe') {
+    const dbg = document.createElement('div');
+    dbg.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:rgba(0,0,0,0.9);color:#0f0;font-family:monospace;font-size:11px;padding:8px;z-index:9999;max-height:200px;overflow:auto';
+    dbg.innerHTML = `<b>DEBUG ${slug}</b><br>
+      chatbot: ${!!chatbot} | total_convs: ${chatbot?.total_conversations}<br>
+      leads_period: ${chatbot?.leads_period} (type: ${typeof chatbot?.leads_period})<br>
+      platforms: ${JSON.stringify(chatbot?.platforms?.length)} items: ${JSON.stringify(chatbot?.platforms?.map(p=>p.plataforma))}<br>
+      response_time: ${JSON.stringify(chatbot?.response_time)}<br>
+      context: ${client.context}<br>
+      hourly has data: ${chatbot?.hourly_distribution?.some(h => h.count > 0)}`;
+    document.body.appendChild(dbg);
+  }
+
   renderDashboard(client, chatbot, messaging, clicks);
 }
 
