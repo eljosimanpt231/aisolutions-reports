@@ -146,7 +146,7 @@ const CLIENTS = {
     domainId: null,
     hasLeads: true,
     context: 'leads',
-    startDate: '2026-01-08'  // IA ativa desde 8/1
+    startDate: '2026-01-08'  // IA ativa desde 8/1 (filtro AI session já exclui sem IA)
   },
   odiseguros: {
     name: 'OdiSeguros',

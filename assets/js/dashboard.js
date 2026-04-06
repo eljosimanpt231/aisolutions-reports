@@ -119,7 +119,10 @@ function renderDashboard(client, chatbot, messaging, clicks) {
   content.innerHTML = html;
 
   requestAnimationFrame(() => {
-    if (chatbot) initChatbotCharts(client, chatbot);
+    if (chatbot) {
+      initChatbotCharts(client, chatbot);
+      initExtendedCharts(chatbot);
+    }
     if (messaging) initMessagingCharts(messaging);
     document.querySelectorAll('[data-count]').forEach(el => {
       const val = parseFloat(el.dataset.count);
@@ -179,15 +182,18 @@ function renderChatbotSection(client, data, clicks) {
     kpiCards += kpiCard('Resolvidas Sem Humano', aiOnly, `de ${total} conversas`, 3, aiRate >= 50 ? 'positive' : '');
     kpiCards += kpiCardPercent('% Sem Intervenção', aiRate, 4, aiRate >= 50 ? 'positive' : 'warning');
   } else if (context === 'leads') {
-    // EcoDrive: leads + platforms + response time
+    // EcoDrive: leads + platforms + response times
     const leadsCount = data.leads_period || 0;
     const respTime = data.response_time;
+    const humanResp = data.extended?.human_response_time;
     if (leadsCount > 0) kpiCards += kpiCard('Leads Recolhidos', leadsCount, periodLabel, 3, 'positive');
-    kpiCards += kpiCardPercent('Taxa Resolução IA', aiRate, leadsCount > 0 ? 4 : 3, aiRate >= 70 ? 'positive' : aiRate >= 50 ? '' : 'warning');
+    kpiCards += kpiCardPercent('Taxa Resolução IA', aiRate, 4, aiRate >= 70 ? 'positive' : aiRate >= 50 ? '' : 'warning');
     if (respTime?.median_sec) {
       const medSec = parseFloat(respTime.median_sec);
-      const label = medSec < 60 ? `${medSec.toFixed(0)}s mediana` : `${(medSec/60).toFixed(1)}min mediana`;
-      kpiCards += kpiCard('Tempo Resposta IA', medSec < 60 ? medSec.toFixed(0) : (medSec/60).toFixed(1), label + ` (média ${parseFloat(respTime.avg_sec).toFixed(0)}s)`, 5);
+      kpiCards += kpiCard('Resposta IA', medSec < 60 ? `${medSec.toFixed(0)}s` : `${(medSec/60).toFixed(1)}min`, `mediana (média ${parseFloat(respTime.avg_sec).toFixed(0)}s)`, 5);
+    }
+    if (humanResp?.median_min) {
+      kpiCards += kpiCard('Resposta Humano', `${parseFloat(humanResp.median_min).toFixed(0)}min`, `mediana (média ${parseFloat(humanResp.avg_min).toFixed(0)}min)`, 6);
     }
   } else {
     // Standard: RR, HCO, Teclas, OdiSeguros
@@ -227,6 +233,23 @@ function renderChatbotSection(client, data, clicks) {
   const hasHourly = data.hourly_distribution?.some(h => h.count > 0);
   if (hasHourly) {
     chartsHtml += `<div class="chart-card glass fade-in fade-in-6"><h3>Distribuição Horária</h3><div class="chart-container" id="chart-hours"></div></div>`;
+  }
+
+  // Extended charts (EcoDrive daily, Lojinha weekly evolution)
+  const ext = data.extended;
+  if (ext?.daily?.length > 0) {
+    chartsHtml += `<div class="chart-card glass fade-in fade-in-6" style="grid-column: 1 / -1"><h3>Evolução Diária</h3><div class="chart-container" id="chart-daily" style="height:300px"></div></div>`;
+  }
+  if (ext?.conversationTypes?.length > 0) {
+    chartsHtml += `<div class="chart-card glass fade-in fade-in-6" style="grid-column: 1 / -1"><h3>Evolução Semanal — IA vs Humano</h3><div class="chart-container" id="chart-weekly-conv" style="height:300px"></div></div>`;
+  }
+  if (ext?.weekly?.length > 0 && !ext?.conversationTypes) {
+    chartsHtml += `<div class="chart-card glass fade-in fade-in-6" style="grid-column: 1 / -1"><h3>Mensagens por Semana</h3><div class="chart-container" id="chart-weekly-msgs" style="height:300px"></div></div>`;
+  }
+  if (ext?.leads_by_interest?.length > 0) {
+    const top10 = ext.leads_by_interest.slice(0, 10);
+    let rows = top10.map(l => `<tr><td>${l.interesse}</td><td class="num">${l.total}</td></tr>`).join('');
+    chartsHtml += `<div class="chart-card glass fade-in fade-in-6"><h3>Leads por Interesse</h3><table class="data-table"><thead><tr><th>Interesse</th><th>Total</th></tr></thead><tbody>${rows}</tbody></table></div>`;
   }
 
   return `

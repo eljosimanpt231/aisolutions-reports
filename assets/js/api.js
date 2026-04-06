@@ -121,10 +121,11 @@ async function getChatbotMetrics(schema, start, end) {
   if (!data) return null;
   const result = transformChatbot(data.chatbot);
   if (!result) return null;
-  // Inject EcoDrive extras from top-level data
+  // Inject top-level extras
   if (data.platforms) result.platforms = data.platforms;
   if (data.response_time) result.response_time = data.response_time;
   if (data.leads) result.leads_period = data.leads.total || parseInt(data.leads.period) || 0;
+  if (data.extended) result.extended = data.extended;
   return result;
 }
 

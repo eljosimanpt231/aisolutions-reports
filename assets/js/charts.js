@@ -186,6 +186,87 @@ function initChatbotCharts(client, data) {
   }
 }
 
+function initExtendedCharts(data) {
+  const ext = data?.extended;
+  if (!ext) return;
+
+  // Daily trend chart (EcoDrive)
+  if (ext.daily?.length > 0 && document.getElementById('chart-daily')) {
+    const days = ext.daily.map(d => d.day);
+    const convs = ext.daily.map(d => parseInt(d.conversations) || 0);
+    const aiMsgs = ext.daily.map(d => parseInt(d.ai_msgs) || 0);
+    const humanMsgs = ext.daily.map(d => parseInt(d.human_msgs) || 0);
+
+    new ApexCharts(document.getElementById('chart-daily'), {
+      ...baseChartOptions,
+      chart: { ...baseChartOptions.chart, type: 'area', height: 280, stacked: false },
+      series: [
+        { name: 'Conversas', data: convs },
+        { name: 'Msgs IA', data: aiMsgs },
+        { name: 'Msgs Humanas', data: humanMsgs }
+      ],
+      xaxis: { categories: days, labels: { rotate: -45, style: { fontSize: '9px' }, formatter: (v) => v?.substring(5) || '' } },
+      colors: [COLORS.accent, COLORS.primary, COLORS.warning],
+      stroke: { curve: 'smooth', width: 2 },
+      fill: { type: 'gradient', gradient: { opacityFrom: 0.3, opacityTo: 0.05 } },
+      dataLabels: { enabled: false },
+      legend: { position: 'top', labels: { colors: COLORS.text } }
+    }).render();
+  }
+
+  // Weekly conversation types (Lojinha Bebé: ai_only vs human_only)
+  if (ext.conversationTypes?.length > 0 && document.getElementById('chart-weekly-conv')) {
+    // Aggregate by week (merge platforms)
+    const weekMap = {};
+    ext.conversationTypes.forEach(r => {
+      if (!weekMap[r.week]) weekMap[r.week] = { ai_only: 0, human_only: 0 };
+      weekMap[r.week][r.conversation_type] += parseInt(r.cnt) || 0;
+    });
+    const weeks = Object.keys(weekMap).sort();
+    const aiOnly = weeks.map(w => weekMap[w].ai_only);
+    const humanOnly = weeks.map(w => weekMap[w].human_only);
+
+    new ApexCharts(document.getElementById('chart-weekly-conv'), {
+      ...baseChartOptions,
+      chart: { ...baseChartOptions.chart, type: 'bar', height: 280, stacked: true },
+      series: [
+        { name: 'Só IA', data: aiOnly },
+        { name: 'Com Humano', data: humanOnly }
+      ],
+      xaxis: { categories: weeks.map(w => w.substring(5)), labels: { style: { fontSize: '10px' } } },
+      colors: [COLORS.accent, COLORS.warning],
+      plotOptions: { bar: { borderRadius: 4, columnWidth: '60%' } },
+      dataLabels: { enabled: false },
+      legend: { position: 'top', labels: { colors: COLORS.text } }
+    }).render();
+  }
+
+  // Weekly messages stacked (Lojinha Bebé: ai_agent, customer, human_agent)
+  if (ext.weekly?.length > 0 && document.getElementById('chart-weekly-msgs')) {
+    const weekMap = {};
+    ext.weekly.forEach(r => {
+      if (!weekMap[r.week]) weekMap[r.week] = { ai_agent: 0, customer: 0, human_agent: 0 };
+      weekMap[r.week][r.sender_type] += parseInt(r.cnt) || 0;
+    });
+    const weeks = Object.keys(weekMap).sort();
+
+    new ApexCharts(document.getElementById('chart-weekly-msgs'), {
+      ...baseChartOptions,
+      chart: { ...baseChartOptions.chart, type: 'bar', height: 280, stacked: true },
+      series: [
+        { name: 'IA', data: weeks.map(w => weekMap[w].ai_agent) },
+        { name: 'Humano', data: weeks.map(w => weekMap[w].human_agent) },
+        { name: 'Cliente', data: weeks.map(w => weekMap[w].customer) }
+      ],
+      xaxis: { categories: weeks.map(w => w.substring(5)), labels: { style: { fontSize: '10px' } } },
+      colors: [COLORS.primary, COLORS.warning, '#555'],
+      plotOptions: { bar: { borderRadius: 3, columnWidth: '65%' } },
+      dataLabels: { enabled: false },
+      legend: { position: 'top', labels: { colors: COLORS.text } }
+    }).render();
+  }
+}
+
 function initMessagingCharts(data) {
   if (!document.getElementById('chart-msg-types')) return;
 
