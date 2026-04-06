@@ -119,16 +119,24 @@ function renderDashboard(client, chatbot, messaging, clicks) {
   content.innerHTML = html;
 
   requestAnimationFrame(() => {
-    if (chatbot) {
-      initChatbotCharts(client, chatbot);
-      initExtendedCharts(chatbot);
+    try {
+      if (chatbot) {
+        initChatbotCharts(client, chatbot);
+        initExtendedCharts(chatbot);
+      }
+      if (messaging) initMessagingCharts(messaging);
+    } catch (e) {
+      console.error('Chart init error:', e);
     }
-    if (messaging) initMessagingCharts(messaging);
     document.querySelectorAll('[data-count]').forEach(el => {
       const val = parseFloat(el.dataset.count);
       const suffix = el.dataset.suffix || '';
-      animateValue(el, val);
-      if (suffix) setTimeout(() => { el.textContent += suffix; }, 1900);
+      if (isNaN(val)) {
+        el.textContent = el.dataset.count; // string value like "14s"
+      } else {
+        animateValue(el, val);
+        if (suffix) setTimeout(() => { el.textContent += suffix; }, 1900);
+      }
     });
   });
 }
