@@ -51,10 +51,10 @@ function transformChatbot(raw) {
     hourly.push({ hour: h, count });
   }
 
-  // EcoDrive extras
-  const platforms = raw.platforms || [];
-  const responseTime = raw.response_time || null;
-  const leads = raw.leads || null;
+  // EcoDrive extras — these come from the parent data object, not from raw (chatbot)
+  // They'll be injected after transformChatbot is called
+  const platforms = [];
+  const responseTime = null;
 
   return {
     total_conversations: parseInt(t.total_conversations) || parseInt(t.unique_users) || 0,
@@ -126,7 +126,14 @@ function transformEcoDriveExtras(raw) {
 // ---- Public API functions (called by dashboard.js) ----
 async function getChatbotMetrics(schema, start, end) {
   const data = await fetchData(getClientSlug(), start, end);
-  return data ? transformChatbot(data.chatbot) : null;
+  if (!data) return null;
+  const result = transformChatbot(data.chatbot);
+  if (!result) return null;
+  // Inject EcoDrive extras from top-level data
+  if (data.platforms) result.platforms = data.platforms;
+  if (data.response_time) result.response_time = data.response_time;
+  if (data.leads) result.leads_period = data.leads.total || parseInt(data.leads.period) || 0;
+  return result;
 }
 
 async function getMessagingMetrics(schema, start, end) {
