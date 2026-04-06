@@ -51,8 +51,13 @@ function transformChatbot(raw) {
     hourly.push({ hour: h, count });
   }
 
+  // EcoDrive extras
+  const platforms = raw.platforms || [];
+  const responseTime = raw.response_time || null;
+  const leads = raw.leads || null;
+
   return {
-    total_conversations: parseInt(t.total_conversations) || 0,
+    total_conversations: parseInt(t.total_conversations) || parseInt(t.unique_users) || 0,
     ai_resolution_rate: parseFloat(t.resolution_rate_pct) || 0,
     messages_ai: parseInt(t.messages_ai) || 0,
     messages_human: parseInt(t.messages_human) || 0,
@@ -63,6 +68,10 @@ function transformChatbot(raw) {
     // Extra fields (EcoDrive leads, Now Fitness leads)
     leads_total: parseInt(t.leads_total) || 0,
     leads_period: parseInt(t.leads_period) || 0,
+    // EcoDrive extras
+    platforms,
+    response_time: responseTime,
+    leads_period: leads?.period || parseInt(t.leads_period) || 0,
     // Now Fitness specific
     unique_users: parseInt(t.unique_users) || 0,
     total_leads: parseInt(t.total_leads) || 0,
@@ -71,7 +80,8 @@ function transformChatbot(raw) {
     conversion_rate: parseFloat(t.conversion_rate) || 0,
     total_comments: parseInt(t.total_comments) || 0,
     dms_initiated: parseInt(t.dms_initiated) || 0,
-    total_follow_ups: parseInt(t.total_follow_ups) || 0
+    total_follow_ups: parseInt(t.total_follow_ups) || 0,
+    lead_records: raw.totals?.lead_records || []
   };
 }
 
@@ -97,8 +107,19 @@ function transformMessaging(raw) {
     total_operacionais: parseInt(totals.total_operacionais) || 0,
     total_automaticas: parseInt(totals.total_automaticas) || 0,
     messages_sent: parseInt(totals.total_mensagens) || 0,
+    total_clicked: parseInt(totals.total_clicked) || 0,
+    click_rate: parseFloat(totals.click_rate) || 0,
     total_orders: parseInt(raw.attributed_orders) || 0,
     total_revenue: parseFloat(raw.attributed_revenue) || 0
+  };
+}
+
+// Transform EcoDrive extra data
+function transformEcoDriveExtras(raw) {
+  return {
+    platforms: raw?.platforms || [],
+    response_time: raw?.response_time || null,
+    leads: raw?.leads || null
   };
 }
 

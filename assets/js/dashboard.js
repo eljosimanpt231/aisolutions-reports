@@ -179,9 +179,16 @@ function renderChatbotSection(client, data, clicks) {
     kpiCards += kpiCard('Resolvidas Sem Humano', aiOnly, `de ${total} conversas`, 3, aiRate >= 50 ? 'positive' : '');
     kpiCards += kpiCardPercent('% Sem Intervenção', aiRate, 4, aiRate >= 50 ? 'positive' : 'warning');
   } else if (context === 'leads') {
-    // EcoDrive / Now Fitness: focus on leads
-    if (leads > 0) kpiCards += kpiCard('Leads Recolhidos', leads, periodLabel, 3, 'positive');
-    kpiCards += kpiCardPercent('Taxa Resolução IA', aiRate, leads > 0 ? 4 : 3, aiRate >= 70 ? 'positive' : aiRate >= 50 ? '' : 'warning');
+    // EcoDrive: leads + platforms + response time
+    const leadsCount = data.leads_period || 0;
+    const respTime = data.response_time;
+    if (leadsCount > 0) kpiCards += kpiCard('Leads Recolhidos', leadsCount, periodLabel, 3, 'positive');
+    kpiCards += kpiCardPercent('Taxa Resolução IA', aiRate, leadsCount > 0 ? 4 : 3, aiRate >= 70 ? 'positive' : aiRate >= 50 ? '' : 'warning');
+    if (respTime?.median_sec) {
+      const medSec = parseFloat(respTime.median_sec);
+      const label = medSec < 60 ? `${medSec.toFixed(0)}s mediana` : `${(medSec/60).toFixed(1)}min mediana`;
+      kpiCards += kpiCard('Tempo Resposta IA', medSec < 60 ? medSec.toFixed(0) : (medSec/60).toFixed(1), label + ` (média ${parseFloat(respTime.avg_sec).toFixed(0)}s)`, 5);
+    }
   } else {
     // Standard: RR, HCO, Teclas, OdiSeguros
     kpiCards += kpiCardPercent('Taxa Resolução IA', aiRate, 3, aiRate >= 70 ? 'positive' : aiRate >= 50 ? '' : 'warning');
@@ -197,9 +204,20 @@ function renderChatbotSection(client, data, clicks) {
   if (activeChannels.length > 1) {
     chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Conversas por Canal</h3><div class="chart-container" id="chart-channels"></div></div>`;
   }
+  // EcoDrive platform breakdown
+  if (context === 'leads' && data.platforms?.length > 1) {
+    chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Conversas por Plataforma</h3><div class="chart-container" id="chart-platforms"></div></div>`;
+  }
+
   if (context === 'lead_gen') {
-    // Now Fitness: show funnel chart instead of AI resolution
+    // Now Fitness: funnel + leads table
     chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Funil de Conversão</h3><div class="chart-container" id="chart-funnel"></div></div>`;
+    // Leads table
+    const leadRecords = data.lead_records || [];
+    if (leadRecords.length > 0) {
+      let leadsTableRows = leadRecords.map(l => `<tr><td>${l.nome || '—'}</td><td>${l.tipo_registo || '—'}</td><td>${l.criado_em?.substring(0,10) || '—'}</td></tr>`).join('');
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-6"><h3>Leads Registados</h3><table class="data-table"><thead><tr><th>Nome</th><th>Tipo</th><th>Data</th></tr></thead><tbody>${leadsTableRows}</tbody></table></div>`;
+    }
   } else if (context === 'qualificador') {
     chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Novos vs Existentes</h3><div class="chart-container" id="chart-ai-human"></div></div>`;
   } else {
@@ -239,9 +257,13 @@ function renderMessagingSection(client, data) {
     tableRows += `<tr><td>${r.tipo}</td><td><span class="tag tag-mk">Marketing</span></td><td class="num">${formatNumber(r.total)}</td></tr>`;
   });
 
+  const totalClicked = data.total_clicked || 0;
+  const clickRate = data.click_rate || 0;
+
   let kpiCards = kpiCard('Total Mensagens', totalMsgs, '', 2);
   if (hasOp) kpiCards += kpiCard('Operacionais', totalOp, hasOp && hasAuto ? 'morada, MB, MBWay' : '', 3);
   if (hasAuto) kpiCards += kpiCard('Marketing', totalAuto, hasOp && hasAuto ? 'carrinhos, upsell' : '', hasOp ? 4 : 3);
+  if (totalClicked > 0) kpiCards += kpiCard('Cliques', totalClicked, `${clickRate.toFixed(1)}% taxa de clique`, hasOp && hasAuto ? 5 : 4);
   if (totalOrders > 0) kpiCards += kpiCard('Encomendas', totalOrders, `${formatNumber(totalRevenue)}€ receita`, 5);
 
   return `

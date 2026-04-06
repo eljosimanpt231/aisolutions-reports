@@ -114,7 +114,7 @@ const CLIENTS = {
   teclasdavida: {
     name: 'Teclas da Vida',
     password: 'teclasdavida2026',
-    services: ['chatbot'],
+    services: ['chatbot', 'messaging'],
     channels: ['whatsapp'],
     schema: 'teclas_da_vida',
     domainId: null

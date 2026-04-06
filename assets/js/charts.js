@@ -69,6 +69,20 @@ function initChatbotCharts(client, data) {
     return; // skip standard charts
   }
 
+  // EcoDrive platform breakdown chart
+  if (client.context === 'leads' && data.platforms?.length > 1 && document.getElementById('chart-platforms')) {
+    new ApexCharts(document.getElementById('chart-platforms'), {
+      ...baseChartOptions,
+      chart: { ...baseChartOptions.chart, type: 'bar', height: 260 },
+      series: [{ name: 'Conversas', data: data.platforms.map(p => p.total_conversations || 0) }],
+      xaxis: { categories: data.platforms.map(p => p.plataforma || 'Desconhecido') },
+      colors: [COLORS.primary, COLORS.accent],
+      plotOptions: { bar: { borderRadius: 8, columnWidth: '50%', distributed: true, dataLabels: { position: 'top' } } },
+      dataLabels: { enabled: true, offsetY: -20, style: { fontSize: '13px', fontWeight: 700, colors: ['#e8e6f0'] } },
+      legend: { show: false }
+    }).render();
+  }
+
   // Channels bar chart — use actual channels from API data, not config
   const activeChannels = Object.keys(data.channels || {});
   if (activeChannels.length > 1 && document.getElementById('chart-channels')) {
