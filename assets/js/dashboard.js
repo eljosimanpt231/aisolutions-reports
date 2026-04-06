@@ -246,6 +246,25 @@ function renderChatbotSection(client, data, clicks) {
   if (ext?.weekly?.length > 0 && !ext?.conversationTypes) {
     chartsHtml += `<div class="chart-card glass fade-in fade-in-6" style="grid-column: 1 / -1"><h3>Mensagens por Semana</h3><div class="chart-container" id="chart-weekly-msgs" style="height:300px"></div></div>`;
   }
+  // Agent breakdown (Lojinha Bebé)
+  if (ext?.agentBreakdown?.length > 0) {
+    // Build agent table
+    const agentTotals = {};
+    ext.agentBreakdown.forEach(r => {
+      const id = r.agent_id;
+      if (!agentTotals[id]) agentTotals[id] = { fb: 0, ig: 0, total: 0 };
+      agentTotals[id].total += parseInt(r.cnt) || 0;
+      if (r.platform === 'facebook') agentTotals[id].fb += parseInt(r.cnt) || 0;
+      if (r.platform === 'instagram') agentTotals[id].ig += parseInt(r.cnt) || 0;
+    });
+    const AGENT_NAMES = { '6': 'Ricardo Pinto', '7': 'Miriam Silva', '8': 'Andreia Pinto', '9': 'Cristina Pinto', '10': 'Inês Francisco' };
+    const sorted = Object.entries(agentTotals).sort((a, b) => b[1].total - a[1].total);
+    let agentRows = sorted.map(([id, d]) => `<tr><td>${AGENT_NAMES[id] || 'Agente ' + id}</td><td class="num">${formatNumber(d.fb)}</td><td class="num">${formatNumber(d.ig)}</td><td class="num"><strong>${formatNumber(d.total)}</strong></td></tr>`).join('');
+
+    chartsHtml += `<div class="chart-card glass fade-in fade-in-6"><h3>Equipa — Mensagens por Agente</h3><div class="chart-container" id="chart-agents"></div></div>`;
+    chartsHtml += `<div class="chart-card glass fade-in fade-in-6"><h3>Detalhe por Agente</h3><table class="data-table"><thead><tr><th>Agente</th><th>Facebook</th><th>Instagram</th><th>Total</th></tr></thead><tbody>${agentRows}</tbody></table></div>`;
+  }
+
   if (ext?.leads_by_interest?.length > 0) {
     const top10 = ext.leads_by_interest.slice(0, 10);
     let rows = top10.map(l => `<tr><td>${l.interesse}</td><td class="num">${l.total}</td></tr>`).join('');

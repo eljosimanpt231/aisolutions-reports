@@ -186,29 +186,55 @@ function initChatbotCharts(client, data) {
   }
 }
 
+const AGENT_NAMES = { '6': 'Ricardo Pinto', '7': 'Miriam Silva', '8': 'Andreia Pinto', '9': 'Cristina Pinto', '10': 'Inês Francisco' };
+const AGENT_COLORS_MAP = { '6': '#00B894', '7': '#E1306C', '8': '#FDCB6E', '9': '#00CEC9', '10': '#6C5CE7' };
+
 function initExtendedCharts(data) {
   const ext = data?.extended;
   if (!ext) return;
 
-  // Daily trend chart (EcoDrive)
-  if (ext.daily?.length > 0 && document.getElementById('chart-daily')) {
+  // Daily trend chart — EcoDrive format {day, conversations, ai_msgs, team_msgs, customer_msgs}
+  if (ext.daily?.length > 0 && ext.daily[0]?.conversations !== undefined && document.getElementById('chart-daily')) {
     const days = ext.daily.map(d => d.day);
-    const convs = ext.daily.map(d => parseInt(d.conversations) || 0);
-    const aiMsgs = ext.daily.map(d => parseInt(d.ai_msgs) || 0);
-    const humanMsgs = ext.daily.map(d => parseInt(d.human_msgs) || 0);
-
     new ApexCharts(document.getElementById('chart-daily'), {
       ...baseChartOptions,
-      chart: { ...baseChartOptions.chart, type: 'area', height: 280, stacked: false },
+      chart: { ...baseChartOptions.chart, type: 'area', height: 280 },
       series: [
-        { name: 'Conversas', data: convs },
-        { name: 'Msgs IA', data: aiMsgs },
-        { name: 'Msgs Humanas', data: humanMsgs }
+        { name: 'Conversas', data: ext.daily.map(d => parseInt(d.conversations) || 0) },
+        { name: 'Msgs IA', data: ext.daily.map(d => parseInt(d.ai_msgs) || 0) },
+        { name: 'Equipa', data: ext.daily.map(d => parseInt(d.team_msgs) || 0) },
+        { name: 'Cliente', data: ext.daily.map(d => parseInt(d.customer_msgs) || 0) }
       ],
       xaxis: { categories: days, labels: { rotate: -45, style: { fontSize: '9px' }, formatter: (v) => v?.substring(5) || '' } },
-      colors: [COLORS.accent, COLORS.primary, COLORS.warning],
+      colors: [COLORS.accent, COLORS.primary, COLORS.warning, '#555'],
       stroke: { curve: 'smooth', width: 2 },
-      fill: { type: 'gradient', gradient: { opacityFrom: 0.3, opacityTo: 0.05 } },
+      fill: { type: 'gradient', gradient: { opacityFrom: 0.25, opacityTo: 0.02 } },
+      dataLabels: { enabled: false },
+      legend: { position: 'top', labels: { colors: COLORS.text } }
+    }).render();
+  }
+
+  // Daily trend chart — Lojinha format {day, platform, sender_type, cnt}
+  if (ext.daily?.length > 0 && ext.daily[0]?.sender_type !== undefined && document.getElementById('chart-daily')) {
+    // Aggregate by day (merge platforms)
+    const dayMap = {};
+    ext.daily.forEach(r => {
+      if (!dayMap[r.day]) dayMap[r.day] = { ai_agent: 0, human_agent: 0, customer: 0 };
+      dayMap[r.day][r.sender_type] += parseInt(r.cnt) || 0;
+    });
+    const days = Object.keys(dayMap).sort();
+    new ApexCharts(document.getElementById('chart-daily'), {
+      ...baseChartOptions,
+      chart: { ...baseChartOptions.chart, type: 'area', height: 280 },
+      series: [
+        { name: 'IA', data: days.map(d => dayMap[d].ai_agent) },
+        { name: 'Equipa', data: days.map(d => dayMap[d].human_agent) },
+        { name: 'Cliente', data: days.map(d => dayMap[d].customer) }
+      ],
+      xaxis: { categories: days, labels: { rotate: -45, style: { fontSize: '9px' }, formatter: (v) => v?.substring(5) || '' } },
+      colors: [COLORS.primary, COLORS.warning, '#555'],
+      stroke: { curve: 'smooth', width: 2 },
+      fill: { type: 'gradient', gradient: { opacityFrom: 0.25, opacityTo: 0.02 } },
       dataLabels: { enabled: false },
       legend: { position: 'top', labels: { colors: COLORS.text } }
     }).render();
@@ -263,6 +289,30 @@ function initExtendedCharts(data) {
       plotOptions: { bar: { borderRadius: 3, columnWidth: '65%' } },
       dataLabels: { enabled: false },
       legend: { position: 'top', labels: { colors: COLORS.text } }
+    }).render();
+  }
+}
+
+  // Agent breakdown donut (Lojinha Bebé)
+  if (ext.agentBreakdown?.length > 0 && document.getElementById('chart-agents')) {
+    // Aggregate total per agent
+    const agentTotals = {};
+    ext.agentBreakdown.forEach(r => {
+      const id = r.agent_id;
+      if (!agentTotals[id]) agentTotals[id] = 0;
+      agentTotals[id] += parseInt(r.cnt) || 0;
+    });
+    const ids = Object.keys(agentTotals).sort((a, b) => agentTotals[b] - agentTotals[a]);
+    new ApexCharts(document.getElementById('chart-agents'), {
+      ...baseChartOptions,
+      chart: { ...baseChartOptions.chart, type: 'donut', height: 280 },
+      series: ids.map(id => agentTotals[id]),
+      labels: ids.map(id => AGENT_NAMES[id] || `Agente ${id}`),
+      colors: ids.map(id => AGENT_COLORS_MAP[id] || COLORS.primary),
+      plotOptions: { pie: { donut: { size: '60%', labels: { show: true, total: { show: true, label: 'Total', color: COLORS.text, formatter: (w) => w.globals.seriesTotals.reduce((a, b) => a + b, 0).toLocaleString('pt-PT') }, value: { color: '#e8e6f0', fontSize: '22px', fontWeight: 700 } } } } },
+      legend: { position: 'bottom', labels: { colors: COLORS.text } },
+      dataLabels: { enabled: false },
+      stroke: { width: 0 }
     }).render();
   }
 }
