@@ -40,6 +40,10 @@ const INSIGHTS = {
     month: 'Março 2026',
     text: `<strong>986 conversas</strong> de qualificação de crédito processadas via WhatsApp. O agente identifica clientes elegíveis para crédito pessoal e encaminha os leads qualificados. Volume consistente com os meses anteriores.`
   },
+  rlstore: {
+    month: 'Abril 2026 (live desde dia 8)',
+    text: `Primeiros dias em produção com o chatbot multiplataforma (WhatsApp + Instagram). O sistema responde autonomamente a questões sobre produtos, disponibilidade e compras, escalando para a equipa apenas quando necessário. À medida que a base de conhecimento cresce e os padrões de questões dos clientes vão sendo identificados, a taxa de resolução tende a melhorar significativamente nas primeiras semanas.`
+  },
   odiseguros: {
     month: 'Março 2026 (desde dia 25)',
     text: `Primeira semana em produção. A IA processou <strong>64 conversas</strong>, identificando automaticamente <strong>clientes existentes</strong> (que são encaminhados diretamente) e <strong>novos leads</strong> (onde recolhe dados: NIF, matrícula, data de nascimento, morada). Este trabalho de triagem e recolha de informação poupa tempo significativo à equipa antes mesmo de iniciar o atendimento.`
@@ -174,5 +178,14 @@ const CLIENTS = {
     channels: ['whatsapp'],
     schema: null,  // sem schema próprio
     domainId: null
+  },
+  rlstore: {
+    name: 'RL Store',
+    password: 'rlstore2026',
+    services: ['chatbot'],
+    channels: ['chatwoot'],
+    schema: 'rl_store',
+    domainId: null,
+    startDate: '2026-04-08'  // IA live a partir de 8/4/2026
   }
 };
