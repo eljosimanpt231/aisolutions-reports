@@ -163,10 +163,19 @@ function renderChatbotSection(client, data, clicks) {
   kpiCards += kpiCard('Conversas', total, periodLabel, 2);
 
   if (context === 'qualificador') {
-    // OdiSeguros: lead qualification bot — IA talks to everyone, classifies, hands off
+    // OdiSeguros: uses real classification from odiseguros.contatos_bloqueados
+    const cls = data.extended?.classification || {};
+    const existentes = parseInt(cls.clientes_existentes) || 0;
+    const novosLeads = parseInt(cls.novos_leads) || 0;
+    const urgentes = parseInt(cls.urgentes) || 0;
+    const intHumana = parseInt(cls.intervencao_humana) || 0;
+    const naoClassif = parseInt(cls.nao_classificados) || 0;
+
     kpiCards += kpiCard('Mensagens IA', msgsAI, 'qualificação + recolha dados', 3);
-    kpiCards += kpiCard('Clientes Existentes', withHuman, 'identificados pela IA', 4);
-    kpiCards += kpiCard('Novos Leads', aiOnly, 'qualificados para seguimento', 5, 'positive');
+    kpiCards += kpiCard('Novos Leads', novosLeads, 'qualificados + dados recolhidos', 4, 'positive');
+    kpiCards += kpiCard('Clientes Existentes', existentes, 'identificados pela IA', 5);
+    if (urgentes > 0) kpiCards += kpiCard('Urgentes', urgentes, 'precisam seguro hoje', 6, 'warning');
+    else if (naoClassif > 0) kpiCards += kpiCard('Em Qualificação', naoClassif, 'conversas a decorrer', 6);
   } else if (context === 'lead_gen') {
     // Now Fitness: comments → DMs → leads funnel
     const t = data;
@@ -248,7 +257,17 @@ function renderChatbotSection(client, data, clicks) {
       chartsHtml += `<div class="chart-card glass fade-in fade-in-6"><h3>Leads Registados</h3><table class="data-table"><thead><tr><th>Nome</th><th>Tipo</th><th>Data</th></tr></thead><tbody>${leadsTableRows}</tbody></table></div>`;
     }
   } else if (context === 'qualificador') {
-    chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Novos vs Existentes</h3><div class="chart-container" id="chart-ai-human"></div></div>`;
+    // OdiSeguros: Novos vs Existentes donut (real classification) + Ramos bar chart + Urgentes table
+    const ext = data.extended;
+    chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Classificação de Contactos</h3><div class="chart-container" id="chart-classification"></div></div>`;
+    if (ext?.ramos?.length > 0) {
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Ramos de Interesse</h3><div class="chart-container" id="chart-ramos"></div></div>`;
+    }
+    if (ext?.urgentes_detalhe?.length > 0) {
+      const RAMO_LABELS = { automovel_particular: 'Auto Particular', automovel_empresa: 'Auto Empresa', tvde: 'TVDE', saude_dental: 'Saúde Dental', multiriscos_habitacao: 'Multirriscos', acidentes_trabalho: 'AT', vida_credito: 'Vida', responsabilidade_civil: 'RC' };
+      const rows = ext.urgentes_detalhe.map(u => `<tr><td>${u.telefone || '—'}</td><td>${RAMO_LABELS[u.ramo] || u.ramo || '—'}</td><td style="font-size:0.75rem">${(u.resumo_dados||'').substring(0,120)}${(u.resumo_dados||'').length>120?'…':''}</td></tr>`).join('');
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-6" style="grid-column: 1 / -1"><h3>Leads Urgentes (precisam seguro hoje)</h3><table class="data-table"><thead><tr><th>Contacto</th><th>Ramo</th><th>Detalhe</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    }
   } else {
     chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>${context === 'porteiro' ? 'Sem Humano vs Com Humano' : 'Resolução IA'}</h3><div class="chart-container" id="chart-ai-human"></div></div>`;
   }

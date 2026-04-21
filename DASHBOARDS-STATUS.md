@@ -19,9 +19,9 @@ Documento para acompanhar o processo de validação dos reports de cada cliente.
 | ManInc | 🔴 Por validar | — | — |
 | Teclas da Vida | 🔴 Por validar | — | — |
 | Now Fitness Studio | 🔴 Por validar | — | — |
-| Lojinha Bebé | 🟡 Em revisão | 2026-04-21 | Evolução diária, agent breakdown |
-| EcoDrive | 🟡 Em revisão | 2026-04-21 | Fix: charts try-catch individual, Velocidade IA/Equipa, multiplicador 10.1x, human_resp query corrigida (100h mediana real), markers FB/IG corrigidos em platforms e daily |
-| OdiSeguros | 🔴 Por validar | — | — |
+| Lojinha Bebé | 🟢 Aprovado | 2026-04-21 | — |
+| EcoDrive | 🟢 Aprovado | 2026-04-21 | — |
+| OdiSeguros | 🟡 Em revisão | 2026-04-21 | Validar lógica "Novos vs Existentes" (3% parece baixo) |
 | Pura Rituals | 🔴 Por validar | — | — |
 | Aprova | 🔴 Por validar | — | — |
 | RL Store | 🔴 Por validar | — | Live 8/4 — 11 convs, 72.7% resolução |

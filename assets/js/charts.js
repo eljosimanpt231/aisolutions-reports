@@ -184,6 +184,46 @@ function initExtendedCharts(data) {
   const ext = data?.extended;
   if (!ext) return;
 
+  // OdiSeguros: Classification donut
+  if (ext.classification && document.getElementById('chart-classification')) {
+    try {
+      const cls = ext.classification;
+      const existentes = parseInt(cls.clientes_existentes) || 0;
+      const novos = parseInt(cls.novos_leads) || 0;
+      const intH = parseInt(cls.intervencao_humana) || 0;
+      const naoClass = parseInt(cls.nao_classificados) || 0;
+      new ApexCharts(document.getElementById('chart-classification'), {
+        ...baseChartOptions,
+        chart: { ...baseChartOptions.chart, type: 'donut', height: 280 },
+        series: [existentes, novos, intH, naoClass],
+        labels: ['Clientes Existentes', 'Novos Leads', 'Intervenção Humana', 'Em Qualificação'],
+        colors: ['#6B7280', COLORS.accent, COLORS.warning, COLORS.primaryLight],
+        plotOptions: { pie: { donut: { size: '60%', labels: { show: true, total: { show: true, label: 'Total', color: COLORS.text, formatter: (w) => w.globals.seriesTotals.reduce((a, b) => a + b, 0).toLocaleString('pt-PT') }, value: { color: '#e8e6f0', fontSize: '22px', fontWeight: 700 } } } } },
+        legend: { position: 'bottom', labels: { colors: COLORS.text }, fontSize: '12px' },
+        dataLabels: { enabled: false },
+        stroke: { width: 0 }
+      }).render();
+    } catch(e) { console.error('chart-classification err:', e); }
+  }
+
+  // OdiSeguros: Ramos bar chart
+  if (ext.ramos?.length > 0 && document.getElementById('chart-ramos')) {
+    try {
+      const RAMO_LABELS = { automovel_particular: 'Auto Particular', automovel_empresa: 'Auto Empresa', tvde: 'TVDE', saude_dental: 'Saúde Dental', multiriscos_habitacao: 'Multirriscos', acidentes_trabalho: 'Acidentes Trabalho', vida_credito: 'Vida / Crédito', responsabilidade_civil: 'Resp. Civil' };
+      const top = ext.ramos.slice(0, 8);
+      new ApexCharts(document.getElementById('chart-ramos'), {
+        ...baseChartOptions,
+        chart: { ...baseChartOptions.chart, type: 'bar', height: 280 },
+        series: [{ name: 'Contactos', data: top.map(r => parseInt(r.total) || 0) }],
+        xaxis: { categories: top.map(r => RAMO_LABELS[r.ramo] || r.ramo) },
+        colors: [COLORS.primary],
+        plotOptions: { bar: { horizontal: true, borderRadius: 6, barHeight: '60%' } },
+        dataLabels: { enabled: true, style: { colors: ['#e8e6f0'], fontSize: '12px', fontWeight: 700 } },
+        legend: { show: false }
+      }).render();
+    } catch(e) { console.error('chart-ramos err:', e); }
+  }
+
   // Daily trend chart — EcoDrive format {day, conversations, ai_msgs, team_msgs, customer_msgs}
   if (ext.daily?.length > 0 && ext.daily[0]?.conversations !== undefined && document.getElementById('chart-daily')) {
     try {
