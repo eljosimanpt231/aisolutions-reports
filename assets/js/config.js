@@ -44,6 +44,14 @@ const INSIGHTS = {
     month: 'Abril 2026 (live desde dia 8)',
     text: `Primeiros dias em produção com o chatbot multiplataforma (WhatsApp + Instagram). O sistema responde autonomamente a questões sobre produtos, disponibilidade e compras, escalando para a equipa apenas quando necessário. À medida que a base de conhecimento cresce e os padrões de questões dos clientes vão sendo identificados, a taxa de resolução tende a melhorar significativamente nas primeiras semanas.`
   },
+  costuraurbana: {
+    month: 'Abril 2026 (live)',
+    text: `Dois agentes IA em produção via WhatsApp: um agente dedicado à <strong>loja</strong> (questões sobre produtos, encomendas e disponibilidade) e um agente de <strong>assistência técnica</strong> (suporte especializado em reparações). Complementado por mensagens automáticas de carrinho abandonado para recuperar vendas perdidas. Esta arquitetura dual permite respostas mais especializadas em cada contexto.`
+  },
+  lojaginastica: {
+    month: 'Abril 2026 (live desde dia 20)',
+    text: `Cliente acabou de entrar em produção. O agente IA responde a questões sobre produtos de ginástica, disponibilidade e encomendas via WhatsApp. O ecossistema inclui ainda mensagens automáticas de carrinho abandonado, upsell e recuperação de clientes inativos — otimizando o ciclo de conversão e retenção.`
+  },
   odiseguros: {
     month: 'Março 2026 (desde dia 25)',
     text: `Primeira semana em produção. A IA processou <strong>64 conversas</strong>, identificando automaticamente <strong>clientes existentes</strong> (que são encaminhados diretamente) e <strong>novos leads</strong> (onde recolhe dados: NIF, matrícula, data de nascimento, morada). Este trabalho de triagem e recolha de informação poupa tempo significativo à equipa antes mesmo de iniciar o atendimento.`
@@ -187,5 +195,23 @@ const CLIENTS = {
     schema: 'rl_store',
     domainId: null,
     startDate: '2026-04-08'  // IA live a partir de 8/4/2026
+  },
+  costuraurbana: {
+    name: 'Costura Urbana',
+    password: 'costuraurbana2026',
+    services: ['chatbot', 'messaging'],
+    channels: ['whatsapp'],  // 2 agentes WA: loja + assistência
+    schema: 'costura_urbana',
+    domainId: null,
+    startDate: '2026-04-09'  // ajustar se necessário
+  },
+  lojaginastica: {
+    name: 'Loja de Ginástica',
+    password: 'lojaginastica2026',
+    services: ['chatbot', 'messaging'],
+    channels: ['whatsapp'],
+    schema: 'loja_de_ginastica',
+    domainId: null,
+    startDate: '2026-04-20'  // live 20/4/2026 12h
   }
 };
