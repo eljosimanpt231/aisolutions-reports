@@ -119,20 +119,20 @@ function renderDashboard(client, chatbot, messaging, clicks) {
   content.innerHTML = html;
 
   requestAnimationFrame(() => {
-    try {
-      if (chatbot) {
-        initChatbotCharts(client, chatbot);
-        initExtendedCharts(chatbot);
-      }
-      if (messaging) initMessagingCharts(messaging);
-    } catch (e) {
-      console.error('Chart init error:', e);
+    // Init charts independently — errors in one don't block others
+    if (chatbot) {
+      try { initChatbotCharts(client, chatbot); } catch (e) { console.error('initChatbotCharts:', e); }
+      try { initExtendedCharts(chatbot); } catch (e) { console.error('initExtendedCharts:', e); }
+    }
+    if (messaging) {
+      try { initMessagingCharts(messaging); } catch (e) { console.error('initMessagingCharts:', e); }
     }
     document.querySelectorAll('[data-count]').forEach(el => {
-      const val = parseFloat(el.dataset.count);
+      const raw = el.dataset.count;
+      const val = parseFloat(raw);
       const suffix = el.dataset.suffix || '';
-      if (isNaN(val)) {
-        el.textContent = el.dataset.count; // string value like "14s"
+      if (isNaN(val) || /[a-zA-Z]/.test(raw)) {
+        el.textContent = raw; // keep strings like "14s", "2.3h"
       } else {
         animateValue(el, val);
         if (suffix) setTimeout(() => { el.textContent += suffix; }, 1900);
@@ -190,18 +190,34 @@ function renderChatbotSection(client, data, clicks) {
     kpiCards += kpiCard('Resolvidas Sem Humano', aiOnly, `de ${total} conversas`, 3, aiRate >= 50 ? 'positive' : '');
     kpiCards += kpiCardPercent('% Sem Intervenção', aiRate, 4, aiRate >= 50 ? 'positive' : 'warning');
   } else if (context === 'leads') {
-    // EcoDrive: leads + platforms + response times
+    // EcoDrive: leads + platforms + response times + IA vs Equipa comparison
     const leadsCount = data.leads_period || 0;
     const respTime = data.response_time;
     const humanResp = data.extended?.human_response_time;
+    // Count messages from extended.daily: IA vs Equipa
+    const dailyRaw = data.extended?.daily || [];
+    const totalAIMsgs = dailyRaw.reduce((s, d) => s + (parseInt(d.ai_msgs) || 0), 0);
+    const totalTeamMsgs = dailyRaw.reduce((s, d) => s + (parseInt(d.team_msgs) || 0), 0);
+    const multiplier = totalTeamMsgs > 0 ? (totalAIMsgs / totalTeamMsgs).toFixed(1) : null;
+
     if (leadsCount > 0) kpiCards += kpiCard('Leads Recolhidos', leadsCount, periodLabel, 3, 'positive');
     kpiCards += kpiCardPercent('Taxa Resolução IA', aiRate, 4, aiRate >= 70 ? 'positive' : aiRate >= 50 ? '' : 'warning');
+    if (totalAIMsgs > 0) {
+      kpiCards += kpiCard('Mensagens IA', totalAIMsgs, multiplier ? `${multiplier}× mais que a equipa` : 'automatizadas', 5, 'positive');
+    }
+    if (totalTeamMsgs > 0) {
+      kpiCards += kpiCard('Mensagens Equipa', totalTeamMsgs, 'respostas humanas', 6);
+    }
     if (respTime?.median_sec) {
       const medSec = parseFloat(respTime.median_sec);
-      kpiCards += kpiCard('Resposta IA', medSec < 60 ? `${medSec.toFixed(0)}s` : `${(medSec/60).toFixed(1)}min`, `mediana (média ${parseFloat(respTime.avg_sec).toFixed(0)}s)`, 5);
+      kpiCards += kpiCard('Velocidade IA', medSec < 60 ? `${medSec.toFixed(0)}s` : `${(medSec/60).toFixed(1)}min`, `mediana resposta (média ${parseFloat(respTime.avg_sec).toFixed(0)}s)`, 5);
     }
     if (humanResp?.median_min) {
-      kpiCards += kpiCard('Resposta Humano', `${parseFloat(humanResp.median_min).toFixed(0)}min`, `mediana (média ${parseFloat(humanResp.avg_min).toFixed(0)}min)`, 6);
+      const medMin = parseFloat(humanResp.median_min);
+      const avgMin = parseFloat(humanResp.avg_min);
+      const medLabel = medMin < 60 ? `${medMin.toFixed(0)}min` : `${(medMin/60).toFixed(1)}h`;
+      const avgLabel = avgMin < 60 ? `${avgMin.toFixed(0)}min` : `${(avgMin/60).toFixed(1)}h`;
+      kpiCards += kpiCard('Velocidade Equipa', medLabel, `mediana resposta (média ${avgLabel})`, 6);
     }
   } else {
     // Standard: RR, HCO, Teclas, OdiSeguros

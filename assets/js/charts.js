@@ -71,16 +71,18 @@ function initChatbotCharts(client, data) {
 
   // EcoDrive platform breakdown chart
   if (client.context === 'leads' && data.platforms?.length > 1 && document.getElementById('chart-platforms')) {
-    new ApexCharts(document.getElementById('chart-platforms'), {
-      ...baseChartOptions,
-      chart: { ...baseChartOptions.chart, type: 'bar', height: 260 },
-      series: [{ name: 'Conversas', data: data.platforms.map(p => p.total_conversations || 0) }],
-      xaxis: { categories: data.platforms.map(p => p.plataforma || 'Desconhecido') },
-      colors: [COLORS.primary, COLORS.accent],
-      plotOptions: { bar: { borderRadius: 8, columnWidth: '50%', distributed: true, dataLabels: { position: 'top' } } },
-      dataLabels: { enabled: true, offsetY: -20, style: { fontSize: '13px', fontWeight: 700, colors: ['#e8e6f0'] } },
-      legend: { show: false }
-    }).render();
+    try {
+      new ApexCharts(document.getElementById('chart-platforms'), {
+        ...baseChartOptions,
+        chart: { ...baseChartOptions.chart, type: 'bar', height: 260 },
+        series: [{ name: 'Conversas', data: data.platforms.map(p => parseInt(p.total_conversations) || 0) }],
+        xaxis: { categories: data.platforms.map(p => p.plataforma || 'Desconhecido') },
+        colors: [COLORS.primary, COLORS.accent],
+        plotOptions: { bar: { borderRadius: 8, columnWidth: '50%', distributed: true, dataLabels: { position: 'top' } } },
+        dataLabels: { enabled: true, offsetY: -20, style: { fontSize: '13px', fontWeight: 700, colors: ['#e8e6f0'] } },
+        legend: { show: false }
+      }).render();
+    } catch(e) { console.error('chart-platforms err:', e); }
   }
 
   // Channels bar chart — use actual channels from API data, not config
@@ -129,60 +131,49 @@ function initChatbotCharts(client, data) {
       ? (total > 0 ? Math.round((aiOnly / total) * 100) : 0)
       : aiPercent;
 
-    new ApexCharts(document.getElementById('chart-ai-human'), {
-      ...baseChartOptions,
-      chart: { ...baseChartOptions.chart, type: 'radialBar', height: 280 },
-      series: [displayPercent],
-      plotOptions: {
-        radialBar: {
-          startAngle: -135,
-          endAngle: 135,
-          hollow: { size: '65%', background: 'transparent' },
-          track: {
-            background: 'rgba(255,255,255,0.05)',
-            strokeWidth: '100%'
-          },
-          dataLabels: {
-            name: { show: true, fontSize: '13px', color: COLORS.text, offsetY: -10 },
-            value: { show: true, fontSize: '36px', fontWeight: 700, color: '#e8e6f0', offsetY: 5, formatter: (v) => v + '%' }
+    try {
+      new ApexCharts(document.getElementById('chart-ai-human'), {
+        ...baseChartOptions,
+        chart: { ...baseChartOptions.chart, type: 'radialBar', height: 280 },
+        series: [displayPercent],
+        plotOptions: {
+          radialBar: {
+            startAngle: -135,
+            endAngle: 135,
+            hollow: { size: '65%', background: 'transparent' },
+            track: { background: 'rgba(255,255,255,0.05)', strokeWidth: '100%' },
+            dataLabels: {
+              name: { show: true, fontSize: '13px', color: COLORS.text, offsetY: -10 },
+              value: { show: true, fontSize: '36px', fontWeight: 700, color: '#e8e6f0', offsetY: 5, formatter: (v) => v + '%' }
+            }
           }
-        }
-      },
-      colors: [isQualificador ? COLORS.accent : (aiPercent >= 70 ? COLORS.accent : aiPercent >= 50 ? COLORS.warning : COLORS.danger)],
-      labels: [label],
-      stroke: { lineCap: 'round' }
-    }).render();
+        },
+        colors: [isQualificador ? COLORS.accent : (aiPercent >= 70 ? COLORS.accent : aiPercent >= 50 ? COLORS.warning : COLORS.danger)],
+        labels: [label],
+        stroke: { lineCap: 'round' }
+      }).render();
+    } catch(e) { console.error('chart-ai-human err:', e); }
   }
 
   // Hourly distribution
   if (document.getElementById('chart-hours') && data.hourly_distribution) {
-    new ApexCharts(document.getElementById('chart-hours'), {
-      ...baseChartOptions,
-      chart: { ...baseChartOptions.chart, type: 'area', height: 260 },
-      series: [{
-        name: 'Mensagens',
-        data: data.hourly_distribution.map(h => h.count)
-      }],
-      xaxis: {
-        categories: data.hourly_distribution.map(h => `${h.hour}h`),
-        labels: { style: { fontSize: '10px' }, rotate: 0 },
-        axisBorder: { show: false },
-        axisTicks: { show: false }
-      },
-      yaxis: { labels: { style: { fontSize: '11px' } } },
-      colors: [COLORS.primary],
-      fill: {
-        type: 'gradient',
-        gradient: {
-          shadeIntensity: 1,
-          opacityFrom: 0.4,
-          opacityTo: 0.05,
-          stops: [0, 100]
-        }
-      },
-      stroke: { curve: 'smooth', width: 2.5 },
-      dataLabels: { enabled: false }
-    }).render();
+    try {
+      new ApexCharts(document.getElementById('chart-hours'), {
+        ...baseChartOptions,
+        chart: { ...baseChartOptions.chart, type: 'area', height: 260 },
+        series: [{ name: 'Mensagens', data: data.hourly_distribution.map(h => h.count) }],
+        xaxis: {
+          categories: data.hourly_distribution.map(h => `${h.hour}h`),
+          labels: { style: { fontSize: '10px' }, rotate: 0 },
+          axisBorder: { show: false }, axisTicks: { show: false }
+        },
+        yaxis: { labels: { style: { fontSize: '11px' } } },
+        colors: [COLORS.primary],
+        fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0.05, stops: [0, 100] } },
+        stroke: { curve: 'smooth', width: 2.5 },
+        dataLabels: { enabled: false }
+      }).render();
+    } catch(e) { console.error('chart-hours err:', e); }
   }
 }
 
@@ -195,23 +186,24 @@ function initExtendedCharts(data) {
 
   // Daily trend chart — EcoDrive format {day, conversations, ai_msgs, team_msgs, customer_msgs}
   if (ext.daily?.length > 0 && ext.daily[0]?.conversations !== undefined && document.getElementById('chart-daily')) {
-    const days = ext.daily.map(d => d.day);
-    new ApexCharts(document.getElementById('chart-daily'), {
-      ...baseChartOptions,
-      chart: { ...baseChartOptions.chart, type: 'area', height: 280 },
-      series: [
-        { name: 'Conversas', data: ext.daily.map(d => parseInt(d.conversations) || 0) },
-        { name: 'Msgs IA', data: ext.daily.map(d => parseInt(d.ai_msgs) || 0) },
-        { name: 'Equipa', data: ext.daily.map(d => parseInt(d.team_msgs) || 0) },
-        { name: 'Cliente', data: ext.daily.map(d => parseInt(d.customer_msgs) || 0) }
-      ],
-      xaxis: { categories: days, labels: { rotate: -45, style: { fontSize: '9px' }, formatter: (v) => v?.substring(5) || '' } },
-      colors: [COLORS.accent, COLORS.primary, COLORS.warning, '#555'],
-      stroke: { curve: 'smooth', width: 2 },
-      fill: { type: 'gradient', gradient: { opacityFrom: 0.25, opacityTo: 0.02 } },
-      dataLabels: { enabled: false },
-      legend: { position: 'top', labels: { colors: COLORS.text } }
-    }).render();
+    try {
+      const days = ext.daily.map(d => d.day);
+      new ApexCharts(document.getElementById('chart-daily'), {
+        ...baseChartOptions,
+        chart: { ...baseChartOptions.chart, type: 'area', height: 280 },
+        series: [
+          { name: 'Msgs IA', data: ext.daily.map(d => parseInt(d.ai_msgs) || 0) },
+          { name: 'Msgs Equipa', data: ext.daily.map(d => parseInt(d.team_msgs) || 0) },
+          { name: 'Msgs Cliente', data: ext.daily.map(d => parseInt(d.customer_msgs) || 0) }
+        ],
+        xaxis: { categories: days, labels: { rotate: -45, style: { fontSize: '9px' }, formatter: (v) => v?.substring(5) || '' } },
+        colors: [COLORS.primary, COLORS.warning, '#6B7280'],
+        stroke: { curve: 'smooth', width: 2 },
+        fill: { type: 'gradient', gradient: { opacityFrom: 0.25, opacityTo: 0.02 } },
+        dataLabels: { enabled: false },
+        legend: { position: 'top', labels: { colors: COLORS.text } }
+      }).render();
+    } catch(e) { console.error('chart-daily err:', e); }
   }
 
   // Daily trend chart — Lojinha format {day, platform, sender_type, cnt}
