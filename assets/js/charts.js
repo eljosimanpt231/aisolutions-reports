@@ -69,8 +69,8 @@ function initChatbotCharts(client, data) {
     return; // skip standard charts
   }
 
-  // EcoDrive platform breakdown chart
-  if (client.context === 'leads' && data.platforms?.length > 1 && document.getElementById('chart-platforms')) {
+  // Platform breakdown chart (any client with multiple Chatwoot inboxes)
+  if (data.platforms?.length > 1 && document.getElementById('chart-platforms')) {
     try {
       new ApexCharts(document.getElementById('chart-platforms'), {
         ...baseChartOptions,
