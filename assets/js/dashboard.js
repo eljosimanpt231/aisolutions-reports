@@ -265,7 +265,8 @@ function renderChatbotSection(client, data, clicks) {
     }
     if (ext?.urgentes_detalhe?.length > 0) {
       const RAMO_LABELS = { automovel_particular: 'Auto Particular', automovel_empresa: 'Auto Empresa', tvde: 'TVDE', saude_dental: 'Saúde Dental', multiriscos_habitacao: 'Multirriscos', acidentes_trabalho: 'AT', vida_credito: 'Vida', responsabilidade_civil: 'RC' };
-      const rows = ext.urgentes_detalhe.map(u => `<tr><td>${u.telefone || '—'}</td><td>${RAMO_LABELS[u.ramo] || u.ramo || '—'}</td><td style="font-size:0.75rem">${(u.resumo_dados||'').substring(0,120)}${(u.resumo_dados||'').length>120?'…':''}</td></tr>`).join('');
+      const cleanPhone = (p) => p ? String(p).split('@')[0].replace(/^351/, '').replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3') : '—';
+      const rows = ext.urgentes_detalhe.map(u => `<tr><td>${cleanPhone(u.telefone)}</td><td>${RAMO_LABELS[u.ramo] || u.ramo || '—'}</td><td style="font-size:0.75rem">${(u.resumo_dados||'').substring(0,120)}${(u.resumo_dados||'').length>120?'…':''}</td></tr>`).join('');
       chartsHtml += `<div class="chart-card glass fade-in fade-in-6" style="grid-column: 1 / -1"><h3>Leads Urgentes (precisam seguro hoje)</h3><table class="data-table"><thead><tr><th>Contacto</th><th>Ramo</th><th>Detalhe</th></tr></thead><tbody>${rows}</tbody></table></div>`;
     }
   } else {

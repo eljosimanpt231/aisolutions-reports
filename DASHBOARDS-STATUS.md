@@ -21,7 +21,7 @@ Documento para acompanhar o processo de validação dos reports de cada cliente.
 | Now Fitness Studio | 🔴 Por validar | — | — |
 | Lojinha Bebé | 🟢 Aprovado | 2026-04-21 | — |
 | EcoDrive | 🟢 Aprovado | 2026-04-21 | — |
-| OdiSeguros | 🟡 Em revisão | 2026-04-21 | Validar lógica "Novos vs Existentes" (3% parece baixo) |
+| OdiSeguros | 🟢 Aprovado | 2026-04-21 | — |
 | Pura Rituals | 🔴 Por validar | — | — |
 | Aprova | 🔴 Por validar | — | — |
 | RL Store | 🔴 Por validar | — | Live 8/4 — 11 convs, 72.7% resolução |
@@ -38,6 +38,9 @@ Documento para acompanhar o processo de validação dos reports de cada cliente.
 
 ### Be on Sport
 - 2026-04-21: Setup inicial — WA, messaging, CRM atualizado com nome alternativo
+
+### OdiSeguros
+- 2026-04-21: Classification query real (contatos_bloqueados) — Novos Leads/Clientes Existentes/Urgentes/Em Qualificação. Ramos chart + tabela urgentes. Phone cleanup (remove @s.whatsapp.net). APROVADO
 
 ### Pura Rituals
 - 2026-04-13: startDate corrigido para 2026-03-26 (IA estável 100% sessões)
