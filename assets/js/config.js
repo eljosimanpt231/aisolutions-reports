@@ -206,7 +206,7 @@ const CLIENTS = {
     startDate: '2026-04-09'  // ajustar se necessário
   },
   lojaginastica: {
-    name: 'Loja de Ginástica',
+    name: 'Be on Sport',
     password: 'lojaginastica2026',
     services: ['chatbot', 'messaging'],
     channels: ['whatsapp'],
