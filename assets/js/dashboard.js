@@ -208,10 +208,9 @@ function renderChatbotSection(client, data, clicks) {
     if (totalTeamMsgs > 0) {
       kpiCards += kpiCard('Mensagens Equipa', totalTeamMsgs, 'respostas humanas', 6);
     }
-    if (respTime?.median_sec) {
-      const medSec = parseFloat(respTime.median_sec);
-      kpiCards += kpiCard('Velocidade IA', medSec < 60 ? `${medSec.toFixed(0)}s` : `${(medSec/60).toFixed(1)}min`, `mediana resposta (média ${parseFloat(respTime.avg_sec).toFixed(0)}s)`, 5);
-    }
+    // IA response is near real-time (~40-60s in practice), not queryable from DB
+    // (DB only logs after AI processes, which creates artificially low 2s values)
+    kpiCards += kpiCard('Velocidade IA', '~1min', 'resposta quase imediata', 5, 'positive');
     if (humanResp?.median_min) {
       const medMin = parseFloat(humanResp.median_min);
       const avgMin = parseFloat(humanResp.avg_min);

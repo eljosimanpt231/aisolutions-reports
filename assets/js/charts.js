@@ -283,29 +283,29 @@ function initExtendedCharts(data) {
       legend: { position: 'top', labels: { colors: COLORS.text } }
     }).render();
   }
-}
 
   // Agent breakdown donut (Lojinha Bebé)
   if (ext.agentBreakdown?.length > 0 && document.getElementById('chart-agents')) {
-    // Aggregate total per agent
-    const agentTotals = {};
-    ext.agentBreakdown.forEach(r => {
-      const id = r.agent_id;
-      if (!agentTotals[id]) agentTotals[id] = 0;
-      agentTotals[id] += parseInt(r.cnt) || 0;
-    });
-    const ids = Object.keys(agentTotals).sort((a, b) => agentTotals[b] - agentTotals[a]);
-    new ApexCharts(document.getElementById('chart-agents'), {
-      ...baseChartOptions,
-      chart: { ...baseChartOptions.chart, type: 'donut', height: 280 },
-      series: ids.map(id => agentTotals[id]),
-      labels: ids.map(id => AGENT_NAMES[id] || `Agente ${id}`),
-      colors: ids.map(id => AGENT_COLORS_MAP[id] || COLORS.primary),
-      plotOptions: { pie: { donut: { size: '60%', labels: { show: true, total: { show: true, label: 'Total', color: COLORS.text, formatter: (w) => w.globals.seriesTotals.reduce((a, b) => a + b, 0).toLocaleString('pt-PT') }, value: { color: '#e8e6f0', fontSize: '22px', fontWeight: 700 } } } } },
-      legend: { position: 'bottom', labels: { colors: COLORS.text } },
-      dataLabels: { enabled: false },
-      stroke: { width: 0 }
-    }).render();
+    try {
+      const agentTotals = {};
+      ext.agentBreakdown.forEach(r => {
+        const id = r.agent_id;
+        if (!agentTotals[id]) agentTotals[id] = 0;
+        agentTotals[id] += parseInt(r.cnt) || 0;
+      });
+      const ids = Object.keys(agentTotals).sort((a, b) => agentTotals[b] - agentTotals[a]);
+      new ApexCharts(document.getElementById('chart-agents'), {
+        ...baseChartOptions,
+        chart: { ...baseChartOptions.chart, type: 'donut', height: 280 },
+        series: ids.map(id => agentTotals[id]),
+        labels: ids.map(id => AGENT_NAMES[id] || `Agente ${id}`),
+        colors: ids.map(id => AGENT_COLORS_MAP[id] || COLORS.primary),
+        plotOptions: { pie: { donut: { size: '60%', labels: { show: true, total: { show: true, label: 'Total', color: COLORS.text, formatter: (w) => w.globals.seriesTotals.reduce((a, b) => a + b, 0).toLocaleString('pt-PT') }, value: { color: '#e8e6f0', fontSize: '22px', fontWeight: 700 } } } } },
+        legend: { position: 'bottom', labels: { colors: COLORS.text } },
+        dataLabels: { enabled: false },
+        stroke: { width: 0 }
+      }).render();
+    } catch(e) { console.error('chart-agents err:', e); }
   }
 }
 
