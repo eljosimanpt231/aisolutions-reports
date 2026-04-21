@@ -22,9 +22,8 @@ Documento para acompanhar o processo de validação dos reports de cada cliente.
 | Lojinha Bebé | 🟢 Aprovado | 2026-04-21 | — |
 | EcoDrive | 🟢 Aprovado | 2026-04-21 | — |
 | OdiSeguros | 🟢 Aprovado | 2026-04-21 | — |
-| Pura Rituals | 🔴 Por validar | — | — |
-| Aprova | 🔴 Por validar | — | — |
-| RL Store | 🔴 Por validar | — | Live 8/4 — 11 convs, 72.7% resolução |
+| Pura Rituals | 🟡 Em revisão | 2026-04-22 | Platforms breakdown, off-hours KPI, cliques Kutt domain 13, insights dinâmicos |
+| RL Store | 🟡 Em revisão | 2026-04-22 | Platforms breakdown, off-hours KPI, cliques Kutt domain 15, insights dinâmicos |
 | Costura Urbana | 🔴 Por validar | — | 2 agentes (loja + assistência), startDate 9/4 a confirmar |
 | Be on Sport (Loja de Ginástica) | 🔴 Por validar | — | Live 20/4/2026 12h |
 

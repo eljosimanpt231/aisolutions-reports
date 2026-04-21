@@ -93,7 +93,7 @@ const CLIENTS = {
     services: ['messaging'],
     channels: [],
     schema: 'fbeauty',
-    domainId: null,
+    domainId: 7,
     msgTables: {
       automaticas: { failFilter: 'failed_at IS NULL' },
       operacionais: { typeCol: 'tipo' }
@@ -105,7 +105,7 @@ const CLIENTS = {
     services: ['messaging'],
     channels: [],
     schema: 'farmatogo',
-    domainId: null,
+    domainId: 6,
     msgTables: {
       automaticas: { failFilter: 'send_failed = false' },
       operacionais: { typeCol: 'tipo' }
@@ -117,7 +117,7 @@ const CLIENTS = {
     services: ['messaging'],
     channels: [],
     schema: 'maninc',
-    domainId: null,
+    domainId: 8,
     msgTables: {
       automaticas: { failFilter: 'failed_at IS NULL' },
       operacionais: null
@@ -129,7 +129,7 @@ const CLIENTS = {
     services: ['chatbot', 'messaging'],
     channels: ['whatsapp'],
     schema: 'teclas_da_vida',
-    domainId: null
+    domainId: 12
   },
   nowfitness: {
     name: 'Now Fitness Studio',
@@ -176,16 +176,8 @@ const CLIENTS = {
     services: ['chatbot'],
     channels: ['chatwoot'],
     schema: 'pura_rituals',
-    domainId: null,
+    domainId: 13,
     startDate: '2026-03-26'  // IA estável a partir de 26/3 (100% sessões com IA)
-  },
-  aprova: {
-    name: 'Aprova',
-    password: 'aprova2026',
-    services: ['chatbot'],
-    channels: ['whatsapp'],
-    schema: null,  // sem schema próprio
-    domainId: null
   },
   rlstore: {
     name: 'RL Store',
@@ -193,7 +185,7 @@ const CLIENTS = {
     services: ['chatbot'],
     channels: ['chatwoot'],
     schema: 'rl_store',
-    domainId: null,
+    domainId: 15,
     startDate: '2026-04-08'  // IA live a partir de 8/4/2026
   },
   costuraurbana: {
@@ -202,7 +194,7 @@ const CLIENTS = {
     services: ['chatbot', 'messaging'],
     channels: ['whatsapp'],  // 2 agentes WA: loja + assistência
     schema: 'costura_urbana',
-    domainId: null,
+    domainId: 11,
     startDate: '2026-04-09'  // ajustar se necessário
   },
   lojaginastica: {
@@ -211,7 +203,7 @@ const CLIENTS = {
     services: ['chatbot', 'messaging'],
     channels: ['whatsapp'],
     schema: 'loja_de_ginastica',
-    domainId: null,
+    domainId: 14,
     startDate: '2026-04-20'  // live 20/4/2026 12h
   }
 };

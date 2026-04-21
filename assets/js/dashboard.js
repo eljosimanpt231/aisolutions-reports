@@ -108,8 +108,8 @@ function renderDashboard(client, chatbot, messaging, clicks) {
     html += renderMessagingSection(client, messaging);
   }
 
-  // Insights
-  const insight = typeof INSIGHTS !== 'undefined' ? INSIGHTS[slug] : null;
+  // Insights — dynamic based on real data
+  const insight = generateInsight(slug, client, chatbot, messaging, clicks);
   if (insight) {
     if (html) html += '<hr class="section-divider">';
     html += renderInsightsSection(insight);
@@ -234,7 +234,12 @@ function renderChatbotSection(client, data, clicks) {
   }
 
   if (kuttClicks > 0) {
-    kpiCards += kpiCard('Cliques em Produtos', kuttClicks, 'links partilhados pelo agente', 5);
+    kpiCards += kpiCard('Cliques em Links', kuttClicks, 'partilhados pelo agente', 5);
+  }
+  // Off-hours KPI (all chatbot clients that have this data)
+  const offHours = data.extended?.off_hours;
+  if (offHours && parseFloat(offHours.off_hours_pct) > 0) {
+    kpiCards += kpiCard('Fora de Horas', offHours.off_hours_pct, 'mensagens em fim-de-semana ou 18h-9h', 6, 'positive', '%');
   }
 
   // Charts
@@ -242,8 +247,8 @@ function renderChatbotSection(client, data, clicks) {
   if (activeChannels.length > 1) {
     chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Conversas por Canal</h3><div class="chart-container" id="chart-channels"></div></div>`;
   }
-  // EcoDrive platform breakdown
-  if (context === 'leads' && data.platforms?.length > 1) {
+  // Platform breakdown (EcoDrive, Pura Rituals, RL Store, any with multiple Chatwoot inboxes)
+  if (data.platforms?.length > 1) {
     chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Conversas por Plataforma</h3><div class="chart-container" id="chart-platforms"></div></div>`;
   }
 
@@ -382,11 +387,12 @@ function renderInsightsSection(insight) {
 }
 
 // ---- KPI Card Helpers ----
-function kpiCard(label, value, sub, fadeN, colorClass) {
+function kpiCard(label, value, sub, fadeN, colorClass, suffix) {
+  const suffixAttr = suffix ? ` data-suffix="${suffix}"` : '';
   return `
     <div class="kpi-card glass fade-in fade-in-${fadeN}">
       <div class="kpi-label">${label}</div>
-      <div class="kpi-value ${colorClass || ''}" data-count="${value}">0</div>
+      <div class="kpi-value ${colorClass || ''}" data-count="${value}"${suffixAttr}>0</div>
       ${sub ? `<div class="kpi-sub">${sub}</div>` : ''}
     </div>`;
 }
@@ -398,4 +404,104 @@ function kpiCardPercent(label, value, fadeN, colorClass) {
       <div class="kpi-value ${colorClass || ''}" data-count="${value}" data-suffix="%">0</div>
       <div class="kpi-sub">sem intervenção humana</div>
     </div>`;
+}
+
+// ============================================================
+// Dynamic insight generation based on real data
+// ============================================================
+function generateInsight(slug, client, chatbot, messaging, clicks) {
+  if (!chatbot && !messaging) return null;
+
+  const periodLabel = currentPeriod === 'this-month' ? 'este mês' : currentPeriod === 'last-month' ? 'no mês anterior' : `nos últimos ${currentPeriod.replace('d', ' dias')}`;
+  const bits = [];
+
+  // ---- Chatbot insights ----
+  if (chatbot) {
+    const total = chatbot.total_conversations || 0;
+    const aiRate = chatbot.ai_resolution_rate || 0;
+    const aiMsgs = chatbot.messages_ai || 0;
+    const offHours = chatbot.extended?.off_hours;
+    const context = client.context;
+
+    if (total > 0) {
+      // Opening line
+      if (context === 'porteiro') {
+        bits.push(`O agente processou <strong>${total.toLocaleString('pt-PT')} conversas</strong>, resolvendo <strong>${Math.round(aiRate)}% sem intervenção humana</strong>.`);
+      } else if (context === 'qualificador') {
+        const cls = chatbot.extended?.classification;
+        const novos = parseInt(cls?.novos_leads) || 0;
+        const existentes = parseInt(cls?.clientes_existentes) || 0;
+        bits.push(`A IA processou <strong>${total.toLocaleString('pt-PT')} conversas</strong>, identificando <strong>${existentes} clientes existentes</strong> e qualificando <strong>${novos} novos leads</strong> com recolha de dados completa.`);
+      } else if (context === 'leads') {
+        const leadsCount = chatbot.leads_period || 0;
+        bits.push(`O agente processou <strong>${total.toLocaleString('pt-PT')} conversas</strong> ${periodLabel}, com taxa de resolução de <strong>${Math.round(aiRate)}%</strong>${leadsCount > 0 ? ` e <strong>${leadsCount} leads recolhidos</strong>` : ''}.`);
+      } else if (context === 'lead_gen') {
+        const leads = chatbot.total_leads || 0;
+        const convRate = chatbot.conversion_rate || 0;
+        bits.push(`O sistema de lead gen Instagram gerou <strong>${leads} leads registados</strong> de ${chatbot.unique_users || total} utilizadores únicos (${convRate.toFixed(1)}% conversão).`);
+      } else {
+        bits.push(`O agente processou <strong>${total.toLocaleString('pt-PT')} conversas</strong> ${periodLabel}, resolvendo <strong>${Math.round(aiRate)}%</strong> sem intervenção humana.`);
+      }
+
+      // Off-hours insight
+      if (offHours && parseFloat(offHours.off_hours_pct) > 20) {
+        const pct = Math.round(parseFloat(offHours.off_hours_pct));
+        bits.push(`<strong>${pct}% das mensagens</strong> chegam fora de horário comercial (fim-de-semana ou depois das 18h) — o valor do atendimento 24/7 é visível aqui.`);
+      }
+
+      // Multi-platform insight
+      if (chatbot.platforms?.length > 1) {
+        const top = [...chatbot.platforms].sort((a, b) => (b.total_conversations || 0) - (a.total_conversations || 0))[0];
+        const topPct = total > 0 ? Math.round((top.total_conversations / total) * 100) : 0;
+        bits.push(`O canal principal é <strong>${top.plataforma}</strong> com ${topPct}% das conversas.`);
+      }
+
+      // IA vs team multiplier (EcoDrive-style)
+      if (context === 'leads' && chatbot.extended?.daily?.[0]?.team_msgs !== undefined) {
+        const aiTotal = chatbot.extended.daily.reduce((s, d) => s + (parseInt(d.ai_msgs) || 0), 0);
+        const teamTotal = chatbot.extended.daily.reduce((s, d) => s + (parseInt(d.team_msgs) || 0), 0);
+        if (teamTotal > 0 && aiTotal > 0) {
+          const mult = (aiTotal / teamTotal).toFixed(1);
+          bits.push(`A IA respondeu <strong>${mult}× mais mensagens</strong> que a equipa humana no período.`);
+        }
+      }
+
+      // Clicks
+      const kuttClicks = clicks?.total_clicks || 0;
+      if (kuttClicks > 0) {
+        bits.push(`O agente gerou <strong>${kuttClicks.toLocaleString('pt-PT')} cliques</strong> em links partilhados com clientes.`);
+      }
+    }
+  }
+
+  // ---- Messaging insights ----
+  if (messaging) {
+    const totalMsgs = messaging.messages_sent || 0;
+    const totalOrders = messaging.total_orders || 0;
+    const totalRevenue = messaging.total_revenue || 0;
+    const clickRate = messaging.click_rate || 0;
+
+    if (totalMsgs > 0) {
+      let msgBit = `No lado das mensagens automáticas, foram enviadas <strong>${totalMsgs.toLocaleString('pt-PT')} mensagens</strong>`;
+      if (clickRate > 0) msgBit += ` (${clickRate.toFixed(1)}% taxa de clique)`;
+      msgBit += '.';
+      bits.push(msgBit);
+
+      if (totalOrders > 0) {
+        bits.push(`Estas campanhas geraram <strong>${totalOrders} encomendas atribuídas</strong> (${totalRevenue.toLocaleString('pt-PT', { minimumFractionDigits: 2 })}€ em receita).`);
+      }
+    }
+  }
+
+  if (bits.length === 0) return null;
+
+  // Pick a period label
+  const today = new Date();
+  const monthNames = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  const monthLabel = `${monthNames[today.getMonth()]} ${today.getFullYear()}`;
+
+  return {
+    month: monthLabel,
+    text: bits.join(' ')
+  };
 }
