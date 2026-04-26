@@ -12,20 +12,20 @@ Documento para acompanhar o processo de validação dos reports de cada cliente.
 
 | Cliente | Estado | Último review | Notas pendentes |
 |---------|--------|---------------|-----------------|
-| RR Customs | 🔴 Por validar | — | — |
-| HCO Cosméticos | 🔴 Por validar | — | — |
-| FBeauty | 🔴 Por validar | — | — |
-| FarmatoGo | 🔴 Por validar | — | — |
-| ManInc | 🔴 Por validar | — | — |
-| Teclas da Vida | 🔴 Por validar | — | — |
-| Now Fitness Studio | 🔴 Por validar | — | — |
+| RR Customs | 🟢 Aprovado | 2026-04-22 | — |
+| HCO Cosméticos | 🟡 Em revisão | 2026-04-22 | Separar operacionais vs marketing (sempre mostrar ambos KPIs) |
+| FBeauty | 🟢 Aprovado | 2026-04-22 | — |
+| FarmatoGo | 🟢 Aprovado | 2026-04-22 | — |
+| ManInc | 🟢 Aprovado | 2026-04-22 | — |
+| Teclas da Vida | 🟢 Aprovado | 2026-04-22 | — |
+| Now Fitness Studio | 🟡 Em revisão | 2026-04-22 | Bug fix: coluna `nome_cliente` (não `nome`) — agora 360 utilizadores, 41 leads |
 | Lojinha Bebé | 🟢 Aprovado | 2026-04-21 | — |
 | EcoDrive | 🟢 Aprovado | 2026-04-21 | — |
 | OdiSeguros | 🟢 Aprovado | 2026-04-21 | — |
 | Pura Rituals | 🟢 Aprovado | 2026-04-22 | — |
 | RL Store | 🟢 Aprovado | 2026-04-22 | — |
-| Costura Urbana | 🔴 Por validar | — | 2 agentes (loja + assistência), startDate 9/4 a confirmar |
-| Be on Sport (Loja de Ginástica) | 🔴 Por validar | — | Live 20/4/2026 12h |
+| Costura Urbana | 🟡 Aprovado provisório | 2026-04-22 | Rever no final do mês (1º mês completo de dados) |
+| Be on Sport (Loja de Ginástica) | 🟡 Aprovado provisório | 2026-04-22 | Rever no final do mês (1º mês completo de dados) |
 
 ## Histórico de alterações por cliente
 
@@ -37,6 +37,12 @@ Documento para acompanhar o processo de validação dos reports de cada cliente.
 
 ### Be on Sport
 - 2026-04-21: Setup inicial — WA, messaging, CRM atualizado com nome alternativo
+
+### Now Fitness
+- 2026-04-22: Bug fix crítico — query custom usava `nome` mas DB tem `nome_cliente`. Erro era silenciado por `onError: continueRegularOutput`, todos os KPIs voltavam 0. Corrigido com aliases.
+
+### HCO
+- 2026-04-22: Separar visualmente operacionais vs marketing (KPIs sempre mostram ambos para HCO/FBeauty/FarmatoGo)
 
 ### OdiSeguros
 - 2026-04-21: Classification query real (contatos_bloqueados) — Novos Leads/Clientes Existentes/Urgentes/Em Qualificação. Ramos chart + tabela urgentes. Phone cleanup (remove @s.whatsapp.net). APROVADO

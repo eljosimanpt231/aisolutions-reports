@@ -350,11 +350,15 @@ function renderMessagingSection(client, data) {
   const totalClicked = data.total_clicked || 0;
   const clickRate = data.click_rate || 0;
 
+  // Always show both Operacionais and Marketing as separate KPIs so the structure is clear
+  // (even when one is currently 0 — useful for clients that may add the other later)
+  const slug = getClientSlug();
+  const showBothCategories = ['hco', 'fbeauty', 'farmatogo'].includes(slug); // clients that have or may have both
   let kpiCards = kpiCard('Total Mensagens', totalMsgs, '', 2);
-  if (hasOp) kpiCards += kpiCard('Operacionais', totalOp, hasOp && hasAuto ? 'morada, MB, MBWay' : '', 3);
-  if (hasAuto) kpiCards += kpiCard('Marketing', totalAuto, hasOp && hasAuto ? 'carrinhos, upsell' : '', hasOp ? 4 : 3);
-  if (totalClicked > 0) kpiCards += kpiCard('Cliques', totalClicked, `${clickRate.toFixed(1)}% taxa de clique`, hasOp && hasAuto ? 5 : 4);
-  if (totalOrders > 0) kpiCards += kpiCard('Encomendas', totalOrders, `${formatNumber(totalRevenue)}€ receita`, 5);
+  if (hasOp || showBothCategories) kpiCards += kpiCard('Operacionais', totalOp, 'morada, MB, MBWay', 3);
+  if (hasAuto || showBothCategories) kpiCards += kpiCard('Marketing', totalAuto, 'carrinhos, upsell, recuperação', hasOp || showBothCategories ? 4 : 3);
+  if (totalClicked > 0) kpiCards += kpiCard('Cliques', totalClicked, `${clickRate.toFixed(1)}% taxa de clique`, 5);
+  if (totalOrders > 0) kpiCards += kpiCard('Encomendas', totalOrders, `${formatNumber(totalRevenue)}€ receita`, 6);
 
   return `
     <div class="section-title fade-in fade-in-1">
