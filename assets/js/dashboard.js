@@ -253,14 +253,8 @@ function renderChatbotSection(client, data, clicks) {
   }
 
   if (context === 'lead_gen') {
-    // Now Fitness: funnel + leads table
+    // Now Fitness: funnel chart only (leads table is rendered full-width at the end)
     chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Funil de Conversão</h3><div class="chart-container" id="chart-funnel"></div></div>`;
-    // Leads table
-    const leadRecords = data.lead_records || [];
-    if (leadRecords.length > 0) {
-      let leadsTableRows = leadRecords.map(l => `<tr><td>${l.nome || '—'}</td><td>${l.tipo_registo || '—'}</td><td>${l.criado_em?.substring(0,10) || '—'}</td></tr>`).join('');
-      chartsHtml += `<div class="chart-card glass fade-in fade-in-6"><h3>Leads Registados</h3><table class="data-table"><thead><tr><th>Nome</th><th>Tipo</th><th>Data</th></tr></thead><tbody>${leadsTableRows}</tbody></table></div>`;
-    }
   } else if (context === 'qualificador') {
     // OdiSeguros: Novos vs Existentes donut (real classification) + Ramos bar chart + Urgentes table
     const ext = data.extended;
@@ -317,6 +311,16 @@ function renderChatbotSection(client, data, clicks) {
     const top10 = ext.leads_by_interest.slice(0, 10);
     let rows = top10.map(l => `<tr><td>${l.interesse}</td><td class="num">${l.total}</td></tr>`).join('');
     chartsHtml += `<div class="chart-card glass fade-in fade-in-6"><h3>Leads por Interesse</h3><table class="data-table"><thead><tr><th>Interesse</th><th>Total</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  }
+
+  // Now Fitness: leads table full-width at the bottom (after all charts)
+  if (context === 'lead_gen') {
+    const leadRecords = data.lead_records || [];
+    if (leadRecords.length > 0) {
+      const cleanPhone = (p) => p ? String(p).split('@')[0].replace(/^351/, '').replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3') : '—';
+      let leadsTableRows = leadRecords.map(l => `<tr><td>${l.nome || '—'}</td><td>${cleanPhone(l.telefone)}</td><td>${l.tipo_registo || '—'}</td><td style="font-size:0.813rem">${l.objetivo_cliente || '—'}</td><td>${l.criado_em?.substring(0,10) || '—'}</td></tr>`).join('');
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-6" style="grid-column: 1 / -1"><h3>Leads Registados (${leadRecords.length})</h3><table class="data-table"><thead><tr><th>Nome</th><th>Contacto</th><th>Tipo</th><th>Objetivo</th><th>Data</th></tr></thead><tbody>${leadsTableRows}</tbody></table></div>`;
+    }
   }
 
   return `

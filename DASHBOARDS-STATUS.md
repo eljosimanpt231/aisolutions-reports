@@ -13,12 +13,12 @@ Documento para acompanhar o processo de validação dos reports de cada cliente.
 | Cliente | Estado | Último review | Notas pendentes |
 |---------|--------|---------------|-----------------|
 | RR Customs | 🟢 Aprovado | 2026-04-22 | — |
-| HCO Cosméticos | 🟡 Em revisão | 2026-04-22 | Separar operacionais vs marketing (sempre mostrar ambos KPIs) |
+| HCO Cosméticos | 🟢 Aprovado | 2026-04-22 | — |
 | FBeauty | 🟢 Aprovado | 2026-04-22 | — |
 | FarmatoGo | 🟢 Aprovado | 2026-04-22 | — |
 | ManInc | 🟢 Aprovado | 2026-04-22 | — |
 | Teclas da Vida | 🟢 Aprovado | 2026-04-22 | — |
-| Now Fitness Studio | 🟡 Em revisão | 2026-04-22 | Bug fix: coluna `nome_cliente` (não `nome`) — agora 360 utilizadores, 41 leads |
+| Now Fitness Studio | 🟢 Aprovado | 2026-04-22 | — |
 | Lojinha Bebé | 🟢 Aprovado | 2026-04-21 | — |
 | EcoDrive | 🟢 Aprovado | 2026-04-21 | — |
 | OdiSeguros | 🟢 Aprovado | 2026-04-21 | — |
