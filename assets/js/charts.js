@@ -184,6 +184,45 @@ function initExtendedCharts(data) {
   const ext = data?.extended;
   if (!ext) return;
 
+  // Georgina Moura: Objetivos bar chart
+  if (ext.leads_objetivos?.length > 0 && document.getElementById('chart-objetivos')) {
+    try {
+      const OBJ_LABELS = { pedir_credito: 'Pedir Crédito', juntar_creditos: 'Juntar Créditos', baixar_mensalidade: 'Baixar Mensalidade', credito_habitacao: 'Crédito Habitação', outro: 'Outro' };
+      const items = ext.leads_objetivos.slice(0, 8);
+      new ApexCharts(document.getElementById('chart-objetivos'), {
+        ...baseChartOptions,
+        chart: { ...baseChartOptions.chart, type: 'bar', height: 280 },
+        series: [{ name: 'Leads', data: items.map(i => parseInt(i.total) || 0) }],
+        xaxis: { categories: items.map(i => OBJ_LABELS[i.objetivo] || i.objetivo) },
+        colors: [COLORS.primary],
+        plotOptions: { bar: { horizontal: true, borderRadius: 6, barHeight: '60%' } },
+        dataLabels: { enabled: true, style: { colors: ['#e8e6f0'], fontSize: '12px', fontWeight: 700 } },
+        legend: { show: false }
+      }).render();
+    } catch(e) { console.error('chart-objetivos err:', e); }
+  }
+
+  // Georgina Moura: Reactivation funnel
+  if (ext.reactivation_stats && document.getElementById('chart-react-funnel')) {
+    try {
+      const r = ext.reactivation_stats;
+      const total = parseInt(r.total) || 0;
+      const sent = parseInt(r.enviadas) || 0;
+      const responded = parseInt(r.responderam) || 0;
+      const skipped = parseInt(r.skipped) || 0;
+      new ApexCharts(document.getElementById('chart-react-funnel'), {
+        ...baseChartOptions,
+        chart: { ...baseChartOptions.chart, type: 'bar', height: 280 },
+        series: [{ name: 'Quantidade', data: [total, sent, responded, skipped] }],
+        xaxis: { categories: ['Total', 'Enviadas', 'Responderam', 'Skipped'] },
+        colors: [COLORS.primaryLight, COLORS.primary, COLORS.accent, '#6B7280'],
+        plotOptions: { bar: { borderRadius: 8, columnWidth: '55%', distributed: true, dataLabels: { position: 'top' } } },
+        dataLabels: { enabled: true, offsetY: -20, style: { fontSize: '13px', fontWeight: 700, colors: ['#e8e6f0'] } },
+        legend: { show: false }
+      }).render();
+    } catch(e) { console.error('chart-react-funnel err:', e); }
+  }
+
   // OdiSeguros: Classification donut
   if (ext.classification && document.getElementById('chart-classification')) {
     try {

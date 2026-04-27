@@ -205,5 +205,15 @@ const CLIENTS = {
     schema: 'loja_de_ginastica',
     domainId: 14,
     startDate: '2026-04-20'  // live 20/4/2026 12h
+  },
+  georginamoura: {
+    name: 'Georgina Moura',
+    password: 'georginamoura2026',
+    services: ['chatbot'],
+    channels: ['whatsapp'],
+    schema: 'georgina_moura',
+    domainId: null,  // sem Kutt domain
+    startDate: '2026-03-05',  // primeira mensagem 5/3
+    context: 'credit_qualifier'
   }
 };

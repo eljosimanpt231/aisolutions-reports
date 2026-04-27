@@ -162,7 +162,24 @@ function renderChatbotSection(client, data, clicks) {
   // Conversas — always shown
   kpiCards += kpiCard('Conversas', total, periodLabel, 2);
 
-  if (context === 'qualificador') {
+  if (context === 'credit_qualifier') {
+    // Georgina Moura: lead qualification + reactivation for credit/loans
+    const ext = data.extended || {};
+    const ls = ext.leads_stats || {};
+    const rs = ext.reactivation_stats || {};
+    const totalLeads = parseInt(ls.total) || 0;
+    const encaminhadas = parseInt(ls.encaminhadas) || 0;
+    const reactSent = parseInt(rs.enviadas) || 0;
+    const reactResp = parseInt(rs.responderam) || 0;
+    const respRate = parseFloat(rs.response_rate) || 0;
+
+    kpiCards += kpiCard('Leads Recolhidos', totalLeads, 'qualificados pela IA', 3, 'positive');
+    kpiCards += kpiCard('Leads Encaminhadas', encaminhadas, 'transferidas para a equipa', 4);
+    if (reactSent > 0) {
+      kpiCards += kpiCard('Reativações Enviadas', reactSent, `${reactResp} responderam (${respRate}%)`, 5);
+    }
+    kpiCards += kpiCardPercent('Taxa Resolução IA', aiRate, 6, aiRate >= 70 ? 'positive' : aiRate >= 50 ? '' : 'warning');
+  } else if (context === 'qualificador') {
     // OdiSeguros: uses real classification from odiseguros.contatos_bloqueados
     const cls = data.extended?.classification || {};
     const existentes = parseInt(cls.clientes_existentes) || 0;
@@ -255,6 +272,15 @@ function renderChatbotSection(client, data, clicks) {
   if (context === 'lead_gen') {
     // Now Fitness: funnel chart only (leads table is rendered full-width at the end)
     chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Funil de Conversão</h3><div class="chart-container" id="chart-funnel"></div></div>`;
+  } else if (context === 'credit_qualifier') {
+    // Georgina Moura: Objetivos chart + reactivation funnel
+    const ext = data.extended || {};
+    if (ext.leads_objetivos?.length > 0) {
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Objetivos dos Leads</h3><div class="chart-container" id="chart-objetivos"></div></div>`;
+    }
+    if (ext.reactivation_stats?.total > 0) {
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Funil Reativação</h3><div class="chart-container" id="chart-react-funnel"></div></div>`;
+    }
   } else if (context === 'qualificador') {
     // OdiSeguros: Novos vs Existentes donut (real classification) + Ramos bar chart + Urgentes table
     const ext = data.extended;
@@ -320,6 +346,18 @@ function renderChatbotSection(client, data, clicks) {
       const cleanPhone = (p) => p ? String(p).split('@')[0].replace(/^351/, '').replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3') : '—';
       let leadsTableRows = leadRecords.map(l => `<tr><td>${l.nome || '—'}</td><td>${cleanPhone(l.telefone)}</td><td>${l.tipo_registo || '—'}</td><td style="font-size:0.813rem">${l.objetivo_cliente || '—'}</td><td>${l.criado_em?.substring(0,10) || '—'}</td></tr>`).join('');
       chartsHtml += `<div class="chart-card glass fade-in fade-in-6" style="grid-column: 1 / -1"><h3>Leads Registados (${leadRecords.length})</h3><table class="data-table"><thead><tr><th>Nome</th><th>Contacto</th><th>Tipo</th><th>Objetivo</th><th>Data</th></tr></thead><tbody>${leadsTableRows}</tbody></table></div>`;
+    }
+  }
+
+  // Georgina Moura: leads recent table full-width
+  if (context === 'credit_qualifier') {
+    const ext2 = data.extended || {};
+    const leads = ext2.leads_recent || [];
+    if (leads.length > 0) {
+      const cleanPhone = (p) => p ? String(p).split('@')[0].replace(/^351/, '').replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3') : '—';
+      const stateBadge = (s) => s === 'encaminhada' ? `<span class="tag tag-mk">Encaminhada</span>` : s ? `<span class="tag tag-op">${s}</span>` : '—';
+      let rows = leads.map(l => `<tr><td>${l.nome || '—'}</td><td>${cleanPhone(l.telefone)}</td><td style="font-size:0.813rem">${l.objetivo_contacto || '—'}</td><td>${l.tem_credito_habitacao || '—'}</td><td>${stateBadge(l.estado)}</td><td>${l.created_at?.substring(0,10) || '—'}</td></tr>`).join('');
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-6" style="grid-column: 1 / -1"><h3>Leads Recolhidos (${leads.length})</h3><table class="data-table"><thead><tr><th>Nome</th><th>Contacto</th><th>Objetivo</th><th>Crédito Habitação</th><th>Estado</th><th>Data</th></tr></thead><tbody>${rows}</tbody></table></div>`;
     }
   }
 
