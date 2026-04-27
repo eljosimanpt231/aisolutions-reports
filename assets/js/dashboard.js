@@ -167,26 +167,33 @@ function renderChatbotSection(client, data, clicks) {
     const ext = data.extended || {};
     const ls = ext.leads_stats || {};
     const rs = ext.reactivation_stats || {};
-    const sources = ext.leads_by_source || [];
+    const qBySrc = ext.qualification_by_source || [];
     const totalLeads = parseInt(ls.total) || 0;
-    const encaminhadas = parseInt(ls.encaminhadas) || 0;
-    const reactSent = parseInt(rs.enviadas) || 0;
-    const reactResp = parseInt(rs.responderam) || 0;
-    const respRate = parseFloat(rs.response_rate) || 0;
-    const inbound = sources.find(s => s.source === 'inbound')?.total || 0;
-    const fromAds = sources.find(s => s.source === 'meta_ads')?.total || 0;
-    const fromHist = sources.find(s => s.source === 'historico_escuta')?.total || 0;
-    const fromReact = sources.find(s => s.source === 'reactivation')?.total || 0;
+    const qualificadas = parseInt(ls.qualificadas) || 0;
+    const emQual = parseInt(ls.em_qualificacao) || 0;
+    const taxaQual = parseFloat(ls.taxa_qualificacao_pct) || 0;
+    const reactSent = parseInt(rs.enviadas_periodo) || 0;
+    const reactPendente = parseInt(rs.pendentes) || 0;
 
-    kpiCards += kpiCard('Leads Recolhidos', totalLeads, 'todas as fontes', 3, 'positive');
-    if (inbound > 0) kpiCards += kpiCard('Leads Inbound', inbound, 'novas conversas WA', 4);
-    if (fromAds > 0) kpiCards += kpiCard('Leads Meta Ads', fromAds, 'campanhas pagas', 5);
-    if (fromHist > 0) kpiCards += kpiCard('Histórico/Escuta', fromHist, 'leads extraídos da base', 6);
-    kpiCards += kpiCard('Encaminhadas', encaminhadas, 'transferidas para equipa', 6);
-    if (reactSent > 0) {
-      kpiCards += kpiCard('Reativações', reactResp, `${respRate}% responderam de ${reactSent} enviadas`, 6);
+    // Find specific sources
+    const ads = qBySrc.find(s => s.source === 'meta_ads');
+    const inbound = qBySrc.find(s => s.source === 'inbound');
+
+    kpiCards += kpiCard('Leads Totais', totalLeads, 'todas as fontes', 3);
+    kpiCards += kpiCard('Leads Qualificadas', qualificadas, `${taxaQual}% taxa de qualificação`, 4, 'positive');
+    if (emQual > 0) kpiCards += kpiCard('Em Qualificação', emQual, 'IA ainda em conversa', 5);
+
+    // Meta Ads specific KPI — most relevant for ROI
+    if (ads) {
+      const adsQual = parseInt(ads.qualificadas) || 0;
+      const adsTotal = parseInt(ads.total) || 0;
+      const adsRate = parseFloat(ads.taxa_pct) || 0;
+      kpiCards += kpiCard('Leads Meta Ads', `${adsQual}/${adsTotal}`, `${adsRate}% qualificadas das pagas`, 6, adsRate >= 50 ? 'positive' : 'warning');
     }
-    kpiCards += kpiCardPercent('Taxa Resolução IA', aiRate, 6, aiRate >= 70 ? 'positive' : aiRate >= 50 ? '' : 'warning');
+
+    if (reactSent > 0) {
+      kpiCards += kpiCard('Reativações Enviadas', reactSent, `${reactPendente} pendentes na base`, 6);
+    }
   } else if (context === 'qualificador') {
     // OdiSeguros: uses real classification from odiseguros.contatos_bloqueados
     const cls = data.extended?.classification || {};
@@ -281,16 +288,16 @@ function renderChatbotSection(client, data, clicks) {
     // Now Fitness: funnel chart only (leads table is rendered full-width at the end)
     chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Funil de Conversão</h3><div class="chart-container" id="chart-funnel"></div></div>`;
   } else if (context === 'credit_qualifier') {
-    // Georgina Moura: Sources donut + Objetivos chart + reactivation funnel
+    // Georgina Moura: Sources donut + Qualification rate by source + Objetivos
     const ext = data.extended || {};
     if (ext.leads_by_source?.length > 0) {
       chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Leads por Fonte</h3><div class="chart-container" id="chart-leads-sources"></div></div>`;
     }
+    if (ext.qualification_by_source?.length > 0) {
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Taxa de Qualificação por Fonte</h3><div class="chart-container" id="chart-qualif-rate"></div></div>`;
+    }
     if (ext.leads_objetivos?.length > 0) {
       chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Objetivos dos Leads</h3><div class="chart-container" id="chart-objetivos"></div></div>`;
-    }
-    if (ext.reactivation_stats?.total > 0) {
-      chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Funil Reativação</h3><div class="chart-container" id="chart-react-funnel"></div></div>`;
     }
   } else if (context === 'qualificador') {
     // OdiSeguros: Novos vs Existentes donut (real classification) + Ramos bar chart + Urgentes table

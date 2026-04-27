@@ -221,25 +221,26 @@ function initExtendedCharts(data) {
     } catch(e) { console.error('chart-objetivos err:', e); }
   }
 
-  // Georgina Moura: Reactivation funnel
-  if (ext.reactivation_stats && document.getElementById('chart-react-funnel')) {
+  // Georgina Moura: Qualification rate by source (stacked bar — qualified vs em_qualificacao vs novas)
+  if (ext.qualification_by_source?.length > 0 && document.getElementById('chart-qualif-rate')) {
     try {
-      const r = ext.reactivation_stats;
-      const total = parseInt(r.total) || 0;
-      const sent = parseInt(r.enviadas) || 0;
-      const responded = parseInt(r.responderam) || 0;
-      const skipped = parseInt(r.skipped) || 0;
-      new ApexCharts(document.getElementById('chart-react-funnel'), {
+      const SRC_LABELS = { reactivation: 'Reativação', inbound: 'Inbound', historico_escuta: 'Histórico', meta_ads: 'Meta Ads' };
+      const items = ext.qualification_by_source;
+      new ApexCharts(document.getElementById('chart-qualif-rate'), {
         ...baseChartOptions,
-        chart: { ...baseChartOptions.chart, type: 'bar', height: 280 },
-        series: [{ name: 'Quantidade', data: [total, sent, responded, skipped] }],
-        xaxis: { categories: ['Total', 'Enviadas', 'Responderam', 'Skipped'] },
-        colors: [COLORS.primaryLight, COLORS.primary, COLORS.accent, '#6B7280'],
-        plotOptions: { bar: { borderRadius: 8, columnWidth: '55%', distributed: true, dataLabels: { position: 'top' } } },
-        dataLabels: { enabled: true, offsetY: -20, style: { fontSize: '13px', fontWeight: 700, colors: ['#e8e6f0'] } },
-        legend: { show: false }
+        chart: { ...baseChartOptions.chart, type: 'bar', height: 280, stacked: true, stackType: '100%' },
+        series: [
+          { name: 'Qualificadas', data: items.map(i => parseInt(i.qualificadas) || 0) },
+          { name: 'Em Qualificação', data: items.map(i => parseInt(i.em_qualificacao) || 0) },
+          { name: 'Novas', data: items.map(i => parseInt(i.novas) || 0) }
+        ],
+        xaxis: { categories: items.map(i => `${SRC_LABELS[i.source] || i.source} (${i.total})`) },
+        colors: [COLORS.accent, COLORS.warning, '#6B7280'],
+        plotOptions: { bar: { borderRadius: 4, columnWidth: '55%', dataLabels: { position: 'center' } } },
+        dataLabels: { enabled: true, formatter: (v) => v >= 5 ? Math.round(v) + '%' : '', style: { fontSize: '11px', fontWeight: 700, colors: ['#0a0a1a'] } },
+        legend: { position: 'top', labels: { colors: COLORS.text } }
       }).render();
-    } catch(e) { console.error('chart-react-funnel err:', e); }
+    } catch(e) { console.error('chart-qualif-rate err:', e); }
   }
 
   // OdiSeguros: Classification donut
