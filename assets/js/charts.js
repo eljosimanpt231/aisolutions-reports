@@ -184,6 +184,25 @@ function initExtendedCharts(data) {
   const ext = data?.extended;
   if (!ext) return;
 
+  // Georgina Moura: Leads by source donut
+  if (ext.leads_by_source?.length > 0 && document.getElementById('chart-leads-sources')) {
+    try {
+      const SRC_LABELS = { reactivation: 'Reativação', inbound: 'Inbound (WA)', historico_escuta: 'Histórico / Escuta', meta_ads: 'Meta Ads' };
+      const items = ext.leads_by_source;
+      new ApexCharts(document.getElementById('chart-leads-sources'), {
+        ...baseChartOptions,
+        chart: { ...baseChartOptions.chart, type: 'donut', height: 280 },
+        series: items.map(s => parseInt(s.total) || 0),
+        labels: items.map(s => SRC_LABELS[s.source] || s.source),
+        colors: [COLORS.primary, COLORS.accent, COLORS.warning, COLORS.primaryLight],
+        plotOptions: { pie: { donut: { size: '60%', labels: { show: true, total: { show: true, label: 'Total', color: COLORS.text, formatter: (w) => w.globals.seriesTotals.reduce((a, b) => a + b, 0).toLocaleString('pt-PT') }, value: { color: '#e8e6f0', fontSize: '22px', fontWeight: 700 } } } } },
+        legend: { position: 'bottom', labels: { colors: COLORS.text }, fontSize: '12px' },
+        dataLabels: { enabled: false },
+        stroke: { width: 0 }
+      }).render();
+    } catch(e) { console.error('chart-leads-sources err:', e); }
+  }
+
   // Georgina Moura: Objetivos bar chart
   if (ext.leads_objetivos?.length > 0 && document.getElementById('chart-objetivos')) {
     try {
