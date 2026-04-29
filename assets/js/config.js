@@ -215,5 +215,15 @@ const CLIENTS = {
     domainId: null,  // sem Kutt domain
     startDate: '2026-03-05',  // primeira mensagem 5/3
     context: 'credit_qualifier'
+  },
+  abadias: {
+    name: 'Escola de Condução Abadias',
+    password: 'abadias2026',
+    services: ['chatbot'],
+    channels: ['chatwoot'],
+    schema: 'abadias',
+    domainId: null,
+    startDate: '2026-04-29',  // live hoje, ajustar quando user confirmar
+    context: 'driving_school'
   }
 };

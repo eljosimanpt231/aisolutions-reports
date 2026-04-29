@@ -184,6 +184,85 @@ function initExtendedCharts(data) {
   const ext = data?.extended;
   if (!ext) return;
 
+  // Abadias: Alunos vs Leads donut
+  if (ext.breakdown && document.getElementById('chart-abadias-split')) {
+    try {
+      const b = ext.breakdown;
+      const alunos = parseInt(b.alunos_total) || 0;
+      const leads = parseInt(b.leads_total) || 0;
+      new ApexCharts(document.getElementById('chart-abadias-split'), {
+        ...baseChartOptions,
+        chart: { ...baseChartOptions.chart, type: 'donut', height: 280 },
+        series: [alunos, leads],
+        labels: ['Alunos', 'Leads'],
+        colors: [COLORS.accent, COLORS.primary],
+        plotOptions: { pie: { donut: { size: '65%', labels: { show: true, total: { show: true, label: 'Total', color: COLORS.text, formatter: (w) => w.globals.seriesTotals.reduce((a, b) => a + b, 0).toLocaleString('pt-PT') }, value: { color: '#e8e6f0', fontSize: '24px', fontWeight: 700 } } } } },
+        legend: { position: 'bottom', labels: { colors: COLORS.text } },
+        dataLabels: { enabled: false },
+        stroke: { width: 0 }
+      }).render();
+    } catch(e) { console.error('chart-abadias-split err:', e); }
+  }
+
+  // Abadias: Resolução IA por tipo (stacked 100% bar)
+  if (ext.breakdown && document.getElementById('chart-abadias-resolucao')) {
+    try {
+      const b = ext.breakdown;
+      const alunosOnly = parseInt(b.alunos_resolvidos_ia) || 0;
+      const alunosHum = parseInt(b.alunos_com_humano) || 0;
+      const leadsOnly = parseInt(b.leads_resolvidos_ia) || 0;
+      const leadsHum = parseInt(b.leads_com_humano) || 0;
+      new ApexCharts(document.getElementById('chart-abadias-resolucao'), {
+        ...baseChartOptions,
+        chart: { ...baseChartOptions.chart, type: 'bar', height: 280, stacked: true, stackType: '100%' },
+        series: [
+          { name: 'Resolvidas pela IA', data: [alunosOnly, leadsOnly] },
+          { name: 'Escaladas para humano', data: [alunosHum, leadsHum] }
+        ],
+        xaxis: { categories: [`Alunos (${alunosOnly + alunosHum})`, `Leads (${leadsOnly + leadsHum})`] },
+        colors: [COLORS.accent, COLORS.warning],
+        plotOptions: { bar: { borderRadius: 6, columnWidth: '55%' } },
+        dataLabels: { enabled: true, formatter: (v) => v >= 5 ? Math.round(v) + '%' : '', style: { fontSize: '12px', fontWeight: 700, colors: ['#0a0a1a'] } },
+        legend: { position: 'top', labels: { colors: COLORS.text } }
+      }).render();
+    } catch(e) { console.error('chart-abadias-resolucao err:', e); }
+  }
+
+  // Abadias: Inboxes
+  if (ext.inboxes?.length > 0 && document.getElementById('chart-abadias-inboxes')) {
+    try {
+      const INBOX_LABELS = { 'WP Figueiras': 'Figueira da Foz', 'WP - Marinha': 'Marinha Grande', 'ecabadias': 'EC Abadias' };
+      const items = ext.inboxes;
+      new ApexCharts(document.getElementById('chart-abadias-inboxes'), {
+        ...baseChartOptions,
+        chart: { ...baseChartOptions.chart, type: 'bar', height: 280 },
+        series: [{ name: 'Conversas', data: items.map(i => parseInt(i.total_conversations) || 0) }],
+        xaxis: { categories: items.map(i => INBOX_LABELS[i.plataforma] || i.plataforma) },
+        colors: [COLORS.primary],
+        plotOptions: { bar: { borderRadius: 8, columnWidth: '50%', distributed: true, dataLabels: { position: 'top' } } },
+        dataLabels: { enabled: true, offsetY: -20, style: { fontSize: '13px', fontWeight: 700, colors: ['#e8e6f0'] } },
+        legend: { show: false }
+      }).render();
+    } catch(e) { console.error('chart-abadias-inboxes err:', e); }
+  }
+
+  // Abadias: Categorias de leads
+  if (ext.leads_categorias?.length > 0 && document.getElementById('chart-abadias-categorias')) {
+    try {
+      const items = ext.leads_categorias.slice(0, 8);
+      new ApexCharts(document.getElementById('chart-abadias-categorias'), {
+        ...baseChartOptions,
+        chart: { ...baseChartOptions.chart, type: 'bar', height: 280 },
+        series: [{ name: 'Leads', data: items.map(i => parseInt(i.total) || 0) }],
+        xaxis: { categories: items.map(i => i.categoria_interesse || 'Outro') },
+        colors: [COLORS.accent],
+        plotOptions: { bar: { horizontal: true, borderRadius: 6, barHeight: '60%' } },
+        dataLabels: { enabled: true, style: { colors: ['#e8e6f0'], fontSize: '12px', fontWeight: 700 } },
+        legend: { show: false }
+      }).render();
+    } catch(e) { console.error('chart-abadias-categorias err:', e); }
+  }
+
   // Georgina Moura: Leads by source donut
   if (ext.leads_by_source?.length > 0 && document.getElementById('chart-leads-sources')) {
     try {

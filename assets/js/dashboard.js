@@ -162,7 +162,25 @@ function renderChatbotSection(client, data, clicks) {
   // Conversas — always shown
   kpiCards += kpiCard('Conversas', total, periodLabel, 2);
 
-  if (context === 'credit_qualifier') {
+  if (context === 'driving_school') {
+    // Abadias: dual agent (alunos + leads)
+    const ext = data.extended || {};
+    const b = ext.breakdown || {};
+    const lr = ext.leads_recolhidos || {};
+    const alunosTotal = parseInt(b.alunos_total) || 0;
+    const leadsTotal = parseInt(b.leads_total) || 0;
+    const alunosTaxa = parseFloat(b.alunos_taxa_pct) || 0;
+    const leadsTaxa = parseFloat(b.leads_taxa_pct) || 0;
+    const leadsRec = parseInt(lr.total) || 0;
+    const totalAll = alunosTotal + leadsTotal;
+    const alunosPct = totalAll > 0 ? Math.round((alunosTotal / totalAll) * 100) : 0;
+    const leadsPct = totalAll > 0 ? Math.round((leadsTotal / totalAll) * 100) : 0;
+
+    kpiCards += kpiCardPercent('Taxa Resolução IA', aiRate, 3, aiRate >= 70 ? 'positive' : aiRate >= 50 ? '' : 'warning');
+    if (alunosTotal > 0) kpiCards += kpiCard('Conversas Alunos', alunosTotal, `${alunosPct}% do total · ${alunosTaxa}% IA`, 4);
+    if (leadsTotal > 0) kpiCards += kpiCard('Conversas Leads', leadsTotal, `${leadsPct}% do total · ${leadsTaxa}% IA`, 5);
+    if (leadsRec > 0) kpiCards += kpiCard('Leads Recolhidos', leadsRec, 'qualificados pela IA', 6, 'positive');
+  } else if (context === 'credit_qualifier') {
     // Georgina Moura: lead qualification (multi-source) + reactivation for credit/loans
     const ext = data.extended || {};
     const ls = ext.leads_stats || {};
@@ -287,6 +305,19 @@ function renderChatbotSection(client, data, clicks) {
   if (context === 'lead_gen') {
     // Now Fitness: funnel chart only (leads table is rendered full-width at the end)
     chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Funil de Conversão</h3><div class="chart-container" id="chart-funnel"></div></div>`;
+  } else if (context === 'driving_school') {
+    // Abadias: dual donut alunos vs leads + inboxes + categorias
+    const ext = data.extended || {};
+    if (ext.breakdown && ((parseInt(ext.breakdown.alunos_total) || 0) + (parseInt(ext.breakdown.leads_total) || 0)) > 0) {
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Alunos vs Leads</h3><div class="chart-container" id="chart-abadias-split"></div></div>`;
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Resolução IA por Tipo</h3><div class="chart-container" id="chart-abadias-resolucao"></div></div>`;
+    }
+    if (ext.inboxes?.length > 0) {
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Conversas por Inbox</h3><div class="chart-container" id="chart-abadias-inboxes"></div></div>`;
+    }
+    if (ext.leads_categorias?.length > 0) {
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Categorias de Interesse (Leads)</h3><div class="chart-container" id="chart-abadias-categorias"></div></div>`;
+    }
   } else if (context === 'credit_qualifier') {
     // Georgina Moura: Sources donut + Qualification rate by source + Objetivos
     const ext = data.extended || {};
@@ -364,6 +395,22 @@ function renderChatbotSection(client, data, clicks) {
       const cleanPhone = (p) => p ? String(p).split('@')[0].replace(/^351/, '').replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3') : '—';
       let leadsTableRows = leadRecords.map(l => `<tr><td>${l.nome || '—'}</td><td>${cleanPhone(l.telefone)}</td><td>${l.tipo_registo || '—'}</td><td style="font-size:0.813rem">${l.objetivo_cliente || '—'}</td><td>${l.criado_em?.substring(0,10) || '—'}</td></tr>`).join('');
       chartsHtml += `<div class="chart-card glass fade-in fade-in-6" style="grid-column: 1 / -1"><h3>Leads Registados (${leadRecords.length})</h3><table class="data-table"><thead><tr><th>Nome</th><th>Contacto</th><th>Tipo</th><th>Objetivo</th><th>Data</th></tr></thead><tbody>${leadsTableRows}</tbody></table></div>`;
+    }
+  }
+
+  // Abadias: leads recolhidos + handoffs full-width
+  if (context === 'driving_school') {
+    const extA = data.extended || {};
+    const leadsA = extA.leads_recent || [];
+    if (leadsA.length > 0) {
+      const cleanPhone = (p) => p ? String(p).split('@')[0].replace(/^351/, '').replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3') : '—';
+      let rows = leadsA.map(l => `<tr><td>${l.nome || '—'}</td><td>${cleanPhone(l.telefone)}</td><td>${l.categoria_interesse || '—'}</td><td>${l.escola_preferida || '—'}</td><td><span class="tag tag-mk">${l.status || '—'}</span></td><td>${l.created_at?.substring(0,10) || '—'}</td></tr>`).join('');
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-6" style="grid-column: 1 / -1"><h3>Leads Recolhidos pela IA (${leadsA.length})</h3><table class="data-table"><thead><tr><th>Nome</th><th>Contacto</th><th>Categoria</th><th>Escola</th><th>Estado</th><th>Data</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    }
+    const handoffs = extA.handoffs_recent || [];
+    if (handoffs.length > 0) {
+      let rows = handoffs.map(h => `<tr><td><span class="tag ${h.tag === 'aluno' ? 'tag-op' : 'tag-mk'}">${h.tag || '—'}</span></td><td style="font-size:0.813rem">${h.razao || '—'}</td><td>${h.created_at?.substring(0,16).replace('T',' ') || '—'}</td></tr>`).join('');
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-6" style="grid-column: 1 / -1"><h3>Escalações para Equipa (${handoffs.length})</h3><table class="data-table"><thead><tr><th>Tipo</th><th>Razão</th><th>Data</th></tr></thead><tbody>${rows}</tbody></table></div>`;
     }
   }
 
