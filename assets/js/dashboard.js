@@ -520,8 +520,9 @@ function renderMessagingSection(client, data) {
       }
     });
 
+    const slug = getClientSlug();
     const mkRows = data.marketing.map(m => {
-      const seqLabel = m.sequence == null ? '—' : `Msg ${m.sequence}`;
+      const seqLabel = msgSeqLabel(slug, m.campaign_type, m.sequence);
       const isBest = bestByCat[m.categoria] === m;
       const trophy = isBest ? ' 🥇' : '';
       const rowCost = cost > 0 ? m.sends * cost : 0;
@@ -590,6 +591,25 @@ function prettyMsgType(t) {
     upsell: 'Upsell'
   };
   return map[t] || t;
+}
+
+// Custom labels for marketing message sequence (per client + campaign_type)
+const MSG_SEQ_LABELS = {
+  fbeauty: {
+    recovery: {
+      1: '30min · cliente novo',
+      2: '24h · cliente novo',
+      3: '48h · cliente novo',
+      4: '30min · cliente atual',
+      5: '24h · cliente atual'
+    }
+  }
+};
+
+function msgSeqLabel(slug, campaignType, sequence) {
+  if (sequence == null) return '—';
+  const label = MSG_SEQ_LABELS[slug]?.[campaignType]?.[sequence];
+  return label || `Msg ${sequence}`;
 }
 
 // ---- Insights Section ----
