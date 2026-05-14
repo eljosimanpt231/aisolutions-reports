@@ -447,118 +447,15 @@ function renderMessagingSection(client, data) {
   const clickRate = data.click_rate || 0;
   const cost = client.costPerMessage || 0; // €/msg
 
-  // ===== Top KPIs =====
+  // Always show both Operacionais and Marketing as separate KPIs so the structure is clear
+  // (even when one is currently 0 — useful for clients that may add the other later)
+  const slug = getClientSlug();
+  const showBothCategories = ['hco', 'fbeauty', 'farmatogo'].includes(slug); // clients that have or may have both
   let kpiCards = kpiCard('Total Mensagens', totalMsgs, '', 2);
-  if (totalOp > 0) kpiCards += kpiCard('Operacionais', totalOp, 'morada, MB, MBWay', 3);
-  if (totalMkt > 0) kpiCards += kpiCard('Marketing', totalMkt, 'carrinhos, upsell, recuperação', 4);
+  if (hasOp || showBothCategories) kpiCards += kpiCard('Operacionais', totalOp, 'morada, MB, MBWay', 3);
+  if (hasAuto || showBothCategories) kpiCards += kpiCard('Marketing', totalAuto, 'carrinhos, upsell, recuperação', hasOp || showBothCategories ? 4 : 3);
   if (totalClicked > 0) kpiCards += kpiCard('Cliques', totalClicked, `${clickRate.toFixed(1)}% taxa de clique`, 5);
   if (totalOrders > 0) kpiCards += kpiCard('Encomendas', totalOrders, `${formatNumber(totalRevenue)}€ receita`, 6);
-
-  // ===== Cost & ROI Section (clientes com costPerMessage) =====
-  let costRoiSection = '';
-  if (cost > 0 && totalMsgs > 0) {
-    const globalCost = totalMsgs * cost;
-    const netMargin = totalRevenue - globalCost;
-    const roiPct = globalCost > 0 ? (netMargin / globalCost) * 100 : 0;
-    const roasMult = globalCost > 0 ? totalRevenue / globalCost : 0;
-    const positive = netMargin >= 0;
-    const marginColor = positive ? '#00D4AA' : '#FF6B6B';
-    const costFmt = cost.toFixed(2).replace('.', ',');
-
-    costRoiSection = `
-      <div class="section-title fade-in fade-in-1" style="margin-top:24px;">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7066A8" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-        Custo & ROI
-      </div>
-      <div class="kpi-grid">
-        <div class="kpi-card glass fade-in fade-in-2">
-          <div class="kpi-label">Custo Total</div>
-          <div class="kpi-value" data-count="${Math.round(globalCost)}" data-suffix="€">0</div>
-          <div class="kpi-sub">${formatNumber(totalMsgs)} × ${costFmt}€/msg</div>
-        </div>
-        <div class="kpi-card glass fade-in fade-in-3">
-          <div class="kpi-label">Receita Atribuída</div>
-          <div class="kpi-value" data-count="${Math.round(totalRevenue)}" data-suffix="€">0</div>
-          <div class="kpi-sub">${totalOrders} encomendas</div>
-        </div>
-        <div class="kpi-card glass fade-in fade-in-4">
-          <div class="kpi-label">Margem Líquida</div>
-          <div class="kpi-value" style="color:${marginColor};" data-count="${Math.round(netMargin)}" data-suffix="€">0</div>
-          <div class="kpi-sub">receita − custo</div>
-        </div>
-        <div class="kpi-card glass fade-in fade-in-5">
-          <div class="kpi-label">ROI</div>
-          <div class="kpi-value" style="color:${marginColor};" data-count="${Math.round(roiPct)}" data-suffix="%">0</div>
-          <div class="kpi-sub">${roasMult.toFixed(2)}x ROAS</div>
-        </div>
-      </div>
-    `;
-  }
-
-  // ===== Tabela Operacionais =====
-  let opSection = '';
-  if (totalOp > 0) {
-    const opRows = (data.operacionais || []).slice().sort((a,b)=>b.total-a.total).map(r =>
-      `<tr><td>${prettyMsgType(r.tipo)}</td><td class="num">${formatNumber(r.total)}</td></tr>`
-    ).join('');
-    opSection = `
-      <div class="chart-card glass fade-in fade-in-5">
-        <h3>Mensagens Operacionais</h3>
-        <p style="color:#9b95b8;font-size:12px;margin:-4px 0 12px 0;">Confirmações transacionais — sem receita atribuída</p>
-        <table class="data-table"><thead><tr><th>Tipo</th><th>Enviadas</th></tr></thead><tbody>${opRows}</tbody></table>
-      </div>
-    `;
-  }
-
-  // ===== Tabela Marketing ROI =====
-  let mkSection = '';
-  if (totalMkt > 0 && (data.marketing || []).length > 0) {
-    // Best performer por categoria (maior receita)
-    const bestByCat = {};
-    data.marketing.forEach(m => {
-      if (m.revenue > 0 && (!bestByCat[m.categoria] || m.revenue > bestByCat[m.categoria].revenue)) {
-        bestByCat[m.categoria] = m;
-      }
-    });
-
-    const mkRows = data.marketing.map(m => {
-      const seqLabel = m.sequence == null ? '—' : `Msg ${m.sequence}`;
-      const isBest = bestByCat[m.categoria] === m;
-      const trophy = isBest ? ' 🥇' : '';
-      const rowCost = cost > 0 ? m.sends * cost : 0;
-      const rowMargin = m.revenue - rowCost;
-      let roiCell = '<td class="num" style="color:#9b95b8;">—</td>';
-      if (cost > 0 && rowCost > 0) {
-        const rowRoi = ((rowMargin / rowCost) * 100);
-        const color = rowMargin >= 0 ? '#00D4AA' : '#FF6B6B';
-        roiCell = `<td class="num" style="color:${color};font-weight:600;">${rowRoi.toFixed(0)}%</td>`;
-      } else if (m.revenue > 0) {
-        roiCell = `<td class="num">${m.revenue_per_msg.toFixed(2)}€/msg</td>`;
-      }
-      return `<tr>
-        <td>${prettyMsgType(m.categoria)}${trophy}</td>
-        <td class="num">${seqLabel}</td>
-        <td class="num">${formatNumber(m.sends)}</td>
-        <td class="num">${formatNumber(m.clicks)}</td>
-        <td class="num">${m.click_rate.toFixed(1)}%</td>
-        <td class="num">${formatNumber(m.orders)}</td>
-        <td class="num">${formatNumber(m.revenue)}€</td>
-        ${roiCell}
-      </tr>`;
-    }).join('');
-    const roiHeader = cost > 0 ? 'ROI' : '€/msg';
-    const costNote = cost > 0 ? ` · Custo ${cost.toFixed(2).replace('.', ',')}€/msg` : '';
-    mkSection = `
-      <div class="chart-card glass fade-in fade-in-6">
-        <h3>Marketing — Performance por Tipo & Sequência</h3>
-        <p style="color:#9b95b8;font-size:12px;margin:-4px 0 12px 0;">Receita atribuída a cada mensagem · 🥇 melhor performer por tipo${costNote}</p>
-        <table class="data-table" style="font-size:13px;">
-          <thead><tr><th>Tipo</th><th>Msg</th><th>Enviadas</th><th>Cliques</th><th>CTR</th><th>Encom.</th><th>Receita</th><th>${roiHeader}</th></tr></thead>
-          <tbody>${mkRows}</tbody>
-        </table>
-      </div>
-    `;
-  }
 
   return `
     <div class="section-title fade-in fade-in-1">

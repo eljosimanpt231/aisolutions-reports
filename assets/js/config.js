@@ -96,7 +96,6 @@ const CLIENTS = {
     channels: [],
     schema: 'fbeauty',
     domainId: 7,
-    costPerMessage: 0.15,
     msgTables: {
       automaticas: { failFilter: 'failed_at IS NULL' },
       operacionais: { typeCol: 'tipo' }
@@ -109,7 +108,6 @@ const CLIENTS = {
     channels: [],
     schema: 'farmatogo',
     domainId: 6,
-    costPerMessage: 0.12,
     msgTables: {
       automaticas: { failFilter: 'send_failed = false' },
       operacionais: { typeCol: 'tipo' }
@@ -122,7 +120,6 @@ const CLIENTS = {
     channels: [],
     schema: 'maninc',
     domainId: 8,
-    costPerMessage: 0.15,
     msgTables: {
       automaticas: { failFilter: 'failed_at IS NULL' },
       operacionais: null
