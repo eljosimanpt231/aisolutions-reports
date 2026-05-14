@@ -551,10 +551,12 @@ function renderMessagingSection(client, data) {
       <div class="chart-card glass fade-in fade-in-6">
         <h3>Marketing — Performance por Tipo & Sequência</h3>
         <p style="color:#9b95b8;font-size:12px;margin:-4px 0 12px 0;">Receita atribuída a cada mensagem · 🥇 melhor performer por tipo${costNote}</p>
-        <table class="data-table" style="font-size:13px;">
-          <thead><tr><th>Tipo</th><th>Msg</th><th>Enviadas</th><th>Cliques</th><th>CTR</th><th>Encom.</th><th>Receita</th><th>${roiHeader}</th></tr></thead>
-          <tbody>${mkRows}</tbody>
-        </table>
+        <div style="overflow-x:auto;">
+          <table class="data-table" style="font-size:13px;min-width:680px;">
+            <thead><tr><th>Tipo</th><th>Msg</th><th>Enviadas</th><th>Cliques</th><th>CTR</th><th>Encom.</th><th>Receita</th><th>${roiHeader}</th></tr></thead>
+            <tbody>${mkRows}</tbody>
+          </table>
+        </div>
       </div>
     `;
   }
@@ -569,8 +571,8 @@ function renderMessagingSection(client, data) {
     <div class="charts-grid" style="margin-top:24px;">
       <div class="chart-card glass fade-in fade-in-4"><h3>Distribuição por Tipo</h3><div class="chart-container" id="chart-msg-types"></div></div>
       ${opSection}
-      ${mkSection}
     </div>
+    ${mkSection ? `<div style="margin-top:24px;">${mkSection}</div>` : ''}
   `;
 }
 
