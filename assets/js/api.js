@@ -77,27 +77,48 @@ function transformChatbot(raw) {
   };
 }
 
-// ---- Transform messaging data ----
+// ---- Transform messaging data (v2: marketing breakdown per [campaign_type, sequence]) ----
 function transformMessaging(raw) {
   if (!raw?.totals?.total_mensagens) return null;
 
+  // Operacionais (transacionais — sem receita atribuída)
   const operacionais = (raw.operacionais || []).map(r => ({
-    tipo: r.categoria || r.tipo,
-    total: parseInt(r.total_mensagens || r.total) || 0
+    tipo: r.tipo || r.categoria,
+    total: parseInt(r.sends || r.total_mensagens || r.total) || 0
   }));
 
-  const automaticas = (raw.automaticas || []).map(r => ({
-    tipo: r.categoria || r.tipo,
-    total: parseInt(r.total_mensagens || r.total) || 0
+  // Marketing — pode vir como nova shape (marketing[]) ou legacy (automaticas[])
+  const rawMarketing = raw.marketing || raw.automaticas || [];
+  const marketing = rawMarketing.map(r => ({
+    categoria: r.categoria || r.tipo,
+    campaign_type: r.campaign_type || null,
+    sequence: r.sequence == null ? null : parseInt(r.sequence),
+    sends: parseInt(r.sends || r.total_mensagens || r.total) || 0,
+    clicks: parseInt(r.clicks || r.clicked_count) || 0,
+    click_rate: parseFloat(r.click_rate) || 0,
+    orders: parseInt(r.orders) || 0,
+    revenue: parseFloat(r.revenue) || 0,
+    revenue_per_msg: parseFloat(r.revenue_per_msg) || 0
   }));
+
+  // Manter "automaticas" legacy (totais por campaign_type agregando sequências)
+  const automaticasMap = {};
+  for (const m of marketing) {
+    const k = m.categoria;
+    if (!automaticasMap[k]) automaticasMap[k] = { tipo: k, total: 0 };
+    automaticasMap[k].total += m.sends;
+  }
+  const automaticas = Object.values(automaticasMap);
 
   const totals = raw.totals || {};
 
   return {
     operacionais,
+    marketing,
     automaticas,
     total_operacionais: parseInt(totals.total_operacionais) || 0,
-    total_automaticas: parseInt(totals.total_automaticas) || 0,
+    total_automaticas: parseInt(totals.total_marketing || totals.total_automaticas) || 0,
+    total_marketing: parseInt(totals.total_marketing || totals.total_automaticas) || 0,
     messages_sent: parseInt(totals.total_mensagens) || 0,
     total_clicked: parseInt(totals.total_clicked) || 0,
     click_rate: parseFloat(totals.click_rate) || 0,

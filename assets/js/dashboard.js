@@ -108,8 +108,8 @@ function renderDashboard(client, chatbot, messaging, clicks) {
     html += renderMessagingSection(client, messaging);
   }
 
-  // Insights
-  const insight = typeof INSIGHTS !== 'undefined' ? INSIGHTS[slug] : null;
+  // Insights — dynamic based on real data
+  const insight = generateInsight(slug, client, chatbot, messaging, clicks);
   if (insight) {
     if (html) html += '<hr class="section-divider">';
     html += renderInsightsSection(insight);
@@ -119,20 +119,20 @@ function renderDashboard(client, chatbot, messaging, clicks) {
   content.innerHTML = html;
 
   requestAnimationFrame(() => {
-    try {
-      if (chatbot) {
-        initChatbotCharts(client, chatbot);
-        initExtendedCharts(chatbot);
-      }
-      if (messaging) initMessagingCharts(messaging);
-    } catch (e) {
-      console.error('Chart init error:', e);
+    // Init charts independently — errors in one don't block others
+    if (chatbot) {
+      try { initChatbotCharts(client, chatbot); } catch (e) { console.error('initChatbotCharts:', e); }
+      try { initExtendedCharts(chatbot); } catch (e) { console.error('initExtendedCharts:', e); }
+    }
+    if (messaging) {
+      try { initMessagingCharts(messaging); } catch (e) { console.error('initMessagingCharts:', e); }
     }
     document.querySelectorAll('[data-count]').forEach(el => {
-      const val = parseFloat(el.dataset.count);
+      const raw = el.dataset.count;
+      const val = parseFloat(raw);
       const suffix = el.dataset.suffix || '';
-      if (isNaN(val)) {
-        el.textContent = el.dataset.count; // string value like "14s"
+      if (isNaN(val) || /[a-zA-Z]/.test(raw)) {
+        el.textContent = raw; // keep strings like "14s", "2.3h"
       } else {
         animateValue(el, val);
         if (suffix) setTimeout(() => { el.textContent += suffix; }, 1900);
@@ -162,11 +162,70 @@ function renderChatbotSection(client, data, clicks) {
   // Conversas — always shown
   kpiCards += kpiCard('Conversas', total, periodLabel, 2);
 
-  if (context === 'qualificador') {
-    // OdiSeguros: lead qualification bot — IA talks to everyone, classifies, hands off
+  if (context === 'driving_school') {
+    // Abadias: dual agent (alunos + leads)
+    const ext = data.extended || {};
+    const b = ext.breakdown || {};
+    const lr = ext.leads_recolhidos || {};
+    const alunosTotal = parseInt(b.alunos_total) || 0;
+    const leadsTotal = parseInt(b.leads_total) || 0;
+    const alunosTaxa = parseFloat(b.alunos_taxa_pct) || 0;
+    const leadsTaxa = parseFloat(b.leads_taxa_pct) || 0;
+    const leadsRec = parseInt(lr.total) || 0;
+    const totalAll = alunosTotal + leadsTotal;
+    const alunosPct = totalAll > 0 ? Math.round((alunosTotal / totalAll) * 100) : 0;
+    const leadsPct = totalAll > 0 ? Math.round((leadsTotal / totalAll) * 100) : 0;
+
+    kpiCards += kpiCardPercent('Taxa Resolução IA', aiRate, 3, aiRate >= 70 ? 'positive' : aiRate >= 50 ? '' : 'warning');
+    if (alunosTotal > 0) kpiCards += kpiCard('Conversas Alunos', alunosTotal, `${alunosPct}% do total · ${alunosTaxa}% IA`, 4);
+    if (leadsTotal > 0) kpiCards += kpiCard('Conversas Leads', leadsTotal, `${leadsPct}% do total · ${leadsTaxa}% IA`, 5);
+    if (leadsRec > 0) kpiCards += kpiCard('Leads Recolhidos', leadsRec, 'qualificados pela IA', 6, 'positive');
+  } else if (context === 'credit_qualifier') {
+    // Georgina Moura: lead qualification (multi-source) + reactivation for credit/loans
+    const ext = data.extended || {};
+    const ls = ext.leads_stats || {};
+    const rs = ext.reactivation_stats || {};
+    const qBySrc = ext.qualification_by_source || [];
+    const totalLeads = parseInt(ls.total) || 0;
+    const qualificadas = parseInt(ls.qualificadas) || 0;
+    const emQual = parseInt(ls.em_qualificacao) || 0;
+    const taxaQual = parseFloat(ls.taxa_qualificacao_pct) || 0;
+    const reactSent = parseInt(rs.enviadas_periodo) || 0;
+    const reactPendente = parseInt(rs.pendentes) || 0;
+
+    // Find specific sources
+    const ads = qBySrc.find(s => s.source === 'meta_ads');
+    const inbound = qBySrc.find(s => s.source === 'inbound');
+
+    kpiCards += kpiCard('Leads Totais', totalLeads, 'todas as fontes', 3);
+    kpiCards += kpiCard('Leads Qualificadas', qualificadas, `${taxaQual}% taxa de qualificação`, 4, 'positive');
+    if (emQual > 0) kpiCards += kpiCard('Em Qualificação', emQual, 'IA ainda em conversa', 5);
+
+    // Meta Ads specific KPI — most relevant for ROI
+    if (ads) {
+      const adsQual = parseInt(ads.qualificadas) || 0;
+      const adsTotal = parseInt(ads.total) || 0;
+      const adsRate = parseFloat(ads.taxa_pct) || 0;
+      kpiCards += kpiCard('Leads Meta Ads', `${adsQual}/${adsTotal}`, `${adsRate}% qualificadas das pagas`, 6, adsRate >= 50 ? 'positive' : 'warning');
+    }
+
+    if (reactSent > 0) {
+      kpiCards += kpiCard('Reativações Enviadas', reactSent, `${reactPendente} pendentes na base`, 6);
+    }
+  } else if (context === 'qualificador') {
+    // OdiSeguros: uses real classification from odiseguros.contatos_bloqueados
+    const cls = data.extended?.classification || {};
+    const existentes = parseInt(cls.clientes_existentes) || 0;
+    const novosLeads = parseInt(cls.novos_leads) || 0;
+    const urgentes = parseInt(cls.urgentes) || 0;
+    const intHumana = parseInt(cls.intervencao_humana) || 0;
+    const naoClassif = parseInt(cls.nao_classificados) || 0;
+
     kpiCards += kpiCard('Mensagens IA', msgsAI, 'qualificação + recolha dados', 3);
-    kpiCards += kpiCard('Clientes Existentes', withHuman, 'identificados pela IA', 4);
-    kpiCards += kpiCard('Novos Leads', aiOnly, 'qualificados para seguimento', 5, 'positive');
+    kpiCards += kpiCard('Novos Leads', novosLeads, 'qualificados + dados recolhidos', 4, 'positive');
+    kpiCards += kpiCard('Clientes Existentes', existentes, 'identificados pela IA', 5);
+    if (urgentes > 0) kpiCards += kpiCard('Urgentes', urgentes, 'precisam seguro hoje', 6, 'warning');
+    else if (naoClassif > 0) kpiCards += kpiCard('Em Qualificação', naoClassif, 'conversas a decorrer', 6);
   } else if (context === 'lead_gen') {
     // Now Fitness: comments → DMs → leads funnel
     const t = data;
@@ -190,18 +249,33 @@ function renderChatbotSection(client, data, clicks) {
     kpiCards += kpiCard('Resolvidas Sem Humano', aiOnly, `de ${total} conversas`, 3, aiRate >= 50 ? 'positive' : '');
     kpiCards += kpiCardPercent('% Sem Intervenção', aiRate, 4, aiRate >= 50 ? 'positive' : 'warning');
   } else if (context === 'leads') {
-    // EcoDrive: leads + platforms + response times
+    // EcoDrive: leads + platforms + response times + IA vs Equipa comparison
     const leadsCount = data.leads_period || 0;
     const respTime = data.response_time;
     const humanResp = data.extended?.human_response_time;
+    // Count messages from extended.daily: IA vs Equipa
+    const dailyRaw = data.extended?.daily || [];
+    const totalAIMsgs = dailyRaw.reduce((s, d) => s + (parseInt(d.ai_msgs) || 0), 0);
+    const totalTeamMsgs = dailyRaw.reduce((s, d) => s + (parseInt(d.team_msgs) || 0), 0);
+    const multiplier = totalTeamMsgs > 0 ? (totalAIMsgs / totalTeamMsgs).toFixed(1) : null;
+
     if (leadsCount > 0) kpiCards += kpiCard('Leads Recolhidos', leadsCount, periodLabel, 3, 'positive');
     kpiCards += kpiCardPercent('Taxa Resolução IA', aiRate, 4, aiRate >= 70 ? 'positive' : aiRate >= 50 ? '' : 'warning');
-    if (respTime?.median_sec) {
-      const medSec = parseFloat(respTime.median_sec);
-      kpiCards += kpiCard('Resposta IA', medSec < 60 ? `${medSec.toFixed(0)}s` : `${(medSec/60).toFixed(1)}min`, `mediana (média ${parseFloat(respTime.avg_sec).toFixed(0)}s)`, 5);
+    if (totalAIMsgs > 0) {
+      kpiCards += kpiCard('Mensagens IA', totalAIMsgs, multiplier ? `${multiplier}× mais que a equipa` : 'automatizadas', 5, 'positive');
     }
+    if (totalTeamMsgs > 0) {
+      kpiCards += kpiCard('Mensagens Equipa', totalTeamMsgs, 'respostas humanas', 6);
+    }
+    // IA response is near real-time (~40-60s in practice), not queryable from DB
+    // (DB only logs after AI processes, which creates artificially low 2s values)
+    kpiCards += kpiCard('Velocidade IA', '~1min', 'resposta quase imediata', 5, 'positive');
     if (humanResp?.median_min) {
-      kpiCards += kpiCard('Resposta Humano', `${parseFloat(humanResp.median_min).toFixed(0)}min`, `mediana (média ${parseFloat(humanResp.avg_min).toFixed(0)}min)`, 6);
+      const medMin = parseFloat(humanResp.median_min);
+      const avgMin = parseFloat(humanResp.avg_min);
+      const medLabel = medMin < 60 ? `${medMin.toFixed(0)}min` : `${(medMin/60).toFixed(1)}h`;
+      const avgLabel = avgMin < 60 ? `${avgMin.toFixed(0)}min` : `${(avgMin/60).toFixed(1)}h`;
+      kpiCards += kpiCard('Velocidade Equipa', medLabel, `mediana resposta (média ${avgLabel})`, 6);
     }
   } else {
     // Standard: RR, HCO, Teclas, OdiSeguros
@@ -210,7 +284,12 @@ function renderChatbotSection(client, data, clicks) {
   }
 
   if (kuttClicks > 0) {
-    kpiCards += kpiCard('Cliques em Produtos', kuttClicks, 'links partilhados pelo agente', 5);
+    kpiCards += kpiCard('Cliques em Links', kuttClicks, 'partilhados pelo agente', 5);
+  }
+  // Off-hours KPI (all chatbot clients that have this data)
+  const offHours = data.extended?.off_hours;
+  if (offHours && parseFloat(offHours.off_hours_pct) > 0) {
+    kpiCards += kpiCard('Fora de Horas', offHours.off_hours_pct, 'mensagens em fim-de-semana ou 18h-9h', 6, 'positive', '%');
   }
 
   // Charts
@@ -218,22 +297,52 @@ function renderChatbotSection(client, data, clicks) {
   if (activeChannels.length > 1) {
     chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Conversas por Canal</h3><div class="chart-container" id="chart-channels"></div></div>`;
   }
-  // EcoDrive platform breakdown
-  if (context === 'leads' && data.platforms?.length > 1) {
+  // Platform breakdown (EcoDrive, Pura Rituals, RL Store, any with multiple Chatwoot inboxes)
+  if (data.platforms?.length > 1) {
     chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Conversas por Plataforma</h3><div class="chart-container" id="chart-platforms"></div></div>`;
   }
 
   if (context === 'lead_gen') {
-    // Now Fitness: funnel + leads table
+    // Now Fitness: funnel chart only (leads table is rendered full-width at the end)
     chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Funil de Conversão</h3><div class="chart-container" id="chart-funnel"></div></div>`;
-    // Leads table
-    const leadRecords = data.lead_records || [];
-    if (leadRecords.length > 0) {
-      let leadsTableRows = leadRecords.map(l => `<tr><td>${l.nome || '—'}</td><td>${l.tipo_registo || '—'}</td><td>${l.criado_em?.substring(0,10) || '—'}</td></tr>`).join('');
-      chartsHtml += `<div class="chart-card glass fade-in fade-in-6"><h3>Leads Registados</h3><table class="data-table"><thead><tr><th>Nome</th><th>Tipo</th><th>Data</th></tr></thead><tbody>${leadsTableRows}</tbody></table></div>`;
+  } else if (context === 'driving_school') {
+    // Abadias: dual donut alunos vs leads + inboxes + categorias
+    const ext = data.extended || {};
+    if (ext.breakdown && ((parseInt(ext.breakdown.alunos_total) || 0) + (parseInt(ext.breakdown.leads_total) || 0)) > 0) {
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Alunos vs Leads</h3><div class="chart-container" id="chart-abadias-split"></div></div>`;
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Resolução IA por Tipo</h3><div class="chart-container" id="chart-abadias-resolucao"></div></div>`;
+    }
+    if (ext.inboxes?.length > 0) {
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Conversas por Inbox</h3><div class="chart-container" id="chart-abadias-inboxes"></div></div>`;
+    }
+    if (ext.leads_categorias?.length > 0) {
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Categorias de Interesse (Leads)</h3><div class="chart-container" id="chart-abadias-categorias"></div></div>`;
+    }
+  } else if (context === 'credit_qualifier') {
+    // Georgina Moura: Sources donut + Qualification rate by source + Objetivos
+    const ext = data.extended || {};
+    if (ext.leads_by_source?.length > 0) {
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Leads por Fonte</h3><div class="chart-container" id="chart-leads-sources"></div></div>`;
+    }
+    if (ext.qualification_by_source?.length > 0) {
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Taxa de Qualificação por Fonte</h3><div class="chart-container" id="chart-qualif-rate"></div></div>`;
+    }
+    if (ext.leads_objetivos?.length > 0) {
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Objetivos dos Leads</h3><div class="chart-container" id="chart-objetivos"></div></div>`;
     }
   } else if (context === 'qualificador') {
-    chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Novos vs Existentes</h3><div class="chart-container" id="chart-ai-human"></div></div>`;
+    // OdiSeguros: Novos vs Existentes donut (real classification) + Ramos bar chart + Urgentes table
+    const ext = data.extended;
+    chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Classificação de Contactos</h3><div class="chart-container" id="chart-classification"></div></div>`;
+    if (ext?.ramos?.length > 0) {
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Ramos de Interesse</h3><div class="chart-container" id="chart-ramos"></div></div>`;
+    }
+    if (ext?.urgentes_detalhe?.length > 0) {
+      const RAMO_LABELS = { automovel_particular: 'Auto Particular', automovel_empresa: 'Auto Empresa', tvde: 'TVDE', saude_dental: 'Saúde Dental', multiriscos_habitacao: 'Multirriscos', acidentes_trabalho: 'AT', vida_credito: 'Vida', responsabilidade_civil: 'RC' };
+      const cleanPhone = (p) => p ? String(p).split('@')[0].replace(/^351/, '').replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3') : '—';
+      const rows = ext.urgentes_detalhe.map(u => `<tr><td>${cleanPhone(u.telefone)}</td><td>${RAMO_LABELS[u.ramo] || u.ramo || '—'}</td><td style="font-size:0.75rem">${(u.resumo_dados||'').substring(0,120)}${(u.resumo_dados||'').length>120?'…':''}</td></tr>`).join('');
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-6" style="grid-column: 1 / -1"><h3>Leads Urgentes (precisam seguro hoje)</h3><table class="data-table"><thead><tr><th>Contacto</th><th>Ramo</th><th>Detalhe</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    }
   } else {
     chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>${context === 'porteiro' ? 'Sem Humano vs Com Humano' : 'Resolução IA'}</h3><div class="chart-container" id="chart-ai-human"></div></div>`;
   }
@@ -279,6 +388,44 @@ function renderChatbotSection(client, data, clicks) {
     chartsHtml += `<div class="chart-card glass fade-in fade-in-6"><h3>Leads por Interesse</h3><table class="data-table"><thead><tr><th>Interesse</th><th>Total</th></tr></thead><tbody>${rows}</tbody></table></div>`;
   }
 
+  // Now Fitness: leads table full-width at the bottom (after all charts)
+  if (context === 'lead_gen') {
+    const leadRecords = data.lead_records || [];
+    if (leadRecords.length > 0) {
+      const cleanPhone = (p) => p ? String(p).split('@')[0].replace(/^351/, '').replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3') : '—';
+      let leadsTableRows = leadRecords.map(l => `<tr><td>${l.nome || '—'}</td><td>${cleanPhone(l.telefone)}</td><td>${l.tipo_registo || '—'}</td><td style="font-size:0.813rem">${l.objetivo_cliente || '—'}</td><td>${l.criado_em?.substring(0,10) || '—'}</td></tr>`).join('');
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-6" style="grid-column: 1 / -1"><h3>Leads Registados (${leadRecords.length})</h3><table class="data-table"><thead><tr><th>Nome</th><th>Contacto</th><th>Tipo</th><th>Objetivo</th><th>Data</th></tr></thead><tbody>${leadsTableRows}</tbody></table></div>`;
+    }
+  }
+
+  // Abadias: leads recolhidos + handoffs full-width
+  if (context === 'driving_school') {
+    const extA = data.extended || {};
+    const leadsA = extA.leads_recent || [];
+    if (leadsA.length > 0) {
+      const cleanPhone = (p) => p ? String(p).split('@')[0].replace(/^351/, '').replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3') : '—';
+      let rows = leadsA.map(l => `<tr><td>${l.nome || '—'}</td><td>${cleanPhone(l.telefone)}</td><td>${l.categoria_interesse || '—'}</td><td>${l.escola_preferida || '—'}</td><td><span class="tag tag-mk">${l.status || '—'}</span></td><td>${l.created_at?.substring(0,10) || '—'}</td></tr>`).join('');
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-6" style="grid-column: 1 / -1"><h3>Leads Recolhidos pela IA (${leadsA.length})</h3><table class="data-table"><thead><tr><th>Nome</th><th>Contacto</th><th>Categoria</th><th>Escola</th><th>Estado</th><th>Data</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    }
+    const handoffs = extA.handoffs_recent || [];
+    if (handoffs.length > 0) {
+      let rows = handoffs.map(h => `<tr><td><span class="tag ${h.tag === 'aluno' ? 'tag-op' : 'tag-mk'}">${h.tag || '—'}</span></td><td style="font-size:0.813rem">${h.razao || '—'}</td><td>${h.created_at?.substring(0,16).replace('T',' ') || '—'}</td></tr>`).join('');
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-6" style="grid-column: 1 / -1"><h3>Escalações para Equipa (${handoffs.length})</h3><table class="data-table"><thead><tr><th>Tipo</th><th>Razão</th><th>Data</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    }
+  }
+
+  // Georgina Moura: leads recent table full-width
+  if (context === 'credit_qualifier') {
+    const ext2 = data.extended || {};
+    const leads = ext2.leads_recent || [];
+    if (leads.length > 0) {
+      const cleanPhone = (p) => p ? String(p).split('@')[0].replace(/^351/, '').replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3') : '—';
+      const stateBadge = (s) => s === 'encaminhada' ? `<span class="tag tag-mk">Encaminhada</span>` : s ? `<span class="tag tag-op">${s}</span>` : '—';
+      let rows = leads.map(l => `<tr><td>${l.nome || '—'}</td><td>${cleanPhone(l.telefone)}</td><td style="font-size:0.813rem">${l.objetivo_contacto || '—'}</td><td>${l.tem_credito_habitacao || '—'}</td><td>${stateBadge(l.estado)}</td><td>${l.created_at?.substring(0,10) || '—'}</td></tr>`).join('');
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-6" style="grid-column: 1 / -1"><h3>Leads Recolhidos (${leads.length})</h3><table class="data-table"><thead><tr><th>Nome</th><th>Contacto</th><th>Objetivo</th><th>Crédito Habitação</th><th>Estado</th><th>Data</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    }
+  }
+
   return `
     <div class="section-title fade-in fade-in-1">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7066A8" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
@@ -292,29 +439,126 @@ function renderChatbotSection(client, data, clicks) {
 // ---- Messaging Section ----
 function renderMessagingSection(client, data) {
   const totalOp = data.total_operacionais;
-  const totalAuto = data.total_automaticas;
+  const totalMkt = data.total_marketing || data.total_automaticas;
   const totalMsgs = data.messages_sent;
   const totalOrders = data.total_orders;
   const totalRevenue = data.total_revenue;
-  const hasOp = totalOp > 0;
-  const hasAuto = totalAuto > 0;
-
-  let tableRows = '';
-  data.operacionais.forEach(r => {
-    tableRows += `<tr><td>${r.tipo}</td><td><span class="tag tag-op">Operacional</span></td><td class="num">${formatNumber(r.total)}</td></tr>`;
-  });
-  data.automaticas.forEach(r => {
-    tableRows += `<tr><td>${r.tipo}</td><td><span class="tag tag-mk">Marketing</span></td><td class="num">${formatNumber(r.total)}</td></tr>`;
-  });
-
   const totalClicked = data.total_clicked || 0;
   const clickRate = data.click_rate || 0;
+  const cost = client.costPerMessage || 0; // €/msg
 
+  // ===== Top KPIs =====
   let kpiCards = kpiCard('Total Mensagens', totalMsgs, '', 2);
-  if (hasOp) kpiCards += kpiCard('Operacionais', totalOp, hasOp && hasAuto ? 'morada, MB, MBWay' : '', 3);
-  if (hasAuto) kpiCards += kpiCard('Marketing', totalAuto, hasOp && hasAuto ? 'carrinhos, upsell' : '', hasOp ? 4 : 3);
-  if (totalClicked > 0) kpiCards += kpiCard('Cliques', totalClicked, `${clickRate.toFixed(1)}% taxa de clique`, hasOp && hasAuto ? 5 : 4);
-  if (totalOrders > 0) kpiCards += kpiCard('Encomendas', totalOrders, `${formatNumber(totalRevenue)}€ receita`, 5);
+  if (totalOp > 0) kpiCards += kpiCard('Operacionais', totalOp, 'morada, MB, MBWay', 3);
+  if (totalMkt > 0) kpiCards += kpiCard('Marketing', totalMkt, 'carrinhos, upsell, recuperação', 4);
+  if (totalClicked > 0) kpiCards += kpiCard('Cliques', totalClicked, `${clickRate.toFixed(1)}% taxa de clique`, 5);
+  if (totalOrders > 0) kpiCards += kpiCard('Encomendas', totalOrders, `${formatNumber(totalRevenue)}€ receita`, 6);
+
+  // ===== Cost & ROI Section (clientes com costPerMessage) =====
+  let costRoiSection = '';
+  if (cost > 0 && totalMsgs > 0) {
+    const globalCost = totalMsgs * cost;
+    const netMargin = totalRevenue - globalCost;
+    const roiPct = globalCost > 0 ? (netMargin / globalCost) * 100 : 0;
+    const roasMult = globalCost > 0 ? totalRevenue / globalCost : 0;
+    const positive = netMargin >= 0;
+    const marginColor = positive ? '#00D4AA' : '#FF6B6B';
+    const costFmt = cost.toFixed(2).replace('.', ',');
+
+    costRoiSection = `
+      <div class="section-title fade-in fade-in-1" style="margin-top:24px;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7066A8" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+        Custo & ROI
+      </div>
+      <div class="kpi-grid">
+        <div class="kpi-card glass fade-in fade-in-2">
+          <div class="kpi-label">Custo Total</div>
+          <div class="kpi-value" data-count="${Math.round(globalCost)}" data-suffix="€">0</div>
+          <div class="kpi-sub">${formatNumber(totalMsgs)} × ${costFmt}€/msg</div>
+        </div>
+        <div class="kpi-card glass fade-in fade-in-3">
+          <div class="kpi-label">Receita Atribuída</div>
+          <div class="kpi-value" data-count="${Math.round(totalRevenue)}" data-suffix="€">0</div>
+          <div class="kpi-sub">${totalOrders} encomendas</div>
+        </div>
+        <div class="kpi-card glass fade-in fade-in-4">
+          <div class="kpi-label">Margem Líquida</div>
+          <div class="kpi-value" style="color:${marginColor};" data-count="${Math.round(netMargin)}" data-suffix="€">0</div>
+          <div class="kpi-sub">receita − custo</div>
+        </div>
+        <div class="kpi-card glass fade-in fade-in-5">
+          <div class="kpi-label">ROI</div>
+          <div class="kpi-value" style="color:${marginColor};" data-count="${Math.round(roiPct)}" data-suffix="%">0</div>
+          <div class="kpi-sub">${roasMult.toFixed(2)}x ROAS</div>
+        </div>
+      </div>
+    `;
+  }
+
+  // ===== Tabela Operacionais =====
+  let opSection = '';
+  if (totalOp > 0) {
+    const opRows = (data.operacionais || []).slice().sort((a,b)=>b.total-a.total).map(r =>
+      `<tr><td>${prettyMsgType(r.tipo)}</td><td class="num">${formatNumber(r.total)}</td></tr>`
+    ).join('');
+    opSection = `
+      <div class="chart-card glass fade-in fade-in-5">
+        <h3>Mensagens Operacionais</h3>
+        <p style="color:#9b95b8;font-size:12px;margin:-4px 0 12px 0;">Confirmações transacionais — sem receita atribuída</p>
+        <table class="data-table"><thead><tr><th>Tipo</th><th>Enviadas</th></tr></thead><tbody>${opRows}</tbody></table>
+      </div>
+    `;
+  }
+
+  // ===== Tabela Marketing ROI =====
+  let mkSection = '';
+  if (totalMkt > 0 && (data.marketing || []).length > 0) {
+    // Best performer por categoria (maior receita)
+    const bestByCat = {};
+    data.marketing.forEach(m => {
+      if (m.revenue > 0 && (!bestByCat[m.categoria] || m.revenue > bestByCat[m.categoria].revenue)) {
+        bestByCat[m.categoria] = m;
+      }
+    });
+
+    const mkRows = data.marketing.map(m => {
+      const seqLabel = m.sequence == null ? '—' : `Msg ${m.sequence}`;
+      const isBest = bestByCat[m.categoria] === m;
+      const trophy = isBest ? ' 🥇' : '';
+      const rowCost = cost > 0 ? m.sends * cost : 0;
+      const rowMargin = m.revenue - rowCost;
+      let roiCell = '<td class="num" style="color:#9b95b8;">—</td>';
+      if (cost > 0 && rowCost > 0) {
+        const rowRoi = ((rowMargin / rowCost) * 100);
+        const color = rowMargin >= 0 ? '#00D4AA' : '#FF6B6B';
+        roiCell = `<td class="num" style="color:${color};font-weight:600;">${rowRoi.toFixed(0)}%</td>`;
+      } else if (m.revenue > 0) {
+        roiCell = `<td class="num">${m.revenue_per_msg.toFixed(2)}€/msg</td>`;
+      }
+      return `<tr>
+        <td>${prettyMsgType(m.categoria)}${trophy}</td>
+        <td class="num">${seqLabel}</td>
+        <td class="num">${formatNumber(m.sends)}</td>
+        <td class="num">${formatNumber(m.clicks)}</td>
+        <td class="num">${m.click_rate.toFixed(1)}%</td>
+        <td class="num">${formatNumber(m.orders)}</td>
+        <td class="num">${formatNumber(m.revenue)}€</td>
+        ${roiCell}
+      </tr>`;
+    }).join('');
+    const roiHeader = cost > 0 ? 'ROI' : '€/msg';
+    const costNote = cost > 0 ? ` · Custo ${cost.toFixed(2).replace('.', ',')}€/msg` : '';
+    mkSection = `
+      <div class="chart-card glass fade-in fade-in-6">
+        <h3>Marketing — Performance por Tipo & Sequência</h3>
+        <p style="color:#9b95b8;font-size:12px;margin:-4px 0 12px 0;">Receita atribuída a cada mensagem · 🥇 melhor performer por tipo${costNote}</p>
+        <table class="data-table" style="font-size:13px;">
+          <thead><tr><th>Tipo</th><th>Msg</th><th>Enviadas</th><th>Cliques</th><th>CTR</th><th>Encom.</th><th>Receita</th><th>${roiHeader}</th></tr></thead>
+          <tbody>${mkRows}</tbody>
+        </table>
+      </div>
+    `;
+  }
 
   return `
     <div class="section-title fade-in fade-in-1">
@@ -322,13 +566,29 @@ function renderMessagingSection(client, data) {
       Mensagens Automáticas
     </div>
     <div class="kpi-grid">${kpiCards}</div>
-    <div class="charts-grid">
-      <div class="chart-card glass fade-in fade-in-5"><h3>Distribuição por Tipo</h3><div class="chart-container" id="chart-msg-types"></div></div>
-      <div class="chart-card glass fade-in fade-in-6"><h3>Detalhe por Categoria</h3>
-        ${tableRows ? `<table class="data-table"><thead><tr><th>Categoria</th><th>Tipo</th><th>Total</th></tr></thead><tbody>${tableRows}</tbody></table>` : '<p class="no-data">Sem dados.</p>'}
-      </div>
+    ${costRoiSection}
+    <div class="charts-grid" style="margin-top:24px;">
+      <div class="chart-card glass fade-in fade-in-4"><h3>Distribuição por Tipo</h3><div class="chart-container" id="chart-msg-types"></div></div>
+      ${opSection}
+      ${mkSection}
     </div>
   `;
+}
+
+function prettyMsgType(t) {
+  const map = {
+    MBWAY: 'MBWay',
+    MULTIBANCO: 'Multibanco',
+    MORADA: 'Morada',
+    UNBOXING: 'Unboxing',
+    'CÓDIGO POSTAL': 'Código Postal',
+    winback_21d: 'Recuperação 21d',
+    winback_45d: 'Recuperação 45d',
+    winback_60d: 'Recuperação 60d',
+    recovery: 'Carrinho Abandonado',
+    upsell: 'Upsell'
+  };
+  return map[t] || t;
 }
 
 // ---- Insights Section ----
@@ -347,11 +607,12 @@ function renderInsightsSection(insight) {
 }
 
 // ---- KPI Card Helpers ----
-function kpiCard(label, value, sub, fadeN, colorClass) {
+function kpiCard(label, value, sub, fadeN, colorClass, suffix) {
+  const suffixAttr = suffix ? ` data-suffix="${suffix}"` : '';
   return `
     <div class="kpi-card glass fade-in fade-in-${fadeN}">
       <div class="kpi-label">${label}</div>
-      <div class="kpi-value ${colorClass || ''}" data-count="${value}">0</div>
+      <div class="kpi-value ${colorClass || ''}" data-count="${value}"${suffixAttr}>0</div>
       ${sub ? `<div class="kpi-sub">${sub}</div>` : ''}
     </div>`;
 }
@@ -363,4 +624,104 @@ function kpiCardPercent(label, value, fadeN, colorClass) {
       <div class="kpi-value ${colorClass || ''}" data-count="${value}" data-suffix="%">0</div>
       <div class="kpi-sub">sem intervenção humana</div>
     </div>`;
+}
+
+// ============================================================
+// Dynamic insight generation based on real data
+// ============================================================
+function generateInsight(slug, client, chatbot, messaging, clicks) {
+  if (!chatbot && !messaging) return null;
+
+  const periodLabel = currentPeriod === 'this-month' ? 'este mês' : currentPeriod === 'last-month' ? 'no mês anterior' : `nos últimos ${currentPeriod.replace('d', ' dias')}`;
+  const bits = [];
+
+  // ---- Chatbot insights ----
+  if (chatbot) {
+    const total = chatbot.total_conversations || 0;
+    const aiRate = chatbot.ai_resolution_rate || 0;
+    const aiMsgs = chatbot.messages_ai || 0;
+    const offHours = chatbot.extended?.off_hours;
+    const context = client.context;
+
+    if (total > 0) {
+      // Opening line
+      if (context === 'porteiro') {
+        bits.push(`O agente processou <strong>${total.toLocaleString('pt-PT')} conversas</strong>, resolvendo <strong>${Math.round(aiRate)}% sem intervenção humana</strong>.`);
+      } else if (context === 'qualificador') {
+        const cls = chatbot.extended?.classification;
+        const novos = parseInt(cls?.novos_leads) || 0;
+        const existentes = parseInt(cls?.clientes_existentes) || 0;
+        bits.push(`A IA processou <strong>${total.toLocaleString('pt-PT')} conversas</strong>, identificando <strong>${existentes} clientes existentes</strong> e qualificando <strong>${novos} novos leads</strong> com recolha de dados completa.`);
+      } else if (context === 'leads') {
+        const leadsCount = chatbot.leads_period || 0;
+        bits.push(`O agente processou <strong>${total.toLocaleString('pt-PT')} conversas</strong> ${periodLabel}, com taxa de resolução de <strong>${Math.round(aiRate)}%</strong>${leadsCount > 0 ? ` e <strong>${leadsCount} leads recolhidos</strong>` : ''}.`);
+      } else if (context === 'lead_gen') {
+        const leads = chatbot.total_leads || 0;
+        const convRate = chatbot.conversion_rate || 0;
+        bits.push(`O sistema de lead gen Instagram gerou <strong>${leads} leads registados</strong> de ${chatbot.unique_users || total} utilizadores únicos (${convRate.toFixed(1)}% conversão).`);
+      } else {
+        bits.push(`O agente processou <strong>${total.toLocaleString('pt-PT')} conversas</strong> ${periodLabel}, resolvendo <strong>${Math.round(aiRate)}%</strong> sem intervenção humana.`);
+      }
+
+      // Off-hours insight
+      if (offHours && parseFloat(offHours.off_hours_pct) > 20) {
+        const pct = Math.round(parseFloat(offHours.off_hours_pct));
+        bits.push(`<strong>${pct}% das mensagens</strong> chegam fora de horário comercial (fim-de-semana ou depois das 18h) — o valor do atendimento 24/7 é visível aqui.`);
+      }
+
+      // Multi-platform insight
+      if (chatbot.platforms?.length > 1) {
+        const top = [...chatbot.platforms].sort((a, b) => (b.total_conversations || 0) - (a.total_conversations || 0))[0];
+        const topPct = total > 0 ? Math.round((top.total_conversations / total) * 100) : 0;
+        bits.push(`O canal principal é <strong>${top.plataforma}</strong> com ${topPct}% das conversas.`);
+      }
+
+      // IA vs team multiplier (EcoDrive-style)
+      if (context === 'leads' && chatbot.extended?.daily?.[0]?.team_msgs !== undefined) {
+        const aiTotal = chatbot.extended.daily.reduce((s, d) => s + (parseInt(d.ai_msgs) || 0), 0);
+        const teamTotal = chatbot.extended.daily.reduce((s, d) => s + (parseInt(d.team_msgs) || 0), 0);
+        if (teamTotal > 0 && aiTotal > 0) {
+          const mult = (aiTotal / teamTotal).toFixed(1);
+          bits.push(`A IA respondeu <strong>${mult}× mais mensagens</strong> que a equipa humana no período.`);
+        }
+      }
+
+      // Clicks
+      const kuttClicks = clicks?.total_clicks || 0;
+      if (kuttClicks > 0) {
+        bits.push(`O agente gerou <strong>${kuttClicks.toLocaleString('pt-PT')} cliques</strong> em links partilhados com clientes.`);
+      }
+    }
+  }
+
+  // ---- Messaging insights ----
+  if (messaging) {
+    const totalMsgs = messaging.messages_sent || 0;
+    const totalOrders = messaging.total_orders || 0;
+    const totalRevenue = messaging.total_revenue || 0;
+    const clickRate = messaging.click_rate || 0;
+
+    if (totalMsgs > 0) {
+      let msgBit = `No lado das mensagens automáticas, foram enviadas <strong>${totalMsgs.toLocaleString('pt-PT')} mensagens</strong>`;
+      if (clickRate > 0) msgBit += ` (${clickRate.toFixed(1)}% taxa de clique)`;
+      msgBit += '.';
+      bits.push(msgBit);
+
+      if (totalOrders > 0) {
+        bits.push(`Estas campanhas geraram <strong>${totalOrders} encomendas atribuídas</strong> (${totalRevenue.toLocaleString('pt-PT', { minimumFractionDigits: 2 })}€ em receita).`);
+      }
+    }
+  }
+
+  if (bits.length === 0) return null;
+
+  // Pick a period label
+  const today = new Date();
+  const monthNames = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  const monthLabel = `${monthNames[today.getMonth()]} ${today.getFullYear()}`;
+
+  return {
+    month: monthLabel,
+    text: bits.join(' ')
+  };
 }

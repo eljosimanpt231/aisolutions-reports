@@ -69,18 +69,20 @@ function initChatbotCharts(client, data) {
     return; // skip standard charts
   }
 
-  // EcoDrive platform breakdown chart
-  if (client.context === 'leads' && data.platforms?.length > 1 && document.getElementById('chart-platforms')) {
-    new ApexCharts(document.getElementById('chart-platforms'), {
-      ...baseChartOptions,
-      chart: { ...baseChartOptions.chart, type: 'bar', height: 260 },
-      series: [{ name: 'Conversas', data: data.platforms.map(p => p.total_conversations || 0) }],
-      xaxis: { categories: data.platforms.map(p => p.plataforma || 'Desconhecido') },
-      colors: [COLORS.primary, COLORS.accent],
-      plotOptions: { bar: { borderRadius: 8, columnWidth: '50%', distributed: true, dataLabels: { position: 'top' } } },
-      dataLabels: { enabled: true, offsetY: -20, style: { fontSize: '13px', fontWeight: 700, colors: ['#e8e6f0'] } },
-      legend: { show: false }
-    }).render();
+  // Platform breakdown chart (any client with multiple Chatwoot inboxes)
+  if (data.platforms?.length > 1 && document.getElementById('chart-platforms')) {
+    try {
+      new ApexCharts(document.getElementById('chart-platforms'), {
+        ...baseChartOptions,
+        chart: { ...baseChartOptions.chart, type: 'bar', height: 260 },
+        series: [{ name: 'Conversas', data: data.platforms.map(p => parseInt(p.total_conversations) || 0) }],
+        xaxis: { categories: data.platforms.map(p => p.plataforma || 'Desconhecido') },
+        colors: [COLORS.primary, COLORS.accent],
+        plotOptions: { bar: { borderRadius: 8, columnWidth: '50%', distributed: true, dataLabels: { position: 'top' } } },
+        dataLabels: { enabled: true, offsetY: -20, style: { fontSize: '13px', fontWeight: 700, colors: ['#e8e6f0'] } },
+        legend: { show: false }
+      }).render();
+    } catch(e) { console.error('chart-platforms err:', e); }
   }
 
   // Channels bar chart — use actual channels from API data, not config
@@ -129,60 +131,49 @@ function initChatbotCharts(client, data) {
       ? (total > 0 ? Math.round((aiOnly / total) * 100) : 0)
       : aiPercent;
 
-    new ApexCharts(document.getElementById('chart-ai-human'), {
-      ...baseChartOptions,
-      chart: { ...baseChartOptions.chart, type: 'radialBar', height: 280 },
-      series: [displayPercent],
-      plotOptions: {
-        radialBar: {
-          startAngle: -135,
-          endAngle: 135,
-          hollow: { size: '65%', background: 'transparent' },
-          track: {
-            background: 'rgba(255,255,255,0.05)',
-            strokeWidth: '100%'
-          },
-          dataLabels: {
-            name: { show: true, fontSize: '13px', color: COLORS.text, offsetY: -10 },
-            value: { show: true, fontSize: '36px', fontWeight: 700, color: '#e8e6f0', offsetY: 5, formatter: (v) => v + '%' }
+    try {
+      new ApexCharts(document.getElementById('chart-ai-human'), {
+        ...baseChartOptions,
+        chart: { ...baseChartOptions.chart, type: 'radialBar', height: 280 },
+        series: [displayPercent],
+        plotOptions: {
+          radialBar: {
+            startAngle: -135,
+            endAngle: 135,
+            hollow: { size: '65%', background: 'transparent' },
+            track: { background: 'rgba(255,255,255,0.05)', strokeWidth: '100%' },
+            dataLabels: {
+              name: { show: true, fontSize: '13px', color: COLORS.text, offsetY: -10 },
+              value: { show: true, fontSize: '36px', fontWeight: 700, color: '#e8e6f0', offsetY: 5, formatter: (v) => v + '%' }
+            }
           }
-        }
-      },
-      colors: [isQualificador ? COLORS.accent : (aiPercent >= 70 ? COLORS.accent : aiPercent >= 50 ? COLORS.warning : COLORS.danger)],
-      labels: [label],
-      stroke: { lineCap: 'round' }
-    }).render();
+        },
+        colors: [isQualificador ? COLORS.accent : (aiPercent >= 70 ? COLORS.accent : aiPercent >= 50 ? COLORS.warning : COLORS.danger)],
+        labels: [label],
+        stroke: { lineCap: 'round' }
+      }).render();
+    } catch(e) { console.error('chart-ai-human err:', e); }
   }
 
   // Hourly distribution
   if (document.getElementById('chart-hours') && data.hourly_distribution) {
-    new ApexCharts(document.getElementById('chart-hours'), {
-      ...baseChartOptions,
-      chart: { ...baseChartOptions.chart, type: 'area', height: 260 },
-      series: [{
-        name: 'Mensagens',
-        data: data.hourly_distribution.map(h => h.count)
-      }],
-      xaxis: {
-        categories: data.hourly_distribution.map(h => `${h.hour}h`),
-        labels: { style: { fontSize: '10px' }, rotate: 0 },
-        axisBorder: { show: false },
-        axisTicks: { show: false }
-      },
-      yaxis: { labels: { style: { fontSize: '11px' } } },
-      colors: [COLORS.primary],
-      fill: {
-        type: 'gradient',
-        gradient: {
-          shadeIntensity: 1,
-          opacityFrom: 0.4,
-          opacityTo: 0.05,
-          stops: [0, 100]
-        }
-      },
-      stroke: { curve: 'smooth', width: 2.5 },
-      dataLabels: { enabled: false }
-    }).render();
+    try {
+      new ApexCharts(document.getElementById('chart-hours'), {
+        ...baseChartOptions,
+        chart: { ...baseChartOptions.chart, type: 'area', height: 260 },
+        series: [{ name: 'Mensagens', data: data.hourly_distribution.map(h => h.count) }],
+        xaxis: {
+          categories: data.hourly_distribution.map(h => `${h.hour}h`),
+          labels: { style: { fontSize: '10px' }, rotate: 0 },
+          axisBorder: { show: false }, axisTicks: { show: false }
+        },
+        yaxis: { labels: { style: { fontSize: '11px' } } },
+        colors: [COLORS.primary],
+        fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0.05, stops: [0, 100] } },
+        stroke: { curve: 'smooth', width: 2.5 },
+        dataLabels: { enabled: false }
+      }).render();
+    } catch(e) { console.error('chart-hours err:', e); }
   }
 }
 
@@ -193,25 +184,204 @@ function initExtendedCharts(data) {
   const ext = data?.extended;
   if (!ext) return;
 
+  // Abadias: Alunos vs Leads donut
+  if (ext.breakdown && document.getElementById('chart-abadias-split')) {
+    try {
+      const b = ext.breakdown;
+      const alunos = parseInt(b.alunos_total) || 0;
+      const leads = parseInt(b.leads_total) || 0;
+      new ApexCharts(document.getElementById('chart-abadias-split'), {
+        ...baseChartOptions,
+        chart: { ...baseChartOptions.chart, type: 'donut', height: 280 },
+        series: [alunos, leads],
+        labels: ['Alunos', 'Leads'],
+        colors: [COLORS.accent, COLORS.primary],
+        plotOptions: { pie: { donut: { size: '65%', labels: { show: true, total: { show: true, label: 'Total', color: COLORS.text, formatter: (w) => w.globals.seriesTotals.reduce((a, b) => a + b, 0).toLocaleString('pt-PT') }, value: { color: '#e8e6f0', fontSize: '24px', fontWeight: 700 } } } } },
+        legend: { position: 'bottom', labels: { colors: COLORS.text } },
+        dataLabels: { enabled: false },
+        stroke: { width: 0 }
+      }).render();
+    } catch(e) { console.error('chart-abadias-split err:', e); }
+  }
+
+  // Abadias: Resolução IA por tipo (stacked 100% bar)
+  if (ext.breakdown && document.getElementById('chart-abadias-resolucao')) {
+    try {
+      const b = ext.breakdown;
+      const alunosOnly = parseInt(b.alunos_resolvidos_ia) || 0;
+      const alunosHum = parseInt(b.alunos_com_humano) || 0;
+      const leadsOnly = parseInt(b.leads_resolvidos_ia) || 0;
+      const leadsHum = parseInt(b.leads_com_humano) || 0;
+      new ApexCharts(document.getElementById('chart-abadias-resolucao'), {
+        ...baseChartOptions,
+        chart: { ...baseChartOptions.chart, type: 'bar', height: 280, stacked: true, stackType: '100%' },
+        series: [
+          { name: 'Resolvidas pela IA', data: [alunosOnly, leadsOnly] },
+          { name: 'Escaladas para humano', data: [alunosHum, leadsHum] }
+        ],
+        xaxis: { categories: [`Alunos (${alunosOnly + alunosHum})`, `Leads (${leadsOnly + leadsHum})`] },
+        colors: [COLORS.accent, COLORS.warning],
+        plotOptions: { bar: { borderRadius: 6, columnWidth: '55%' } },
+        dataLabels: { enabled: true, formatter: (v) => v >= 5 ? Math.round(v) + '%' : '', style: { fontSize: '12px', fontWeight: 700, colors: ['#0a0a1a'] } },
+        legend: { position: 'top', labels: { colors: COLORS.text } }
+      }).render();
+    } catch(e) { console.error('chart-abadias-resolucao err:', e); }
+  }
+
+  // Abadias: Inboxes
+  if (ext.inboxes?.length > 0 && document.getElementById('chart-abadias-inboxes')) {
+    try {
+      const INBOX_LABELS = { 'WP Figueiras': 'Figueira da Foz', 'WP - Marinha': 'Marinha Grande', 'ecabadias': 'EC Abadias' };
+      const items = ext.inboxes;
+      new ApexCharts(document.getElementById('chart-abadias-inboxes'), {
+        ...baseChartOptions,
+        chart: { ...baseChartOptions.chart, type: 'bar', height: 280 },
+        series: [{ name: 'Conversas', data: items.map(i => parseInt(i.total_conversations) || 0) }],
+        xaxis: { categories: items.map(i => INBOX_LABELS[i.plataforma] || i.plataforma) },
+        colors: [COLORS.primary],
+        plotOptions: { bar: { borderRadius: 8, columnWidth: '50%', distributed: true, dataLabels: { position: 'top' } } },
+        dataLabels: { enabled: true, offsetY: -20, style: { fontSize: '13px', fontWeight: 700, colors: ['#e8e6f0'] } },
+        legend: { show: false }
+      }).render();
+    } catch(e) { console.error('chart-abadias-inboxes err:', e); }
+  }
+
+  // Abadias: Categorias de leads
+  if (ext.leads_categorias?.length > 0 && document.getElementById('chart-abadias-categorias')) {
+    try {
+      const items = ext.leads_categorias.slice(0, 8);
+      new ApexCharts(document.getElementById('chart-abadias-categorias'), {
+        ...baseChartOptions,
+        chart: { ...baseChartOptions.chart, type: 'bar', height: 280 },
+        series: [{ name: 'Leads', data: items.map(i => parseInt(i.total) || 0) }],
+        xaxis: { categories: items.map(i => i.categoria_interesse || 'Outro') },
+        colors: [COLORS.accent],
+        plotOptions: { bar: { horizontal: true, borderRadius: 6, barHeight: '60%' } },
+        dataLabels: { enabled: true, style: { colors: ['#e8e6f0'], fontSize: '12px', fontWeight: 700 } },
+        legend: { show: false }
+      }).render();
+    } catch(e) { console.error('chart-abadias-categorias err:', e); }
+  }
+
+  // Georgina Moura: Leads by source donut
+  if (ext.leads_by_source?.length > 0 && document.getElementById('chart-leads-sources')) {
+    try {
+      const SRC_LABELS = { reactivation: 'Reativação', inbound: 'Inbound (WA)', historico_escuta: 'Histórico / Escuta', meta_ads: 'Meta Ads' };
+      const items = ext.leads_by_source;
+      new ApexCharts(document.getElementById('chart-leads-sources'), {
+        ...baseChartOptions,
+        chart: { ...baseChartOptions.chart, type: 'donut', height: 280 },
+        series: items.map(s => parseInt(s.total) || 0),
+        labels: items.map(s => SRC_LABELS[s.source] || s.source),
+        colors: [COLORS.primary, COLORS.accent, COLORS.warning, COLORS.primaryLight],
+        plotOptions: { pie: { donut: { size: '60%', labels: { show: true, total: { show: true, label: 'Total', color: COLORS.text, formatter: (w) => w.globals.seriesTotals.reduce((a, b) => a + b, 0).toLocaleString('pt-PT') }, value: { color: '#e8e6f0', fontSize: '22px', fontWeight: 700 } } } } },
+        legend: { position: 'bottom', labels: { colors: COLORS.text }, fontSize: '12px' },
+        dataLabels: { enabled: false },
+        stroke: { width: 0 }
+      }).render();
+    } catch(e) { console.error('chart-leads-sources err:', e); }
+  }
+
+  // Georgina Moura: Objetivos bar chart
+  if (ext.leads_objetivos?.length > 0 && document.getElementById('chart-objetivos')) {
+    try {
+      const OBJ_LABELS = { pedir_credito: 'Pedir Crédito', juntar_creditos: 'Juntar Créditos', baixar_mensalidade: 'Baixar Mensalidade', credito_habitacao: 'Crédito Habitação', outro: 'Outro' };
+      const items = ext.leads_objetivos.slice(0, 8);
+      new ApexCharts(document.getElementById('chart-objetivos'), {
+        ...baseChartOptions,
+        chart: { ...baseChartOptions.chart, type: 'bar', height: 280 },
+        series: [{ name: 'Leads', data: items.map(i => parseInt(i.total) || 0) }],
+        xaxis: { categories: items.map(i => OBJ_LABELS[i.objetivo] || i.objetivo) },
+        colors: [COLORS.primary],
+        plotOptions: { bar: { horizontal: true, borderRadius: 6, barHeight: '60%' } },
+        dataLabels: { enabled: true, style: { colors: ['#e8e6f0'], fontSize: '12px', fontWeight: 700 } },
+        legend: { show: false }
+      }).render();
+    } catch(e) { console.error('chart-objetivos err:', e); }
+  }
+
+  // Georgina Moura: Qualification rate by source (stacked bar — qualified vs em_qualificacao vs novas)
+  if (ext.qualification_by_source?.length > 0 && document.getElementById('chart-qualif-rate')) {
+    try {
+      const SRC_LABELS = { reactivation: 'Reativação', inbound: 'Inbound', historico_escuta: 'Histórico', meta_ads: 'Meta Ads' };
+      const items = ext.qualification_by_source;
+      new ApexCharts(document.getElementById('chart-qualif-rate'), {
+        ...baseChartOptions,
+        chart: { ...baseChartOptions.chart, type: 'bar', height: 280, stacked: true, stackType: '100%' },
+        series: [
+          { name: 'Qualificadas', data: items.map(i => parseInt(i.qualificadas) || 0) },
+          { name: 'Em Qualificação', data: items.map(i => parseInt(i.em_qualificacao) || 0) },
+          { name: 'Novas', data: items.map(i => parseInt(i.novas) || 0) }
+        ],
+        xaxis: { categories: items.map(i => `${SRC_LABELS[i.source] || i.source} (${i.total})`) },
+        colors: [COLORS.accent, COLORS.warning, '#6B7280'],
+        plotOptions: { bar: { borderRadius: 4, columnWidth: '55%', dataLabels: { position: 'center' } } },
+        dataLabels: { enabled: true, formatter: (v) => v >= 5 ? Math.round(v) + '%' : '', style: { fontSize: '11px', fontWeight: 700, colors: ['#0a0a1a'] } },
+        legend: { position: 'top', labels: { colors: COLORS.text } }
+      }).render();
+    } catch(e) { console.error('chart-qualif-rate err:', e); }
+  }
+
+  // OdiSeguros: Classification donut
+  if (ext.classification && document.getElementById('chart-classification')) {
+    try {
+      const cls = ext.classification;
+      const existentes = parseInt(cls.clientes_existentes) || 0;
+      const novos = parseInt(cls.novos_leads) || 0;
+      const intH = parseInt(cls.intervencao_humana) || 0;
+      const naoClass = parseInt(cls.nao_classificados) || 0;
+      new ApexCharts(document.getElementById('chart-classification'), {
+        ...baseChartOptions,
+        chart: { ...baseChartOptions.chart, type: 'donut', height: 280 },
+        series: [existentes, novos, intH, naoClass],
+        labels: ['Clientes Existentes', 'Novos Leads', 'Intervenção Humana', 'Em Qualificação'],
+        colors: ['#6B7280', COLORS.accent, COLORS.warning, COLORS.primaryLight],
+        plotOptions: { pie: { donut: { size: '60%', labels: { show: true, total: { show: true, label: 'Total', color: COLORS.text, formatter: (w) => w.globals.seriesTotals.reduce((a, b) => a + b, 0).toLocaleString('pt-PT') }, value: { color: '#e8e6f0', fontSize: '22px', fontWeight: 700 } } } } },
+        legend: { position: 'bottom', labels: { colors: COLORS.text }, fontSize: '12px' },
+        dataLabels: { enabled: false },
+        stroke: { width: 0 }
+      }).render();
+    } catch(e) { console.error('chart-classification err:', e); }
+  }
+
+  // OdiSeguros: Ramos bar chart
+  if (ext.ramos?.length > 0 && document.getElementById('chart-ramos')) {
+    try {
+      const RAMO_LABELS = { automovel_particular: 'Auto Particular', automovel_empresa: 'Auto Empresa', tvde: 'TVDE', saude_dental: 'Saúde Dental', multiriscos_habitacao: 'Multirriscos', acidentes_trabalho: 'Acidentes Trabalho', vida_credito: 'Vida / Crédito', responsabilidade_civil: 'Resp. Civil' };
+      const top = ext.ramos.slice(0, 8);
+      new ApexCharts(document.getElementById('chart-ramos'), {
+        ...baseChartOptions,
+        chart: { ...baseChartOptions.chart, type: 'bar', height: 280 },
+        series: [{ name: 'Contactos', data: top.map(r => parseInt(r.total) || 0) }],
+        xaxis: { categories: top.map(r => RAMO_LABELS[r.ramo] || r.ramo) },
+        colors: [COLORS.primary],
+        plotOptions: { bar: { horizontal: true, borderRadius: 6, barHeight: '60%' } },
+        dataLabels: { enabled: true, style: { colors: ['#e8e6f0'], fontSize: '12px', fontWeight: 700 } },
+        legend: { show: false }
+      }).render();
+    } catch(e) { console.error('chart-ramos err:', e); }
+  }
+
   // Daily trend chart — EcoDrive format {day, conversations, ai_msgs, team_msgs, customer_msgs}
   if (ext.daily?.length > 0 && ext.daily[0]?.conversations !== undefined && document.getElementById('chart-daily')) {
-    const days = ext.daily.map(d => d.day);
-    new ApexCharts(document.getElementById('chart-daily'), {
-      ...baseChartOptions,
-      chart: { ...baseChartOptions.chart, type: 'area', height: 280 },
-      series: [
-        { name: 'Conversas', data: ext.daily.map(d => parseInt(d.conversations) || 0) },
-        { name: 'Msgs IA', data: ext.daily.map(d => parseInt(d.ai_msgs) || 0) },
-        { name: 'Equipa', data: ext.daily.map(d => parseInt(d.team_msgs) || 0) },
-        { name: 'Cliente', data: ext.daily.map(d => parseInt(d.customer_msgs) || 0) }
-      ],
-      xaxis: { categories: days, labels: { rotate: -45, style: { fontSize: '9px' }, formatter: (v) => v?.substring(5) || '' } },
-      colors: [COLORS.accent, COLORS.primary, COLORS.warning, '#555'],
-      stroke: { curve: 'smooth', width: 2 },
-      fill: { type: 'gradient', gradient: { opacityFrom: 0.25, opacityTo: 0.02 } },
-      dataLabels: { enabled: false },
-      legend: { position: 'top', labels: { colors: COLORS.text } }
-    }).render();
+    try {
+      const days = ext.daily.map(d => d.day);
+      new ApexCharts(document.getElementById('chart-daily'), {
+        ...baseChartOptions,
+        chart: { ...baseChartOptions.chart, type: 'area', height: 280 },
+        series: [
+          { name: 'Msgs IA', data: ext.daily.map(d => parseInt(d.ai_msgs) || 0) },
+          { name: 'Msgs Equipa', data: ext.daily.map(d => parseInt(d.team_msgs) || 0) },
+          { name: 'Msgs Cliente', data: ext.daily.map(d => parseInt(d.customer_msgs) || 0) }
+        ],
+        xaxis: { categories: days, labels: { rotate: -45, style: { fontSize: '9px' }, formatter: (v) => v?.substring(5) || '' } },
+        colors: [COLORS.primary, COLORS.warning, '#6B7280'],
+        stroke: { curve: 'smooth', width: 2 },
+        fill: { type: 'gradient', gradient: { opacityFrom: 0.25, opacityTo: 0.02 } },
+        dataLabels: { enabled: false },
+        legend: { position: 'top', labels: { colors: COLORS.text } }
+      }).render();
+    } catch(e) { console.error('chart-daily err:', e); }
   }
 
   // Daily trend chart — Lojinha format {day, platform, sender_type, cnt}
@@ -291,29 +461,29 @@ function initExtendedCharts(data) {
       legend: { position: 'top', labels: { colors: COLORS.text } }
     }).render();
   }
-}
 
   // Agent breakdown donut (Lojinha Bebé)
   if (ext.agentBreakdown?.length > 0 && document.getElementById('chart-agents')) {
-    // Aggregate total per agent
-    const agentTotals = {};
-    ext.agentBreakdown.forEach(r => {
-      const id = r.agent_id;
-      if (!agentTotals[id]) agentTotals[id] = 0;
-      agentTotals[id] += parseInt(r.cnt) || 0;
-    });
-    const ids = Object.keys(agentTotals).sort((a, b) => agentTotals[b] - agentTotals[a]);
-    new ApexCharts(document.getElementById('chart-agents'), {
-      ...baseChartOptions,
-      chart: { ...baseChartOptions.chart, type: 'donut', height: 280 },
-      series: ids.map(id => agentTotals[id]),
-      labels: ids.map(id => AGENT_NAMES[id] || `Agente ${id}`),
-      colors: ids.map(id => AGENT_COLORS_MAP[id] || COLORS.primary),
-      plotOptions: { pie: { donut: { size: '60%', labels: { show: true, total: { show: true, label: 'Total', color: COLORS.text, formatter: (w) => w.globals.seriesTotals.reduce((a, b) => a + b, 0).toLocaleString('pt-PT') }, value: { color: '#e8e6f0', fontSize: '22px', fontWeight: 700 } } } } },
-      legend: { position: 'bottom', labels: { colors: COLORS.text } },
-      dataLabels: { enabled: false },
-      stroke: { width: 0 }
-    }).render();
+    try {
+      const agentTotals = {};
+      ext.agentBreakdown.forEach(r => {
+        const id = r.agent_id;
+        if (!agentTotals[id]) agentTotals[id] = 0;
+        agentTotals[id] += parseInt(r.cnt) || 0;
+      });
+      const ids = Object.keys(agentTotals).sort((a, b) => agentTotals[b] - agentTotals[a]);
+      new ApexCharts(document.getElementById('chart-agents'), {
+        ...baseChartOptions,
+        chart: { ...baseChartOptions.chart, type: 'donut', height: 280 },
+        series: ids.map(id => agentTotals[id]),
+        labels: ids.map(id => AGENT_NAMES[id] || `Agente ${id}`),
+        colors: ids.map(id => AGENT_COLORS_MAP[id] || COLORS.primary),
+        plotOptions: { pie: { donut: { size: '60%', labels: { show: true, total: { show: true, label: 'Total', color: COLORS.text, formatter: (w) => w.globals.seriesTotals.reduce((a, b) => a + b, 0).toLocaleString('pt-PT') }, value: { color: '#e8e6f0', fontSize: '22px', fontWeight: 700 } } } } },
+        legend: { position: 'bottom', labels: { colors: COLORS.text } },
+        dataLabels: { enabled: false },
+        stroke: { width: 0 }
+      }).render();
+    } catch(e) { console.error('chart-agents err:', e); }
   }
 }
 

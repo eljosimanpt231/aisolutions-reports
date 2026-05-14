@@ -44,6 +44,14 @@ const INSIGHTS = {
     month: 'Abril 2026 (live desde dia 8)',
     text: `Primeiros dias em produção com o chatbot multiplataforma (WhatsApp + Instagram). O sistema responde autonomamente a questões sobre produtos, disponibilidade e compras, escalando para a equipa apenas quando necessário. À medida que a base de conhecimento cresce e os padrões de questões dos clientes vão sendo identificados, a taxa de resolução tende a melhorar significativamente nas primeiras semanas.`
   },
+  costuraurbana: {
+    month: 'Abril 2026 (live)',
+    text: `Dois agentes IA em produção via WhatsApp: um agente dedicado à <strong>loja</strong> (questões sobre produtos, encomendas e disponibilidade) e um agente de <strong>assistência técnica</strong> (suporte especializado em reparações). Complementado por mensagens automáticas de carrinho abandonado para recuperar vendas perdidas. Esta arquitetura dual permite respostas mais especializadas em cada contexto.`
+  },
+  lojaginastica: {
+    month: 'Abril 2026 (live desde dia 20)',
+    text: `Cliente acabou de entrar em produção. O agente IA responde a questões sobre produtos de ginástica, disponibilidade e encomendas via WhatsApp. O ecossistema inclui ainda mensagens automáticas de carrinho abandonado, upsell e recuperação de clientes inativos — otimizando o ciclo de conversão e retenção.`
+  },
   odiseguros: {
     month: 'Março 2026 (desde dia 25)',
     text: `Primeira semana em produção. A IA processou <strong>64 conversas</strong>, identificando automaticamente <strong>clientes existentes</strong> (que são encaminhados diretamente) e <strong>novos leads</strong> (onde recolhe dados: NIF, matrícula, data de nascimento, morada). Este trabalho de triagem e recolha de informação poupa tempo significativo à equipa antes mesmo de iniciar o atendimento.`
@@ -62,6 +70,7 @@ const CLIENTS = {
     channels: ['whatsapp', 'facebook', 'instagram'],
     schema: 'rr_customs',
     domainId: 4,
+    costPerMessage: 0.15,
     msgTables: {
       automaticas: { failFilter: 'send_failed = false' },
       operacionais: null
@@ -74,6 +83,7 @@ const CLIENTS = {
     channels: ['whatsapp', 'facebook', 'instagram'],
     schema: 'hco_cosmeticos',
     domainId: 9,
+    costPerMessage: 0.12,
     msgTables: {
       automaticas: { failFilter: 'failed_at IS NULL' },
       operacionais: { typeCol: 'tipo' }
@@ -85,7 +95,8 @@ const CLIENTS = {
     services: ['messaging'],
     channels: [],
     schema: 'fbeauty',
-    domainId: null,
+    domainId: 7,
+    costPerMessage: 0.15,
     msgTables: {
       automaticas: { failFilter: 'failed_at IS NULL' },
       operacionais: { typeCol: 'tipo' }
@@ -97,7 +108,8 @@ const CLIENTS = {
     services: ['messaging'],
     channels: [],
     schema: 'farmatogo',
-    domainId: null,
+    domainId: 6,
+    costPerMessage: 0.12,
     msgTables: {
       automaticas: { failFilter: 'send_failed = false' },
       operacionais: { typeCol: 'tipo' }
@@ -109,7 +121,8 @@ const CLIENTS = {
     services: ['messaging'],
     channels: [],
     schema: 'maninc',
-    domainId: null,
+    domainId: 8,
+    costPerMessage: 0.15,
     msgTables: {
       automaticas: { failFilter: 'failed_at IS NULL' },
       operacionais: null
@@ -121,7 +134,7 @@ const CLIENTS = {
     services: ['chatbot', 'messaging'],
     channels: ['whatsapp'],
     schema: 'teclas_da_vida',
-    domainId: null
+    domainId: 12
   },
   nowfitness: {
     name: 'Now Fitness Studio',
@@ -168,16 +181,8 @@ const CLIENTS = {
     services: ['chatbot'],
     channels: ['chatwoot'],
     schema: 'pura_rituals',
-    domainId: null,
+    domainId: 13,
     startDate: '2026-03-26'  // IA estável a partir de 26/3 (100% sessões com IA)
-  },
-  aprova: {
-    name: 'Aprova',
-    password: 'aprova2026',
-    services: ['chatbot'],
-    channels: ['whatsapp'],
-    schema: null,  // sem schema próprio
-    domainId: null
   },
   rlstore: {
     name: 'RL Store',
@@ -185,7 +190,45 @@ const CLIENTS = {
     services: ['chatbot'],
     channels: ['chatwoot'],
     schema: 'rl_store',
-    domainId: null,
+    domainId: 15,
     startDate: '2026-04-08'  // IA live a partir de 8/4/2026
+  },
+  costuraurbana: {
+    name: 'Costura Urbana',
+    password: 'costuraurbana2026',
+    services: ['chatbot', 'messaging'],
+    channels: ['whatsapp'],  // 2 agentes WA: loja + assistência
+    schema: 'costura_urbana',
+    domainId: 11,
+    startDate: '2026-04-09'  // ajustar se necessário
+  },
+  lojaginastica: {
+    name: 'Be on Sport',
+    password: 'lojaginastica2026',
+    services: ['chatbot', 'messaging'],
+    channels: ['whatsapp'],
+    schema: 'loja_de_ginastica',
+    domainId: 14,
+    startDate: '2026-04-20'  // live 20/4/2026 12h
+  },
+  georginamoura: {
+    name: 'Georgina Moura',
+    password: 'georginamoura2026',
+    services: ['chatbot'],
+    channels: ['whatsapp'],
+    schema: 'georgina_moura',
+    domainId: null,  // sem Kutt domain
+    startDate: '2026-03-05',  // primeira mensagem 5/3
+    context: 'credit_qualifier'
+  },
+  abadias: {
+    name: 'Escola de Condução Abadias',
+    password: 'abadias2026',
+    services: ['chatbot'],
+    channels: ['chatwoot'],
+    schema: 'abadias',
+    domainId: null,
+    startDate: '2026-04-29',  // live hoje, ajustar quando user confirmar
+    context: 'driving_school'
   }
 };
