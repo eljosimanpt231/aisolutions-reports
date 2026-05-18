@@ -454,27 +454,39 @@ function renderMessagingSection(client, data) {
   if (totalClicked > 0) kpiCards += kpiCard('Cliques', totalClicked, `${clickRate.toFixed(1)}% taxa de clique`, 5);
   if (totalOrders > 0) kpiCards += kpiCard('Encomendas', totalOrders, `${formatNumber(totalRevenue)}€ receita`, 6);
 
-  // ===== Cost & ROI Section (only when costPerMessage configured) =====
+  // ===== Cost & ROI Section — ROI calculado SÓ sobre marketing =====
+  // (operacionais são transacionais e não geram receita atribuída → fora do ROI)
+  const costOp = client.costPerMessageOp || 0; // €/msg operacionais
   let costRoiSection = '';
-  if (cost > 0 && totalMsgs > 0) {
-    const globalCost = totalMsgs * cost;
-    const netMargin = totalRevenue - globalCost;
-    const roiPct = globalCost > 0 ? (netMargin / globalCost) * 100 : 0;
-    const roasMult = globalCost > 0 ? totalRevenue / globalCost : 0;
+  if (cost > 0 && totalMkt > 0) {
+    const mktCost = totalMkt * cost;            // custo só das mensagens marketing
+    const netMargin = totalRevenue - mktCost;
+    const roiPct = mktCost > 0 ? (netMargin / mktCost) * 100 : 0;
+    const roasMult = mktCost > 0 ? totalRevenue / mktCost : 0;
     const positive = netMargin >= 0;
     const marginColor = positive ? '#00D4AA' : '#FF6B6B';
     const costFmt = cost.toFixed(2).replace('.', ',');
+    const opCostTotal = (costOp > 0 && totalOp > 0) ? totalOp * costOp : 0;
+    const opCostFmt = costOp.toFixed(2).replace('.', ',');
+
+    // Card de custo operacionais (informativo — separado, fora do ROI)
+    const opCostCard = opCostTotal > 0 ? `
+        <div class="kpi-card glass fade-in fade-in-6">
+          <div class="kpi-label">Custo Operacionais</div>
+          <div class="kpi-value" data-count="${Math.round(opCostTotal)}" data-suffix="€">0</div>
+          <div class="kpi-sub">${formatNumber(totalOp)} × ${opCostFmt}€/msg · fora do ROI</div>
+        </div>` : '';
 
     costRoiSection = `
       <div class="section-title fade-in fade-in-1" style="margin-top:24px;">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7066A8" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-        Custo & ROI
+        ROI Marketing
       </div>
       <div class="kpi-grid">
         <div class="kpi-card glass fade-in fade-in-2">
-          <div class="kpi-label">Custo Total</div>
-          <div class="kpi-value" data-count="${Math.round(globalCost)}" data-suffix="€">0</div>
-          <div class="kpi-sub">${formatNumber(totalMsgs)} × ${costFmt}€/msg</div>
+          <div class="kpi-label">Custo Marketing</div>
+          <div class="kpi-value" data-count="${Math.round(mktCost)}" data-suffix="€">0</div>
+          <div class="kpi-sub">${formatNumber(totalMkt)} × ${costFmt}€/msg</div>
         </div>
         <div class="kpi-card glass fade-in fade-in-3">
           <div class="kpi-label">Receita Atribuída</div>
@@ -484,13 +496,14 @@ function renderMessagingSection(client, data) {
         <div class="kpi-card glass fade-in fade-in-4">
           <div class="kpi-label">Margem Líquida</div>
           <div class="kpi-value" style="color:${marginColor};" data-count="${Math.round(netMargin)}" data-suffix="€">0</div>
-          <div class="kpi-sub">receita − custo</div>
+          <div class="kpi-sub">receita − custo marketing</div>
         </div>
         <div class="kpi-card glass fade-in fade-in-5">
           <div class="kpi-label">ROI</div>
           <div class="kpi-value" style="color:${marginColor};" data-count="${Math.round(roiPct)}" data-suffix="%">0</div>
           <div class="kpi-sub">${roasMult.toFixed(2)}x ROAS</div>
         </div>
+        ${opCostCard}
       </div>
     `;
   }

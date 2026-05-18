@@ -70,7 +70,8 @@ const CLIENTS = {
     channels: ['whatsapp', 'facebook', 'instagram'],
     schema: 'rr_customs',
     domainId: 4,
-    costPerMessage: 0.15,
+    costPerMessage: 0.15,      // marketing €/msg (ROI)
+    costPerMessageOp: 0.08,    // operacionais €/msg (informativo, fora do ROI)
     msgTables: {
       automaticas: { failFilter: 'send_failed = false' },
       operacionais: null
@@ -83,7 +84,8 @@ const CLIENTS = {
     channels: ['whatsapp', 'facebook', 'instagram'],
     schema: 'hco_cosmeticos',
     domainId: 9,
-    costPerMessage: 0.12,
+    costPerMessage: 0.12,      // marketing €/msg (ROI)
+    costPerMessageOp: 0.05,    // operacionais €/msg (informativo, fora do ROI)
     msgTables: {
       automaticas: { failFilter: 'failed_at IS NULL' },
       operacionais: { typeCol: 'tipo' }
@@ -96,7 +98,8 @@ const CLIENTS = {
     channels: [],
     schema: 'fbeauty',
     domainId: 7,
-    costPerMessage: 0.15,
+    costPerMessage: 0.15,      // marketing €/msg (ROI)
+    costPerMessageOp: 0.08,    // operacionais €/msg (informativo, fora do ROI)
     msgTables: {
       automaticas: { failFilter: 'failed_at IS NULL' },
       operacionais: { typeCol: 'tipo' }
@@ -109,7 +112,8 @@ const CLIENTS = {
     channels: [],
     schema: 'farmatogo',
     domainId: 6,
-    costPerMessage: 0.12,
+    costPerMessage: 0.12,      // marketing €/msg (ROI)
+    costPerMessageOp: 0.05,    // operacionais €/msg (informativo, fora do ROI)
     msgTables: {
       automaticas: { failFilter: 'send_failed = false' },
       operacionais: { typeCol: 'tipo' }
