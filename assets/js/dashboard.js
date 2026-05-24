@@ -600,6 +600,7 @@ function prettyMsgType(t) {
     winback_21d: 'Recuperação 21d',
     winback_45d: 'Recuperação 45d',
     winback_60d: 'Recuperação 60d',
+    winback_90d: 'Recuperação 90d',
     recovery: 'Carrinho Abandonado',
     upsell: 'Upsell'
   };
