@@ -35,6 +35,8 @@ function transformChatbot(raw) {
         conversations: parseInt(d.total_conversations) || 0,
         messages_ai: parseInt(d.messages_ai) || 0,
         messages_human: parseInt(d.messages_human) || 0,
+        conversations_ai_only: parseInt(d.conversations_ai_only) || 0,
+        conversations_with_human: parseInt(d.conversations_with_human) || 0,
         resolution_rate: parseFloat(d.resolution_rate_pct) || 0
       };
     }

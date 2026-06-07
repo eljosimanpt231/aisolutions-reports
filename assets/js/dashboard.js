@@ -277,6 +277,11 @@ function renderChatbotSection(client, data, clicks) {
       const avgLabel = avgMin < 60 ? `${avgMin.toFixed(0)}min` : `${(avgMin/60).toFixed(1)}h`;
       kpiCards += kpiCard('Velocidade Equipa', medLabel, `mediana resposta (média ${avgLabel})`, 6);
     }
+  } else if (context === 'dual_agent') {
+    // Costura Urbana: 2 agentes IA distintos (Loja + Assistência Técnica), tabelas separadas
+    kpiCards += kpiCardPercent('Taxa Resolução IA', aiRate, 3, aiRate >= 70 ? 'positive' : aiRate >= 50 ? '' : 'warning');
+    kpiCards += kpiCard('Mensagens da IA', msgsAI, 'respostas automáticas', 4, 'positive');
+    kpiCards += kpiCard('Resolvidas sem Equipa', aiOnly, `de ${total} conversas`, 5, 'positive');
   } else {
     // Standard: RR, HCO, Teclas, OdiSeguros
     kpiCards += kpiCardPercent('Taxa Resolução IA', aiRate, 3, aiRate >= 70 ? 'positive' : aiRate >= 50 ? '' : 'warning');
@@ -294,7 +299,8 @@ function renderChatbotSection(client, data, clicks) {
 
   // Charts
   let chartsHtml = '';
-  if (activeChannels.length > 1) {
+  // dual_agent rende um gráfico "por Agente" dedicado em vez do genérico "por Canal"
+  if (activeChannels.length > 1 && context !== 'dual_agent') {
     chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Conversas por Canal</h3><div class="chart-container" id="chart-channels"></div></div>`;
   }
   // Platform breakdown (EcoDrive, Pura Rituals, RL Store, any with multiple Chatwoot inboxes)
@@ -343,6 +349,10 @@ function renderChatbotSection(client, data, clicks) {
       const rows = ext.urgentes_detalhe.map(u => `<tr><td>${cleanPhone(u.telefone)}</td><td>${RAMO_LABELS[u.ramo] || u.ramo || '—'}</td><td style="font-size:0.75rem">${(u.resumo_dados||'').substring(0,120)}${(u.resumo_dados||'').length>120?'…':''}</td></tr>`).join('');
       chartsHtml += `<div class="chart-card glass fade-in fade-in-6" style="grid-column: 1 / -1"><h3>Leads Urgentes (precisam seguro hoje)</h3><table class="data-table"><thead><tr><th>Contacto</th><th>Ramo</th><th>Detalhe</th></tr></thead><tbody>${rows}</tbody></table></div>`;
     }
+  } else if (context === 'dual_agent') {
+    // Costura Urbana: comparação dos 2 agentes (resolução + volume de conversas)
+    chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Resolução IA por Agente</h3><div class="chart-container" id="chart-agent-resolution"></div></div>`;
+    chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Conversas por Agente</h3><div class="chart-container" id="chart-agent-split"></div></div>`;
   } else {
     chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>${context === 'porteiro' ? 'Sem Humano vs Com Humano' : 'Resolução IA'}</h3><div class="chart-container" id="chart-ai-human"></div></div>`;
   }
@@ -423,6 +433,48 @@ function renderChatbotSection(client, data, clicks) {
       const stateBadge = (s) => s === 'encaminhada' ? `<span class="tag tag-mk">Encaminhada</span>` : s ? `<span class="tag tag-op">${s}</span>` : '—';
       let rows = leads.map(l => `<tr><td>${l.nome || '—'}</td><td>${cleanPhone(l.telefone)}</td><td style="font-size:0.813rem">${l.objetivo_contacto || '—'}</td><td>${l.tem_credito_habitacao || '—'}</td><td>${stateBadge(l.estado)}</td><td>${l.created_at?.substring(0,10) || '—'}</td></tr>`).join('');
       chartsHtml += `<div class="chart-card glass fade-in fade-in-6" style="grid-column: 1 / -1"><h3>Leads Recolhidos (${leads.length})</h3><table class="data-table"><thead><tr><th>Nome</th><th>Contacto</th><th>Objetivo</th><th>Crédito Habitação</th><th>Estado</th><th>Data</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    }
+  }
+
+  // Costura Urbana: tabela comparativa por agente (Loja vs Assistência Técnica)
+  if (context === 'dual_agent') {
+    const meta = { wp_loja: 'Loja', wp_assistencia: 'Assistência Técnica' };
+    const ch = data.channels || {};
+    const keys = Object.keys(meta).filter(k => ch[k]);
+    if (keys.length > 0) {
+      const rows = keys.map(k => {
+        const d = ch[k];
+        const conv = d.conversations || 0;
+        const aiSolo = d.conversations_ai_only || 0;
+        const rate = d.resolution_rate || 0;
+        const rateColor = rate >= 70 ? '#00D4AA' : rate >= 50 ? '#e8e6f0' : '#FFB547';
+        return `<tr>
+          <td><strong>${meta[k]}</strong></td>
+          <td class="num">${formatNumber(conv)}</td>
+          <td class="num">${formatNumber(aiSolo)}</td>
+          <td class="num" style="color:${rateColor};font-weight:600;">${rate.toFixed(1)}%</td>
+          <td class="num">${formatNumber(d.messages_ai || 0)}</td>
+        </tr>`;
+      }).join('');
+      const tConv = keys.reduce((s, k) => s + (ch[k].conversations || 0), 0);
+      const tSolo = keys.reduce((s, k) => s + (ch[k].conversations_ai_only || 0), 0);
+      const tMsgs = keys.reduce((s, k) => s + (ch[k].messages_ai || 0), 0);
+      const tRate = tConv > 0 ? (tSolo / tConv) * 100 : 0;
+      const totalRow = `<tr style="border-top:2px solid rgba(255,255,255,0.12);">
+        <td><strong>Total</strong></td>
+        <td class="num"><strong>${formatNumber(tConv)}</strong></td>
+        <td class="num"><strong>${formatNumber(tSolo)}</strong></td>
+        <td class="num"><strong>${tRate.toFixed(1)}%</strong></td>
+        <td class="num"><strong>${formatNumber(tMsgs)}</strong></td>
+      </tr>`;
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-6" style="grid-column: 1 / -1">
+        <h3>Detalhe por Agente</h3>
+        <p style="color:#9b95b8;font-size:12px;margin:-4px 0 12px 0;">Cada agente tem o seu próprio fluxo e base de conhecimento · "Resolvidas só IA" = conversas fechadas sem qualquer intervenção da equipa</p>
+        <table class="data-table">
+          <thead><tr><th>Agente</th><th>Conversas</th><th>Resolvidas só IA</th><th>Taxa Resolução</th><th>Mensagens da IA</th></tr></thead>
+          <tbody>${rows}${totalRow}</tbody>
+        </table>
+      </div>`;
     }
   }
 
@@ -694,6 +746,17 @@ function generateInsight(slug, client, chatbot, messaging, clicks) {
         const leads = chatbot.total_leads || 0;
         const convRate = chatbot.conversion_rate || 0;
         bits.push(`O sistema de lead gen Instagram gerou <strong>${leads} leads registados</strong> de ${chatbot.unique_users || total} utilizadores únicos (${convRate.toFixed(1)}% conversão).`);
+      } else if (context === 'dual_agent') {
+        // Costura Urbana: 2 agentes — destacar o de melhor desempenho
+        const meta = { wp_loja: 'Loja', wp_assistencia: 'Assistência Técnica' };
+        const ch = chatbot.channels || {};
+        const ranked = Object.keys(meta).filter(k => ch[k] && ch[k].conversations > 0)
+          .sort((a, b) => (ch[b].resolution_rate || 0) - (ch[a].resolution_rate || 0));
+        bits.push(`Os <strong>dois agentes IA</strong> (Loja e Assistência Técnica) processaram <strong>${total.toLocaleString('pt-PT')} conversas</strong> ${periodLabel}, resolvendo <strong>${Math.round(aiRate)}%</strong> sem qualquer intervenção da equipa.`);
+        if (ranked.length > 0) {
+          const top = ranked[0];
+          bits.push(`O agente de <strong>${meta[top]}</strong> destacou-se com <strong>${(ch[top].resolution_rate || 0).toFixed(0)}% de resolução autónoma</strong>.`);
+        }
       } else {
         bits.push(`O agente processou <strong>${total.toLocaleString('pt-PT')} conversas</strong> ${periodLabel}, resolvendo <strong>${Math.round(aiRate)}%</strong> sem intervenção humana.`);
       }

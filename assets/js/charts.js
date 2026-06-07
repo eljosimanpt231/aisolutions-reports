@@ -117,6 +117,54 @@ function initChatbotCharts(client, data) {
     }).render();
   }
 
+  // Costura Urbana: dual agent (Loja + Assistência Técnica) — per-agent charts from data.channels
+  if (client.context === 'dual_agent') {
+    const AG = {
+      wp_loja: { label: 'Loja', color: COLORS.primary },
+      wp_assistencia: { label: 'Assistência Técnica', color: COLORS.accent }
+    };
+    const ag = data.channels || {};
+    const keys = Object.keys(AG).filter(k => ag[k] && ag[k].conversations > 0);
+
+    // Resolução IA por agente — 100% stacked bar (só IA vs com equipa)
+    if (keys.length > 0 && document.getElementById('chart-agent-resolution')) {
+      try {
+        const aiOnly = keys.map(k => ag[k].conversations_ai_only || 0);
+        const withHuman = keys.map(k => ag[k].conversations_with_human || 0);
+        new ApexCharts(document.getElementById('chart-agent-resolution'), {
+          ...baseChartOptions,
+          chart: { ...baseChartOptions.chart, type: 'bar', height: 280, stacked: true, stackType: '100%' },
+          series: [
+            { name: 'Resolvidas só pela IA', data: aiOnly },
+            { name: 'Com apoio da equipa', data: withHuman }
+          ],
+          xaxis: { categories: keys.map(k => `${AG[k].label} (${ag[k].conversations})`) },
+          colors: [COLORS.accent, COLORS.warning],
+          plotOptions: { bar: { borderRadius: 6, columnWidth: '55%' } },
+          dataLabels: { enabled: true, formatter: (v) => v >= 5 ? Math.round(v) + '%' : '', style: { fontSize: '13px', fontWeight: 700, colors: ['#0a0a1a'] } },
+          legend: { position: 'top', labels: { colors: COLORS.text } }
+        }).render();
+      } catch (e) { console.error('chart-agent-resolution err:', e); }
+    }
+
+    // Conversas por agente — donut
+    if (keys.length > 0 && document.getElementById('chart-agent-split')) {
+      try {
+        new ApexCharts(document.getElementById('chart-agent-split'), {
+          ...baseChartOptions,
+          chart: { ...baseChartOptions.chart, type: 'donut', height: 280 },
+          series: keys.map(k => ag[k].conversations || 0),
+          labels: keys.map(k => AG[k].label),
+          colors: keys.map(k => AG[k].color),
+          plotOptions: { pie: { donut: { size: '65%', labels: { show: true, total: { show: true, label: 'Conversas', color: COLORS.text, formatter: (w) => w.globals.seriesTotals.reduce((a, b) => a + b, 0).toLocaleString('pt-PT') }, value: { color: '#e8e6f0', fontSize: '24px', fontWeight: 700 } } } } },
+          legend: { position: 'bottom', labels: { colors: COLORS.text } },
+          dataLabels: { enabled: false },
+          stroke: { width: 0 }
+        }).render();
+      } catch (e) { console.error('chart-agent-split err:', e); }
+    }
+  }
+
   // AI vs Human radial — adapts label per client context
   if (document.getElementById('chart-ai-human')) {
     const aiOnly = data.conversations_ai_only || 0;

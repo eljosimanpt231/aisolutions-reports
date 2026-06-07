@@ -204,7 +204,8 @@ const CLIENTS = {
     channels: ['whatsapp'],  // 2 agentes WA: loja + assistência
     schema: 'costura_urbana',
     domainId: 11,
-    startDate: '2026-04-09'  // ajustar se necessário
+    startDate: '2026-04-09',  // ajustar se necessário
+    context: 'dual_agent'  // 2 agentes IA distintos: Loja + Assistência Técnica (tabelas separadas)
   },
   lojaginastica: {
     name: 'Be on Sport',
