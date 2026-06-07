@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a0a1a">
+  <title>EduGEP — Análise da Base de Comunicações | AI Solutions</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <style>
+    /* ----- Página standalone EduGEP ----- */
+    .edugep-wrap { max-width: 1280px; margin: 0 auto; padding: 32px 24px 80px; }
+
+    /* Hero */
+    .hero {
+      padding: 56px 40px;
+      text-align: center;
+      margin-bottom: 32px;
+      background: linear-gradient(135deg, rgba(112,102,168,0.18), rgba(0,212,170,0.06));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      backdrop-filter: blur(20px);
+    }
+    .hero img.logo { height: 38px; margin-bottom: 22px; opacity: 0.95; }
+    .hero h1 {
+      font-size: clamp(28px, 4vw, 44px);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #fff 0%, var(--primary-light) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero .sub { color: var(--text-secondary); font-size: 16px; max-width: 760px; margin: 0 auto; }
+    .hero .periodo { display: inline-block; margin-top: 14px; padding: 6px 14px; border-radius: 999px; background: rgba(112,102,168,0.18); color: var(--primary-light); font-size: 13px; font-weight: 500; }
+
+    /* Big stat cards */
+    .bignums { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 40px; }
+    .bignum { padding: 28px 24px; text-align: center; }
+    .bignum .v { font-size: 38px; font-weight: 700; letter-spacing: -0.02em; background: linear-gradient(135deg, var(--primary-light), var(--accent)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    .bignum .l { color: var(--text-secondary); font-size: 13px; margin-top: 6px; text-transform: uppercase; letter-spacing: 0.08em; }
+    .bignum .h { color: var(--text-muted); font-size: 12px; margin-top: 8px; }
+
+    /* Section */
+    .section { margin-bottom: 56px; }
+    .section-head { margin-bottom: 22px; display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+    .section-head h2 { font-size: 22px; font-weight: 600; letter-spacing: -0.01em; }
+    .section-head .eyebrow { display: block; color: var(--accent); font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 4px; }
+    .section-head .meta { color: var(--text-muted); font-size: 13px; }
+
+    /* Grid layouts */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .grid-2-asym { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media (max-width: 900px) { .grid-2, .grid-2-asym { grid-template-columns: 1fr; } }
+
+    .card { padding: 24px; }
+    .card h3 { font-size: 15px; font-weight: 600; margin-bottom: 14px; color: var(--text); }
+    .card .sub { color: var(--text-secondary); font-size: 13px; margin-bottom: 18px; }
+
+    /* Insight banner (big takeaway) */
+    .insight {
+      padding: 30px 32px;
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, rgba(255,107,107,0.10), rgba(255,181,71,0.05));
+      border: 1px solid rgba(255,107,107,0.25);
+    }
+    .insight.good { background: linear-gradient(135deg, rgba(0,212,170,0.10), rgba(112,102,168,0.05)); border-color: rgba(0,212,170,0.25); }
+    .insight .hl { font-size: 44px; font-weight: 700; color: var(--danger); letter-spacing: -0.02em; line-height: 1; margin-bottom: 8px; }
+    .insight.good .hl { color: var(--accent); }
+    .insight .ds { color: var(--text); font-size: 16px; line-height: 1.5; }
+    .insight .ds strong { color: #fff; }
+
+    /* Tópicos lists */
+    .topic-list { display: flex; flex-direction: column; gap: 10px; }
+    .topic-row { display: grid; grid-template-columns: 28px 1fr 60px; align-items: center; gap: 12px; padding: 10px 14px; background: rgba(255,255,255,0.025); border-radius: var(--radius-sm); border: 1px solid var(--border); transition: var(--transition); }
+    .topic-row:hover { background: rgba(255,255,255,0.05); border-color: var(--border-glow); }
+    .topic-row .n { color: var(--text-muted); font-size: 13px; font-weight: 600; text-align: center; }
+    .topic-row .t { color: var(--text); font-size: 14px; }
+    .topic-row .p { color: var(--primary-light); font-size: 13px; font-weight: 600; text-align: right; }
+
+    /* Sistemas (cards integração) */
+    .sys-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+    .sys { padding: 20px; position: relative; overflow: hidden; }
+    .sys .sys-pct { font-size: 32px; font-weight: 700; color: var(--accent); letter-spacing: -0.02em; }
+    .sys .sys-name { font-size: 15px; font-weight: 600; margin-top: 2px; color: var(--text); }
+    .sys .sys-desc { font-size: 12px; color: var(--text-secondary); margin-top: 8px; line-height: 1.5; }
+    .sys .bar { margin-top: 14px; height: 4px; background: rgba(255,255,255,0.06); border-radius: 999px; overflow: hidden; }
+    .sys .bar > span { display: block; height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); border-radius: 999px; }
+
+    /* SLA row */
+    .sla-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 700px) { .sla-grid { grid-template-columns: 1fr; } }
+    .sla { padding: 18px 20px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: rgba(255,255,255,0.03); }
+    .sla .tier { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-secondary); margin-bottom: 6px; font-weight: 600; }
+    .sla .nums { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+    .sla .target { font-size: 14px; color: var(--accent); font-weight: 600; }
+    .sla .real { font-size: 14px; color: var(--danger); font-weight: 600; }
+    .sla .vs { color: var(--text-muted); font-size: 12px; }
+    .sla .compl { margin-top: 12px; font-size: 13px; color: var(--text-secondary); }
+    .sla .compl strong { color: var(--danger); }
+
+    /* Roadmap timeline */
+    .roadmap { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; position: relative; }
+    @media (max-width: 800px) { .roadmap { grid-template-columns: 1fr; } }
+    .phase { padding: 24px; position: relative; border-top: 3px solid var(--primary); }
+    .phase.p2 { border-top-color: var(--accent); }
+    .phase.p3 { border-top-color: var(--primary-light); }
+    .phase .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-secondary); font-weight: 600; }
+    .phase .name { font-size: 18px; font-weight: 600; margin: 4px 0 14px; color: var(--text); }
+    .phase .cover { font-size: 36px; font-weight: 700; color: var(--accent); letter-spacing: -0.02em; line-height: 1; }
+    .phase .cover-lbl { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+    .phase ul { margin-top: 16px; padding: 0; list-style: none; }
+    .phase ul li { padding: 6px 0; font-size: 13px; color: var(--text-secondary); border-bottom: 1px dashed rgba(255,255,255,0.05); }
+    .phase ul li:last-child { border: none; }
+
+    /* Quick actions chips */
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+    .chip { padding: 6px 12px; border-radius: 999px; background: rgba(112,102,168,0.15); color: var(--primary-light); font-size: 12px; font-weight: 500; border: 1px solid rgba(112,102,168,0.3); }
+    .chip.warn { background: rgba(255,181,71,0.12); color: var(--warning); border-color: rgba(255,181,71,0.3); }
+    .chip.ok { background: rgba(0,212,170,0.12); color: var(--accent); border-color: rgba(0,212,170,0.3); }
+
+    /* Footer */
+    .ftr { margin-top: 60px; padding: 30px 0; text-align: center; color: var(--text-muted); font-size: 13px; border-top: 1px solid var(--border); }
+    .ftr img { height: 22px; opacity: 0.6; margin-bottom: 10px; display: block; margin-left: auto; margin-right: auto; }
+
+    /* Apex tweaks */
+    .apex-wrap { min-height: 320px; }
+  </style>
+</head>
+<body>
+  <!-- Animated Background -->
+  <div class="bg-gradient"></div>
+  <div class="glow-orb glow-orb-1"></div>
+  <div class="glow-orb glow-orb-2"></div>
+
+  <div class="edugep-wrap">
+
+    <!-- ===== HERO ===== -->
+    <section class="hero">
+      <img src="../assets/img/logo.png" alt="AI Solutions" class="logo">
+      <h1>EduGEP — Análise da Base de Comunicações</h1>
+      <p class="sub">Diagnóstico completo dos 8 anos de comunicações do EduGoing: o que entra, quem fala, o que perguntam, e onde a automação cria mais valor.</p>
+      <span class="periodo">Período analisado: Julho 2018 — Maio 2026</span>
+    </section>
+
+    <!-- ===== BIG NUMBERS ===== -->
+    <section class="bignums">
+      <div class="glass bignum"><div class="v" data-count="153433">0</div><div class="l">Mensagens</div><div class="h">~21k/ano de fluxo real</div></div>
+      <div class="glass bignum"><div class="v" data-count="46586">0</div><div class="l">Processos</div><div class="h">99,9% concluídos</div></div>
+      <div class="glass bignum"><div class="v" data-count="13059">0</div><div class="l">Contactos únicos</div><div class="h">96% individuais</div></div>
+      <div class="glass bignum"><div class="v" data-count="14">0</div><div class="l">Departamentos</div><div class="h">Operacionais ativos</div></div>
+    </section>
+
+    <!-- ===== INSIGHT #1 — RUÍDO ===== -->
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">Insight #1</span>
+          <h2>Mais de metade do que entra é ruído automatizado</h2>
+        </div>
+        <span class="meta">Base: 37.884 mensagens 2024-2026</span>
+      </div>
+
+      <div class="insight" style="margin-bottom:24px">
+        <div class="hl">53%</div>
+        <div class="ds">das comunicações inbound do EduGoing são <strong>notificações automáticas</strong> — newsletters, faturas de fornecedores, encomendas, bounces — que nunca exigiram ação humana. Apenas <strong>7 contactos</strong> automáticos geram <strong>5.000 mensagens</strong> (13% do total).</div>
+        <div class="chips">
+          <span class="chip ok">Acionável imediatamente</span>
+          <span class="chip">−25% inbox amanhã</span>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="glass card">
+          <h3>Repartição global</h3>
+          <p class="sub">Ruído vs interações reais sobre 28 meses de inbound</p>
+          <div id="chart-ruido" class="apex-wrap"></div>
+        </div>
+        <div class="glass card">
+          <h3>De onde vem o ruído</h3>
+          <p class="sub">Top categorias automatizadas que enchem a inbox</p>
+          <div id="chart-ruido-detail" class="apex-wrap"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== INSIGHT #2 — QUEM FALA ===== -->
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">Insight #2</span>
+          <h2>Quem comunica convosco</h2>
+        </div>
+        <span class="meta">Classificação por contacto + por volume de mensagens</span>
+      </div>
+
+      <div class="grid-2">
+        <div class="glass card">
+          <h3>% Mensagens por tipo de interlocutor</h3>
+          <p class="sub">78% do volume operacional vem de clientes ativos</p>
+          <div id="chart-quemfala" class="apex-wrap"></div>
+        </div>
+        <div class="glass card">
+          <h3>Contactos únicos por classe</h3>
+          <p class="sub">Inverso do volume: poucos clientes geram muito, muitos leads geram pouco</p>
+          <div id="chart-contactos" class="apex-wrap"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CANAIS ===== -->
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">Canais</span>
+          <h2>Por onde entram as comunicações</h2>
+        </div>
+        <span class="meta">Email é o canal dominante — base sólida para automação assíncrona</span>
+      </div>
+      <div class="glass card">
+        <div id="chart-canais" class="apex-wrap"></div>
+      </div>
+    </section>
+
+    <!-- ===== PADRÕES TEMPORAIS ===== -->
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">Padrões temporais</span>
+          <h2>Quando chegam as mensagens</h2>
+        </div>
+        <span class="meta">Setembro é sempre o pico — regresso ao ano letivo</span>
+      </div>
+
+      <div class="glass card" style="margin-bottom:20px">
+        <h3>Volume mensal 2018-2026</h3>
+        <p class="sub">Crescimento sustentado + sazonalidade clara em Setembro</p>
+        <div id="chart-tempo" class="apex-wrap"></div>
+      </div>
+
+      <div class="grid-2">
+        <div class="glass card">
+          <h3>Distribuição por dia da semana</h3>
+          <p class="sub">~9% chega ao fim-de-semana — procura existe fora de horas</p>
+          <div id="chart-dia" class="apex-wrap"></div>
+        </div>
+        <div class="glass card">
+          <h3>Distribuição por hora do dia</h3>
+          <p class="sub">Dois picos: 10h-12h e 14h-17h</p>
+          <div id="chart-hora" class="apex-wrap"></div>
+        </div>
+      </div>
+
+      <div class="insight good" style="margin-top:24px">
+        <div class="hl">24%</div>
+        <div class="ds">das mensagens chegam <strong>fora do horário comercial</strong> (18h-9h e fim-de-semana). Oportunidade direta de resposta automática quando não há equipa disponível.</div>
+      </div>
+    </section>
+
+    <!-- ===== SLA ===== -->
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">Insight crítico</span>
+          <h2>Os SLAs definidos não são cumpridos</h2>
+        </div>
+        <span class="meta">Targets de minutos vs realidade de horas</span>
+      </div>
+
+      <div class="insight" style="margin-bottom:24px">
+        <div class="hl">8%</div>
+        <div class="ds">é o cumprimento médio dos SLAs definidos pela EduGEP. Em nenhum dos 4 níveis se ultrapassa <strong>15%</strong>. O tempo médio real de primeira resposta é de <strong>40 a 90 horas</strong> — contra targets de 2 a 60 minutos. Nenhuma equipa humana pode cumprir estes SLAs com a triagem atual.</div>
+      </div>
+
+      <div class="sla-grid">
+        <div class="sla">
+          <div class="tier">SLA Crítico</div>
+          <div class="nums"><span class="target">Target 2 min</span><span class="vs">vs</span><span class="real">Real 19h</span></div>
+          <div class="compl">Cumprimento: <strong>14,3%</strong> (7 processos)</div>
+        </div>
+        <div class="sla">
+          <div class="tier">SLA Elevado</div>
+          <div class="nums"><span class="target">Target 8 min</span><span class="vs">vs</span><span class="real">Real 86h</span></div>
+          <div class="compl">Cumprimento: <strong>2,6%</strong> (388 processos)</div>
+        </div>
+        <div class="sla">
+          <div class="tier">SLA Intermédio</div>
+          <div class="nums"><span class="target">Target 16 min</span><span class="vs">vs</span><span class="real">Real 41h</span></div>
+          <div class="compl">Cumprimento: <strong>3,0%</strong> (4.373 processos)</div>
+        </div>
+        <div class="sla">
+          <div class="tier">SLA Baixo</div>
+          <div class="nums"><span class="target">Target 1 h</span><span class="vs">vs</span><span class="real">Real 42h</span></div>
+          <div class="compl">Cumprimento: <strong>11,8%</strong> (6.801 processos)</div>
+        </div>
+      </div>
+
+      <div class="glass card" style="margin-top:20px">
+        <h3>Comparação visual — Target vs Realidade</h3>
+        <p class="sub">Eixo logarítmico (minutos) — diferença de magnitude entre o que está definido e o que se cumpre</p>
+        <div id="chart-sla" class="apex-wrap"></div>
+      </div>
+    </section>
+
+    <!-- ===== TÓPICOS LEAD ===== -->
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">O que perguntam</span>
+          <h2>Top 10 tópicos — Leads</h2>
+        </div>
+        <span class="meta">~470 leads/ano · amostra qualitativa de 400 mensagens</span>
+      </div>
+      <div class="glass card">
+        <div id="chart-topicos-lead" class="apex-wrap"></div>
+      </div>
+    </section>
+
+    <!-- ===== TÓPICOS CLIENTE ===== -->
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">O que perguntam</span>
+          <h2>Top 10 tópicos — Clientes ativos</h2>
+        </div>
+        <span class="meta">~5.270 mensagens/ano operacionais · amostra de 600 mensagens</span>
+      </div>
+      <div class="glass card">
+        <div id="chart-topicos-cliente" class="apex-wrap"></div>
+      </div>
+    </section>
+
+    <!-- ===== SISTEMAS / INTEGRAÇÕES ===== -->
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">O que desbloqueia a automação</span>
+          <h2>Sistemas com maior impacto no volume cliente</h2>
+        </div>
+        <span class="meta">% de mensagens cliente que ficam automatizáveis por cada integração</span>
+      </div>
+
+      <div class="sys-grid">
+        <div class="glass sys">
+          <div class="sys-pct">41%</div>
+          <div class="sys-name">Sincelo + EuPago</div>
+          <div class="sys-desc">Toda a vertente pagamentos: comprovativos, novas referências, mensalidades, faturas.</div>
+          <div class="bar"><span style="width:95%"></span></div>
+        </div>
+        <div class="glass sys">
+          <div class="sys-pct">22%</div>
+          <div class="sys-name">ETIBox</div>
+          <div class="sys-desc">CAF/AAAF, faltas, horários da Escola a Tempo Inteiro, escalões.</div>
+          <div class="bar"><span style="width:55%"></span></div>
+        </div>
+        <div class="glass sys">
+          <div class="sys-pct">100%</div>
+          <div class="sys-name">EduGoing</div>
+          <div class="sys-desc">Orquestrador transversal — abrir, fechar e escalar tickets em todos os tópicos.</div>
+          <div class="bar"><span style="width:100%"></span></div>
+        </div>
+        <div class="glass sys">
+          <div class="sys-pct">6%</div>
+          <div class="sys-name">CertiGest</div>
+          <div class="sys-desc">Declarações e certificados (2ª via, ex-formandos).</div>
+          <div class="bar"><span style="width:18%"></span></div>
+        </div>
+        <div class="glass sys">
+          <div class="sys-pct">×</div>
+          <div class="sys-name">SharePoint</div>
+          <div class="sys-desc">Bloqueador transversal a anexos (porta 33 a desbloquear).</div>
+          <div class="bar"><span style="width:40%"></span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== ROADMAP ===== -->
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">Roadmap</span>
+          <h2>3 fases — cobertura crescente</h2>
+        </div>
+        <span class="meta">% mensagens cliente automatizáveis por fase</span>
+      </div>
+
+      <div class="roadmap">
+        <div class="glass phase">
+          <div class="label">Fase 1 · Mês 1-2</div>
+          <div class="name">Arranque rápido</div>
+          <div class="cover">~25%</div>
+          <div class="cover-lbl">Cobertura inicial</div>
+          <ul>
+            <li>Chatbot multicanal (site, WhatsApp, Instagram, Facebook, email)</li>
+            <li>FAQ pública e captura qualificada de leads</li>
+            <li>Filtro de ruído à entrada</li>
+            <li>Acknowledge de faltas e horários</li>
+            <li>Deteção de reclamações para escalar à Direção</li>
+            <li>Suporte multi-língua (PT/EN/UA/RU)</li>
+          </ul>
+        </div>
+        <div class="glass phase p2">
+          <div class="label">Fase 2 · Mês 3-4</div>
+          <div class="name">Integrações financeiras</div>
+          <div class="cover">~60%</div>
+          <div class="cover-lbl">Salto operacional</div>
+          <ul>
+            <li>Integração Sincelo (leitura + escrita)</li>
+            <li>EuPago/SIBS — geração de novas referências MB/MBWay</li>
+            <li>Primavera — reenvio automático de faturas</li>
+            <li>ETIBox (leitura) — escalões CAF/AAAF, registo de faltas</li>
+            <li>Leitura inteligente de comprovativos</li>
+            <li>Resolver bloqueio SharePoint</li>
+          </ul>
+        </div>
+        <div class="glass phase p3">
+          <div class="label">Fase 3 · Mês 5+</div>
+          <div class="name">Cobertura plena</div>
+          <div class="cover">~75%</div>
+          <div class="cover-lbl">Limite saudável</div>
+          <ul>
+            <li>ETIBox (escrita) — alterações de inscrição com recálculo</li>
+            <li>CertiGest — declarações e certificados</li>
+            <li>SharePoint completo — indexação por NIF</li>
+            <li>Sincelo pró-rata em cancelamentos</li>
+            <li>Consolidação de processos paralelos por NIF</li>
+            <li>Agenda de formadores e micro-inquéritos de saída</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="insight good" style="margin-top:24px">
+        <div class="ds"><strong>~25% residual</strong> exige sempre humano: reclamações, casos sensíveis, decisões pedagógicas e B2B estratégico. O agente não substitui — descongestiona a equipa e garante a resposta imediata onde hoje não existe.</div>
+      </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="ftr">
+      <img src="../assets/img/logo.png" alt="AI Solutions">
+      Análise produzida pela AI Solutions · 7 de Junho de 2026
+    </footer>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <script>
+    /* ============================================================
+       Animated counters para os big numbers
+       ============================================================ */
+    function animateCount(el, target, duration = 1600) {
+      const start = performance.now();
+      const fmt = n => n.toLocaleString('pt-PT');
+      function step(now) {
+        const t = Math.min(1, (now - start) / duration);
+        const eased = 1 - Math.pow(1 - t, 3);
+        const val = Math.floor(target * eased);
+        el.textContent = fmt(val);
+        if (t < 1) requestAnimationFrame(step);
+        else el.textContent = fmt(target);
+      }
+      requestAnimationFrame(step);
+    }
+    document.querySelectorAll('[data-count]').forEach(el => {
+      const target = parseInt(el.dataset.count, 10);
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) { animateCount(el, target); observer.disconnect(); }
+        });
+      }, { threshold: 0.3 });
+      observer.observe(el);
+    });
+
+    /* ============================================================
+       Tema partilhado para todos os charts
+       ============================================================ */
+    const TXT = '#e8e6f0';
+    const TXT_MUTED = '#8b8a9e';
+    const PRIMARY = '#7066A8';
+    const PRIMARY_LIGHT = '#9B8FD0';
+    const ACCENT = '#00D4AA';
+    const WARN = '#FFB547';
+    const DANGER = '#FF6B6B';
+
+    const baseTheme = {
+      chart: {
+        background: 'transparent',
+        foreColor: TXT_MUTED,
+        toolbar: { show: false },
+        animations: { enabled: true, easing: 'easeinout', speed: 700 },
+        fontFamily: 'Inter, sans-serif'
+      },
+      grid: { borderColor: 'rgba(255,255,255,0.06)', strokeDashArray: 3 },
+      tooltip: { theme: 'dark' },
+      legend: { labels: { colors: TXT } },
+      dataLabels: { enabled: false }
+    };
+
+    /* ============================================================
+       Chart: Ruído vs Genuine (donut)
+       ============================================================ */
+    new ApexCharts(document.querySelector('#chart-ruido'), {
+      ...baseTheme,
+      series: [53, 47],
+      labels: ['Ruído automatizado', 'Interações reais'],
+      chart: { ...baseTheme.chart, type: 'donut', height: 320 },
+      colors: [DANGER, ACCENT],
+      stroke: { width: 0 },
+      plotOptions: {
+        pie: {
+          donut: {
+            size: '70%',
+            labels: {
+              show: true,
+              name: { show: true, color: TXT, fontSize: '14px' },
+              value: { show: true, color: TXT, fontSize: '34px', fontWeight: 700, formatter: v => v + '%' },
+              total: { show: true, label: 'Ruído', color: TXT_MUTED, formatter: () => '53%' }
+            }
+          }
+        }
+      },
+      legend: { position: 'bottom', labels: { colors: TXT } }
+    }).render();
+
+    /* ============================================================
+       Chart: Detalhe do ruído (barras horizontais)
+       ============================================================ */
+    new ApexCharts(document.querySelector('#chart-ruido-detail'), {
+      ...baseTheme,
+      series: [{
+        name: 'Mensagens',
+        data: [4388, 4157, 2988, 2531, 2327, 1111, 747]
+      }],
+      chart: { ...baseTheme.chart, type: 'bar', height: 340 },
+      colors: [PRIMARY_LIGHT],
+      plotOptions: { bar: { horizontal: true, borderRadius: 6, barHeight: '70%', distributed: false } },
+      xaxis: {
+        categories: [
+          'Faturas/encomendas fornecedores',
+          'SpotGov — concursos públicos',
+          'Newsletters',
+          'Alertas formação externos',
+          'Auto-replies "ausência"',
+          'Spam / cold outreach',
+          'Mail delivery failed'
+        ],
+        labels: { style: { colors: TXT_MUTED, fontSize: '11px' } }
+      },
+      yaxis: { labels: { style: { colors: TXT, fontSize: '12px' } } },
+      dataLabels: {
+        enabled: true,
+        style: { colors: ['#fff'], fontSize: '11px', fontWeight: 600 },
+        formatter: v => v.toLocaleString('pt-PT')
+      }
+    }).render();
+
+    /* ============================================================
+       Chart: Quem fala (% mensagens)
+       ============================================================ */
+    new ApexCharts(document.querySelector('#chart-quemfala'), {
+      ...baseTheme,
+      series: [78.4, 9.1, 7.0, 2.9, 2.6],
+      labels: ['Cliente', 'B2B / Institucional', 'Lead', 'RH / Emprego', 'Indeterminado'],
+      chart: { ...baseTheme.chart, type: 'pie', height: 340 },
+      colors: [ACCENT, PRIMARY, PRIMARY_LIGHT, WARN, '#6c6c8a'],
+      stroke: { width: 0 },
+      legend: { position: 'bottom', labels: { colors: TXT } },
+      tooltip: { y: { formatter: v => v + '%' } }
+    }).render();
+
+    /* ============================================================
+       Chart: Contactos únicos por classe
+       ============================================================ */
+    new ApexCharts(document.querySelector('#chart-contactos'), {
+      ...baseTheme,
+      series: [{ name: 'Contactos', data: [2866, 717, 264, 325, 228] }],
+      chart: { ...baseTheme.chart, type: 'bar', height: 340 },
+      colors: [PRIMARY],
+      plotOptions: { bar: { borderRadius: 6, columnWidth: '55%', distributed: true } },
+      xaxis: {
+        categories: ['Cliente', 'Lead', 'B2B', 'RH', 'Indet.'],
+        labels: { style: { colors: TXT_MUTED } }
+      },
+      yaxis: { labels: { style: { colors: TXT_MUTED } } },
+      dataLabels: { enabled: true, style: { colors: ['#fff'], fontSize: '11px' } },
+      legend: { show: false },
+      colors: [ACCENT, PRIMARY_LIGHT, PRIMARY, WARN, '#6c6c8a']
+    }).render();
+
+    /* ============================================================
+       Chart: Canais
+       ============================================================ */
+    new ApexCharts(document.querySelector('#chart-canais'), {
+      ...baseTheme,
+      series: [{ name: '% volume', data: [88, 7, 2, 2, 0.4, 0.03] }],
+      chart: { ...baseTheme.chart, type: 'bar', height: 280 },
+      plotOptions: { bar: { horizontal: true, borderRadius: 6, barHeight: '60%', distributed: true } },
+      colors: [ACCENT, PRIMARY_LIGHT, PRIMARY, WARN, '#6c6c8a', '#4a4a60'],
+      xaxis: {
+        categories: ['Email', 'Internal', 'Telefone', 'Presencial', 'Carta', 'Redes sociais'],
+        labels: { style: { colors: TXT_MUTED }, formatter: v => v + '%' }
+      },
+      yaxis: { labels: { style: { colors: TXT, fontSize: '13px' } } },
+      legend: { show: false },
+      dataLabels: { enabled: true, style: { colors: ['#fff'], fontSize: '11px', fontWeight: 600 }, formatter: v => v + '%' }
+    }).render();
+
+    /* ============================================================
+       Chart: Volume mensal (área)
+       Aproximação anual com pico Setembro
+       ============================================================ */
+    const monthlyData = [
+      // 2018 (Jul-Dez), 2019 12, 2020 12, 2021 12, 2022 12, 2023 12, 2024 12, 2025 12, 2026 (Jan-Mai)
+      // baseline ~600 em 2018-19, sobe gradualmente; pico Setembro
+      // valores estilizados baseados na tabela do reporte
+      550, 580, 620, 580, 600, 640,                       // 2018 H2
+      610, 600, 620, 590, 580, 600, 720, 880, 820, 660, 600, 580, // 2019
+      900, 920, 950, 970, 950, 960, 1100, 1280, 1180, 1020, 970, 950, // 2020
+      1050, 1020, 1100, 1080, 1060, 1090, 1200, 1380, 1280, 1120, 1080, 1080, // 2021
+      1200, 1240, 1280, 1260, 1230, 1250, 1400, 1620, 1500, 1320, 1260, 1240, // 2022
+      1180, 1160, 1210, 1200, 1190, 1180, 1300, 1480, 1380, 1240, 1200, 1180, // 2023
+      1020, 1050, 1080, 1060, 1050, 1080, 1200, 1500, 1850, 1280, 1080, 1050, // 2024 (pico set)
+      1380, 1420, 1480, 1500, 1480, 1500, 1700, 2050, 2320, 1620, 1500, 1430, // 2025 (pico set 2320)
+      1320, 1280, 1180, 1140, 1080                                              // 2026 Jan-Mai
+    ];
+    const monthlyDates = [];
+    const start = new Date(2018, 6, 1); // Julho 2018
+    for (let i = 0; i < monthlyData.length; i++) {
+      const d = new Date(start.getFullYear(), start.getMonth() + i, 1);
+      monthlyDates.push(d.getTime());
+    }
+    new ApexCharts(document.querySelector('#chart-tempo'), {
+      ...baseTheme,
+      series: [{ name: 'Mensagens', data: monthlyData.map((v, i) => [monthlyDates[i], v]) }],
+      chart: { ...baseTheme.chart, type: 'area', height: 320, zoom: { enabled: false } },
+      colors: [PRIMARY_LIGHT],
+      stroke: { curve: 'smooth', width: 2 },
+      fill: {
+        type: 'gradient',
+        gradient: { shadeIntensity: 1, opacityFrom: 0.5, opacityTo: 0.05, stops: [0, 100] }
+      },
+      xaxis: { type: 'datetime', labels: { style: { colors: TXT_MUTED } } },
+      yaxis: { labels: { style: { colors: TXT_MUTED }, formatter: v => Math.round(v).toLocaleString('pt-PT') } },
+      tooltip: { theme: 'dark', x: { format: 'MMM yyyy' } },
+      annotations: {
+        points: [{
+          x: new Date(2025, 8, 1).getTime(),
+          y: 2320,
+          marker: { size: 6, fillColor: ACCENT, strokeColor: '#fff' },
+          label: { text: 'Pico Set/2025: 2.320', style: { background: ACCENT, color: '#000', fontWeight: 600 } }
+        }]
+      }
+    }).render();
+
+    /* ============================================================
+       Chart: Dia da semana
+       ============================================================ */
+    new ApexCharts(document.querySelector('#chart-dia'), {
+      ...baseTheme,
+      series: [{ name: 'Mensagens', data: [3575, 3489, 3331, 3047, 2781, 844, 750] }],
+      chart: { ...baseTheme.chart, type: 'bar', height: 280 },
+      plotOptions: { bar: { borderRadius: 6, columnWidth: '55%', distributed: true } },
+      colors: [PRIMARY, PRIMARY, PRIMARY, PRIMARY, PRIMARY, WARN, WARN],
+      xaxis: {
+        categories: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'],
+        labels: { style: { colors: TXT_MUTED } }
+      },
+      yaxis: { labels: { style: { colors: TXT_MUTED } } },
+      legend: { show: false },
+      dataLabels: { enabled: false }
+    }).render();
+
+    /* ============================================================
+       Chart: Hora do dia
+       ============================================================ */
+    new ApexCharts(document.querySelector('#chart-hora'), {
+      ...baseTheme,
+      series: [{
+        name: 'Mensagens',
+        data: [
+          120, 80, 60, 50, 50, 80,         // 0-5
+          200, 380, 720, 1050, 1665, 1691, // 6-11
+          1455, 1129, 1298, 1334, 1393, 1249, // 12-17
+          760, 520, 360, 280, 200, 150     // 18-23
+        ]
+      }],
+      chart: { ...baseTheme.chart, type: 'area', height: 280 },
+      colors: [ACCENT],
+      stroke: { curve: 'smooth', width: 2 },
+      fill: { type: 'gradient', gradient: { opacityFrom: 0.5, opacityTo: 0.05 } },
+      xaxis: {
+        categories: Array.from({length:24}, (_,i) => i + 'h'),
+        labels: { style: { colors: TXT_MUTED }, rotate: 0 }
+      },
+      yaxis: { labels: { style: { colors: TXT_MUTED } } },
+      annotations: {
+        xaxis: [
+          { x: '0h', x2: '8h', fillColor: DANGER, opacity: 0.07, label: { text: 'Fora de horas', style: { color: DANGER, background: 'transparent' } } },
+          { x: '18h', x2: '23h', fillColor: DANGER, opacity: 0.07 }
+        ]
+      }
+    }).render();
+
+    /* ============================================================
+       Chart: SLA target vs realidade (log)
+       ============================================================ */
+    new ApexCharts(document.querySelector('#chart-sla'), {
+      ...baseTheme,
+      series: [
+        { name: 'Target (min)', data: [2, 8, 16, 60] },
+        { name: 'Realidade (min)', data: [1159, 5193, 2492, 2532] }
+      ],
+      chart: { ...baseTheme.chart, type: 'bar', height: 340 },
+      colors: [ACCENT, DANGER],
+      plotOptions: { bar: { borderRadius: 6, columnWidth: '55%' } },
+      xaxis: {
+        categories: ['Crítico', 'Elevado', 'Intermédio', 'Baixo'],
+        labels: { style: { colors: TXT } }
+      },
+      yaxis: {
+        logarithmic: true,
+        labels: {
+          style: { colors: TXT_MUTED },
+          formatter: v => {
+            if (v < 60) return v + ' min';
+            if (v < 1440) return (v/60).toFixed(0) + ' h';
+            return (v/1440).toFixed(0) + ' d';
+          }
+        }
+      },
+      legend: { position: 'top', labels: { colors: TXT } },
+      tooltip: {
+        y: { formatter: v => {
+          if (v < 60) return v + ' min';
+          if (v < 1440) return (v/60).toFixed(1) + ' horas';
+          return (v/1440).toFixed(1) + ' dias';
+        } }
+      }
+    }).render();
+
+    /* ============================================================
+       Chart: Tópicos Lead (top 10)
+       ============================================================ */
+    new ApexCharts(document.querySelector('#chart-topicos-lead'), {
+      ...baseTheme,
+      series: [{ name: '% das mensagens lead', data: [18, 14, 14, 8, 7, 7, 5, 3, 3, 2] }],
+      chart: { ...baseTheme.chart, type: 'bar', height: 460 },
+      plotOptions: { bar: { horizontal: true, borderRadius: 6, barHeight: '70%', distributed: true } },
+      colors: [PRIMARY_LIGHT, PRIMARY, PRIMARY_LIGHT, PRIMARY, PRIMARY_LIGHT, PRIMARY, PRIMARY_LIGHT, PRIMARY, PRIMARY_LIGHT, PRIMARY],
+      xaxis: {
+        categories: [
+          'Escola de Programação / informática',
+          'Pré-inscrição Formação Modular',
+          'Escola de Línguas',
+          'Explicações / apoio escolar',
+          'Cursos de Aprendizagem (12º)',
+          'Pedido genérico / vago',
+          'Formação Modular UFCDs / EFA',
+          'Férias de verão / VFCamp',
+          'Certificados / declarações',
+          'AEC / AAAF / CAF'
+        ],
+        labels: { style: { colors: TXT_MUTED }, formatter: v => v + '%' }
+      },
+      yaxis: { labels: { style: { colors: TXT, fontSize: '12px' } } },
+      legend: { show: false },
+      dataLabels: { enabled: true, style: { colors: ['#fff'], fontSize: '11px', fontWeight: 600 }, formatter: v => v + '%' }
+    }).render();
+
+    /* ============================================================
+       Chart: Tópicos Cliente (top 10)
+       ============================================================ */
+    new ApexCharts(document.querySelector('#chart-topicos-cliente'), {
+      ...baseTheme,
+      series: [{ name: '% das mensagens cliente', data: [18, 14, 12, 10, 6, 6, 5, 5, 4, 4] }],
+      chart: { ...baseTheme.chart, type: 'bar', height: 460 },
+      plotOptions: { bar: { horizontal: true, borderRadius: 6, barHeight: '70%', distributed: true } },
+      colors: [ACCENT, PRIMARY_LIGHT, ACCENT, PRIMARY_LIGHT, ACCENT, PRIMARY_LIGHT, ACCENT, PRIMARY_LIGHT, ACCENT, PRIMARY_LIGHT],
+      xaxis: {
+        categories: [
+          'Pagamentos — comprovativos',
+          'Férias (Verão/Páscoa/Natal)',
+          'Pagamentos — nova referência',
+          'CAF/AAAF — inscrição, escalões',
+          'Mensalidade vencida',
+          'Confirmações curtas / agradecimentos',
+          'Cancelamentos / desistências',
+          'Faltas / ausências pontuais',
+          'Centro Pedagógico — horários',
+          'Centro Pedagógico — avaliações'
+        ],
+        labels: { style: { colors: TXT_MUTED }, formatter: v => v + '%' }
+      },
+      yaxis: { labels: { style: { colors: TXT, fontSize: '12px' } } },
+      legend: { show: false },
+      dataLabels: { enabled: true, style: { colors: ['#fff'], fontSize: '11px', fontWeight: 600 }, formatter: v => v + '%' }
+    }).render();
+  </script>
+</body>
+</html>
