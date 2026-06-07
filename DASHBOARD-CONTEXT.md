@@ -77,7 +77,7 @@ Cada vez que se edita JS partilhado, **incrementar `?v=N` em todos os index.html
 cd reports-dashboard && find . -name "index.html" -exec sed -i 's/?v=30/?v=31/g' {} \;
 ```
 
-Versão atual: **v=30**.
+Versão atual: **v=31**.
 
 ---
 
@@ -90,6 +90,7 @@ O `dashboard.js` adapta a secção chatbot ao `client.context`:
 - `'lead_gen'` — Now Fitness (IG comentários → DMs → leads)
 - `'qualificador'` — Teclas da Vida (crédito) (churn — não renderiza)
 - `'porteiro'` — OdiSeguros (classificação clientes existentes vs novos leads)
+- `'dual_agent'` — Costura Urbana (2 agentes IA em tabelas separadas: Loja + Assistência Técnica; KPIs + gráfico resolução por agente + donut conversas por agente + tabela detalhe). Dados já vêm por canal (`wp_loja`/`wp_assistencia`); o transform preserva `conversations_ai_only`/`with_human` por canal
 - `undefined` / `'standard'` — todos os outros (chatbot normal + canais)
 
 ---
@@ -174,6 +175,7 @@ A HCO precisa de dois preços diferentes para operacionais — atualmente `costP
 
 ## Mudanças recentes (changelog inverso)
 
+- **v=31** — Costura Urbana: novo context `dual_agent` (Loja vs Assistência Técnica). Métricas por agente (resolução, conversas, mensagens IA) a partir de `data.channels` — sem alterações ao workflow. Maio: Loja 41,9% / Assistência 68,75% / global 50,3%. Escolhida resolução-por-conversa (favorável) vs deflexão-por-mensagem (pior, rejeitada).
 - **v=30** — Fix: `jsonb_array_length(clicks)` rebentava quando `clicks` não era array. Guarda `jsonb_typeof='array'` adicionada. Label `winback_90d`. Be on Sport passou a mostrar mensagens automáticas.
 - **v=29** — ROI calculado SÓ sobre marketing (operacionais fora). Adicionado `costPerMessageOp` separado, card informativo "Custo Operacionais".
 - **v=28** — FBeauty: labels custom de sequência (30min/24h/48h cliente novo/atual).
