@@ -271,30 +271,30 @@
       </div>
 
       <div class="insight" style="margin-bottom:24px">
-        <div class="hl">8%</div>
-        <div class="ds">é o cumprimento médio dos SLAs definidos pela EduGEP. Em nenhum dos 4 níveis se ultrapassa <strong>15%</strong>. O tempo médio real de primeira resposta é de <strong>40 a 90 horas</strong> — contra targets de 2 a 60 minutos. Nenhuma equipa humana pode cumprir estes SLAs com a triagem atual.</div>
+        <div class="hl">3,7%</div>
+        <div class="ds">é o cumprimento médio dos SLAs definidos pela EduGEP. Em nenhum dos 4 níveis se ultrapassa <strong>12%</strong>. A <strong>mediana</strong> de primeira resposta é de <strong>16 a 22 horas</strong> em todos os tiers — contra targets de 2 a 60 minutos. Apenas <strong>11%</strong> das respostas chega dentro de 1 hora. Nenhuma equipa humana pode cumprir estes SLAs com a triagem atual.</div>
       </div>
 
       <div class="sla-grid">
         <div class="sla">
           <div class="tier">SLA Crítico</div>
-          <div class="nums"><span class="target">Target 2 min</span><span class="vs">vs</span><span class="real">Real 19h</span></div>
-          <div class="compl">Cumprimento: <strong>14,3%</strong> (7 processos)</div>
+          <div class="nums"><span class="target">Target 2 min</span><span class="vs">vs</span><span class="real">Mediana 22h</span></div>
+          <div class="compl">Cumprimento: <strong>0%</strong> (6 processos)</div>
         </div>
         <div class="sla">
           <div class="tier">SLA Elevado</div>
-          <div class="nums"><span class="target">Target 8 min</span><span class="vs">vs</span><span class="real">Real 86h</span></div>
-          <div class="compl">Cumprimento: <strong>2,6%</strong> (388 processos)</div>
+          <div class="nums"><span class="target">Target 8 min</span><span class="vs">vs</span><span class="real">Mediana 20h</span></div>
+          <div class="compl">Cumprimento: <strong>1,0%</strong> (382 processos)</div>
         </div>
         <div class="sla">
           <div class="tier">SLA Intermédio</div>
-          <div class="nums"><span class="target">Target 16 min</span><span class="vs">vs</span><span class="real">Real 41h</span></div>
-          <div class="compl">Cumprimento: <strong>3,0%</strong> (4.373 processos)</div>
+          <div class="nums"><span class="target">Target 16 min</span><span class="vs">vs</span><span class="real">Mediana 18h</span></div>
+          <div class="compl">Cumprimento: <strong>1,7%</strong> (4.315 processos)</div>
         </div>
         <div class="sla">
           <div class="tier">SLA Baixo</div>
-          <div class="nums"><span class="target">Target 1 h</span><span class="vs">vs</span><span class="real">Real 42h</span></div>
-          <div class="compl">Cumprimento: <strong>11,8%</strong> (6.801 processos)</div>
+          <div class="nums"><span class="target">Target 1 h</span><span class="vs">vs</span><span class="real">Mediana 16h</span></div>
+          <div class="compl">Cumprimento: <strong>11,7%</strong> (6.789 processos)</div>
         </div>
       </div>
 
@@ -709,7 +709,7 @@
       ...baseTheme,
       series: [
         { name: 'Target (min)', data: [2, 8, 16, 60] },
-        { name: 'Realidade (min)', data: [1159, 5193, 2492, 2532] }
+        { name: 'Mediana real (min)', data: [1322, 1193, 1059, 979] }
       ],
       chart: { ...baseTheme.chart, type: 'bar', height: 340 },
       colors: [ACCENT, DANGER],
