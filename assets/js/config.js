@@ -235,5 +235,15 @@ const CLIENTS = {
     domainId: null,
     startDate: '2026-04-29',  // live hoje, ajustar quando user confirmar
     context: 'driving_school'
+  },
+  marcorego: {
+    name: 'Dr. Marco Rego',
+    password: 'marcorego2026',
+    services: ['chatbot'],
+    channels: ['whatsapp', 'instagram', 'facebook'],
+    schema: 'marco_rego',
+    domainId: null,
+    startDate: '2026-06-14',  // go-live 14/6/2026
+    context: 'clinica'  // clínica oftalmologia: atendimento multi-canal + comentários + qualificações (Íris)
   }
 };

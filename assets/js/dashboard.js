@@ -282,6 +282,17 @@ function renderChatbotSection(client, data, clicks) {
     kpiCards += kpiCardPercent('Taxa Resolução IA', aiRate, 3, aiRate >= 70 ? 'positive' : aiRate >= 50 ? '' : 'warning');
     kpiCards += kpiCard('Mensagens da IA', msgsAI, 'respostas automáticas', 4, 'positive');
     kpiCards += kpiCard('Resolvidas sem Equipa', aiOnly, `de ${total} conversas`, 5, 'positive');
+  } else if (context === 'clinica') {
+    // Dr. Marco Rego (Íris): atendimento multi-canal + comentários + qualificações
+    const ext = data.extended || {};
+    const ht = ext.handoff_totals || {};
+    const qualif = parseInt(ht.qualificadas) || 0;
+    const escal = parseInt(ht.escaladas) || 0;
+    const comments = (ext.comments || []).reduce((s, c) => s + (parseInt(c.total) || 0), 0);
+    kpiCards += kpiCard('Respostas da IA', msgsAI, `${formatNumber(msgsHuman)} mensagens recebidas`, 3, 'positive');
+    if (comments > 0) kpiCards += kpiCard('Comentários Tratados', comments, 'Instagram + Facebook', 4);
+    kpiCards += kpiCard('Qualificações', qualif, 'encaminhadas para marcação', 5, 'positive');
+    if (escal > 0) kpiCards += kpiCard('Escaladas p/ Equipa', escal, 'passadas à assistente', 6);
   } else {
     // Standard: RR, HCO, Teclas, OdiSeguros
     kpiCards += kpiCardPercent('Taxa Resolução IA', aiRate, 3, aiRate >= 70 ? 'positive' : aiRate >= 50 ? '' : 'warning');
@@ -475,6 +486,28 @@ function renderChatbotSection(client, data, clicks) {
           <tbody>${rows}${totalRow}</tbody>
         </table>
       </div>`;
+    }
+  }
+
+  // Dr. Marco Rego (clinica): comentários por canal + qualificações/escalações por origem + leads de formulário
+  if (context === 'clinica') {
+    const extC = data.extended || {};
+    const CHLAB = { whatsapp: 'WhatsApp', instagram: 'Instagram', facebook: 'Facebook' };
+    const comm = extC.comments || [];
+    if (comm.length > 0) {
+      const rows = comm.map(c => `<tr><td>${CHLAB[c.channel] || c.channel}</td><td class="num">${formatNumber(c.total)}</td><td class="num">${formatNumber(c.people)}</td></tr>`).join('');
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-6"><h3>Comentários Tratados por Canal</h3><table class="data-table"><thead><tr><th>Canal</th><th>Comentários</th><th>Pessoas</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    }
+    const hos = extC.handoffs || [];
+    if (hos.length > 0) {
+      const MLAB = { qualificada: 'Qualificada', escalar_humano: 'Escalada' };
+      const rows = hos.map(h => `<tr><td>${h.channel || '—'}</td><td><span class="tag ${h.motivo === 'qualificada' ? 'tag-mk' : 'tag-op'}">${MLAB[h.motivo] || h.motivo}</span></td><td class="num">${formatNumber(h.total)}</td></tr>`).join('');
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-6"><h3>Qualificações & Escalações por Origem</h3><table class="data-table"><thead><tr><th>Origem</th><th>Tipo</th><th>Total</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    }
+    const lf = extC.leads_form || [];
+    if (lf.length > 0) {
+      const rows = lf.map(l => `<tr><td>${l.fonte || '—'}</td><td class="num">${formatNumber(l.total)}</td></tr>`).join('');
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-6"><h3>Leads de Formulário por Fonte</h3><table class="data-table"><thead><tr><th>Fonte</th><th>Entradas</th></tr></thead><tbody>${rows}</tbody></table></div>`;
     }
   }
 
@@ -757,6 +790,15 @@ function generateInsight(slug, client, chatbot, messaging, clicks) {
           const top = ranked[0];
           bits.push(`O agente de <strong>${meta[top]}</strong> destacou-se com <strong>${(ch[top].resolution_rate || 0).toFixed(0)}% de resolução autónoma</strong>.`);
         }
+      } else if (context === 'clinica') {
+        const ext = chatbot.extended || {};
+        const ht = ext.handoff_totals || {};
+        const qualif = parseInt(ht.qualificadas) || 0;
+        const escal = parseInt(ht.escaladas) || 0;
+        const comments = (ext.comments || []).reduce((s, c) => s + (parseInt(c.total) || 0), 0);
+        bits.push(`A assistente Íris processou <strong>${total.toLocaleString('pt-PT')} conversas</strong> nos 3 canais (WhatsApp, Instagram e Facebook) ${periodLabel}, com <strong>${aiMsgs.toLocaleString('pt-PT')} respostas automáticas</strong> e uma taxa de resolução de <strong>${Math.round(aiRate)}%</strong>.`);
+        if (comments > 0) bits.push(`Foram ainda tratados <strong>${comments.toLocaleString('pt-PT')} comentários</strong> em Instagram e Facebook.`);
+        bits.push(`No total, <strong>${qualif} leads qualificados</strong> foram encaminhados para marcação${escal > 0 ? ` e <strong>${escal}</strong> casos escalados para a equipa` : ''}.`);
       } else {
         bits.push(`O agente processou <strong>${total.toLocaleString('pt-PT')} conversas</strong> ${periodLabel}, resolvendo <strong>${Math.round(aiRate)}%</strong> sem intervenção humana.`);
       }
