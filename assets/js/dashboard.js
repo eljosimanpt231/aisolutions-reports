@@ -293,6 +293,15 @@ function renderChatbotSection(client, data, clicks) {
     if (comments > 0) kpiCards += kpiCard('Comentários Tratados', comments, 'Instagram + Facebook', 4);
     kpiCards += kpiCard('Qualificações', qualif, 'encaminhadas para marcação', 5, 'positive');
     if (escal > 0) kpiCards += kpiCard('Escaladas p/ Equipa', escal, 'passadas à assistente', 6);
+  } else if (context === 'clinica_nutri') {
+    // Isabel Pedroso (Maria): qualificação de leads + marcação 1ª consulta (nutrição clínica)
+    const ext = data.extended || {};
+    const fn = ext.funnel || {};
+    const contactados = parseInt(fn.contactados) || 0;
+    const agendadas = parseInt(fn.agendadas) || 0;
+    kpiCards += kpiCard('Mensagens IA', msgsAI, `${formatNumber(msgsHuman)} mensagens recebidas`, 3, 'positive');
+    kpiCards += kpiCard('Leads Contactados', contactados, 'qualificados pela IA', 4);
+    kpiCards += kpiCard('Consultas Agendadas', agendadas, contactados > 0 ? `${((agendadas / (contactados + agendadas)) * 100).toFixed(0)}% de conversão` : 'marcações confirmadas', 5, 'positive');
   } else {
     // Standard: RR, HCO, Teclas, OdiSeguros
     kpiCards += kpiCardPercent('Taxa Resolução IA', aiRate, 3, aiRate >= 70 ? 'positive' : aiRate >= 50 ? '' : 'warning');
@@ -364,6 +373,10 @@ function renderChatbotSection(client, data, clicks) {
     // Costura Urbana: comparação dos 2 agentes (resolução + volume de conversas)
     chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Resolução IA por Agente</h3><div class="chart-container" id="chart-agent-resolution"></div></div>`;
     chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Conversas por Agente</h3><div class="chart-container" id="chart-agent-split"></div></div>`;
+  } else if (context === 'clinica_nutri') {
+    // Isabel Pedroso: a resolução-por-conversa genérica não é a métrica-chave (o foco é o funil
+    // de leads + autonomia sobre leads). O donut por canal (chart-channels) mostra o volume.
+    // Sem radial genérico aqui.
   } else {
     chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>${context === 'porteiro' ? 'Sem Humano vs Com Humano' : 'Resolução IA'}</h3><div class="chart-container" id="chart-ai-human"></div></div>`;
   }
@@ -508,6 +521,75 @@ function renderChatbotSection(client, data, clicks) {
     if (lf.length > 0) {
       const rows = lf.map(l => `<tr><td>${l.fonte || '—'}</td><td class="num">${formatNumber(l.total)}</td></tr>`).join('');
       chartsHtml += `<div class="chart-card glass fade-in fade-in-6"><h3>Leads de Formulário por Fonte</h3><table class="data-table"><thead><tr><th>Fonte</th><th>Entradas</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    }
+  }
+
+  // Isabel Pedroso (clinica_nutri): Funil de Leads + Autonomia sobre leads + Mensagens Automáticas
+  if (context === 'clinica_nutri') {
+    const extN = data.extended || {};
+    const fn = extN.funnel || {};
+    const contactados = parseInt(fn.contactados) || 0;
+    const agendadas = parseInt(fn.agendadas) || 0;
+    const funnelTotal = contactados + agendadas;
+    const convRate = funnelTotal > 0 ? (agendadas / funnelTotal) * 100 : 0;
+
+    // Funil de Leads — 3 etapas visuais (Contactados → Agendadas → conversão)
+    chartsHtml += `<div class="chart-card glass fade-in fade-in-5" style="grid-column: 1 / -1">
+      <h3>Funil de Leads</h3>
+      <p style="color:#9b95b8;font-size:12px;margin:-4px 0 16px 0;">Do primeiro contacto pela IA à consulta agendada</p>
+      <div style="display:flex;gap:16px;align-items:stretch;flex-wrap:wrap;">
+        <div style="flex:1;min-width:150px;background:rgba(112,102,168,0.12);border-radius:12px;padding:18px;text-align:center;">
+          <div style="font-size:2rem;font-weight:700;color:#9B8FD0;">${formatNumber(contactados)}</div>
+          <div style="color:#9b95b8;font-size:13px;margin-top:4px;">Contactados</div>
+        </div>
+        <div style="display:flex;align-items:center;color:#6b6785;font-size:1.5rem;">→</div>
+        <div style="flex:1;min-width:150px;background:rgba(0,212,170,0.12);border-radius:12px;padding:18px;text-align:center;">
+          <div style="font-size:2rem;font-weight:700;color:#00D4AA;">${formatNumber(agendadas)}</div>
+          <div style="color:#9b95b8;font-size:13px;margin-top:4px;">Consultas Agendadas</div>
+        </div>
+        <div style="display:flex;align-items:center;color:#6b6785;font-size:1.5rem;">=</div>
+        <div style="flex:1;min-width:150px;background:rgba(255,181,71,0.12);border-radius:12px;padding:18px;text-align:center;">
+          <div style="font-size:2rem;font-weight:700;color:#FFB547;">${convRate.toFixed(1)}%</div>
+          <div style="color:#9b95b8;font-size:13px;margin-top:4px;">Taxa de Conversão</div>
+        </div>
+      </div>
+    </div>`;
+
+    // Autonomia da IA (sobre leads)
+    const au = extN.autonomia_leads || {};
+    const auTotal = parseInt(au.total) || 0;
+    const auSoIa = parseInt(au.so_ia) || 0;
+    const auPct = auTotal > 0 ? (auSoIa / auTotal) * 100 : 0;
+    const auColor = auPct >= 60 ? '#00D4AA' : auPct >= 40 ? '#FFB547' : '#FF6B6B';
+    if (auTotal > 0) {
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-6">
+        <h3>Autonomia da IA (sobre leads)</h3>
+        <div style="text-align:center;padding:12px 0;">
+          <div style="font-size:3rem;font-weight:700;color:${auColor};">${auPct.toFixed(0)}%</div>
+          <div style="color:#9b95b8;font-size:13px;margin-top:6px;">${formatNumber(auSoIa)} de ${formatNumber(auTotal)} leads geridos sem intervenção da equipa</div>
+        </div>
+        <p style="color:#6b6785;font-size:11px;margin:8px 0 0 0;text-align:center;">Percentagem de leads cujas conversas decorreram inteiramente com a IA, sem qualquer mensagem de atendente humano.</p>
+      </div>`;
+    }
+
+    // Mensagens Automáticas (labels amigáveis)
+    const AUTO_LABELS = {
+      auto_followup_ia_24h: 'Follow-up lead',
+      lembrete_prestacoes: 'Lembrete prestação',
+      auto_pos_consulta_avulsa: 'Pós-consulta',
+      auto_pos_acompanhamento: 'Pós-acompanhamento',
+      auto_followup_pagamento_avulsa: 'Follow-up pagamento',
+      aviso_prazo_pagamento: 'Aviso prazo (interno)'
+    };
+    const autos = (extN.automacao || []).slice().sort((a, b) => (parseInt(b.sends) || 0) - (parseInt(a.sends) || 0));
+    if (autos.length > 0) {
+      const totalAuto = autos.reduce((s, a) => s + (parseInt(a.sends) || 0), 0);
+      const rows = autos.map(a => `<tr><td>${AUTO_LABELS[a.workflow_name] || a.workflow_name}</td><td class="num">${formatNumber(parseInt(a.sends) || 0)}</td></tr>`).join('');
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-6">
+        <h3>Mensagens Automáticas</h3>
+        <p style="color:#9b95b8;font-size:12px;margin:-4px 0 12px 0;">${formatNumber(totalAuto)} envios · follow-ups, lembretes e pós-consulta</p>
+        <table class="data-table"><thead><tr><th>Tipo</th><th>Enviadas</th></tr></thead><tbody>${rows}</tbody></table>
+      </div>`;
     }
   }
 
@@ -799,6 +881,18 @@ function generateInsight(slug, client, chatbot, messaging, clicks) {
         bits.push(`A assistente Íris processou <strong>${total.toLocaleString('pt-PT')} conversas</strong> nos 3 canais (WhatsApp, Instagram e Facebook) ${periodLabel}, com <strong>${aiMsgs.toLocaleString('pt-PT')} respostas automáticas</strong> e uma taxa de resolução de <strong>${Math.round(aiRate)}%</strong>.`);
         if (comments > 0) bits.push(`Foram ainda tratados <strong>${comments.toLocaleString('pt-PT')} comentários</strong> em Instagram e Facebook.`);
         bits.push(`No total, <strong>${qualif} leads qualificados</strong> foram encaminhados para marcação${escal > 0 ? ` e <strong>${escal}</strong> casos escalados para a equipa` : ''}.`);
+      } else if (context === 'clinica_nutri') {
+        const ext = chatbot.extended || {};
+        const fn = ext.funnel || {};
+        const contactados = parseInt(fn.contactados) || 0;
+        const agendadas = parseInt(fn.agendadas) || 0;
+        const au = ext.autonomia_leads || {};
+        const auTotal = parseInt(au.total) || 0;
+        const auSoIa = parseInt(au.so_ia) || 0;
+        const auPct = auTotal > 0 ? Math.round((auSoIa / auTotal) * 100) : 0;
+        bits.push(`A assistente Maria processou <strong>${total.toLocaleString('pt-PT')} conversas</strong> ${periodLabel} (WhatsApp e Instagram), com <strong>${aiMsgs.toLocaleString('pt-PT')} respostas automáticas</strong>.`);
+        if (contactados > 0) bits.push(`Foram qualificados e contactados <strong>${contactados} leads</strong>, dos quais <strong>${agendadas} avançaram para consulta agendada</strong>.`);
+        if (auTotal > 0) bits.push(`<strong>${auPct}% dos leads</strong> foram geridos inteiramente pela IA, sem intervenção da equipa.`);
       } else {
         bits.push(`O agente processou <strong>${total.toLocaleString('pt-PT')} conversas</strong> ${periodLabel}, resolvendo <strong>${Math.round(aiRate)}%</strong> sem intervenção humana.`);
       }

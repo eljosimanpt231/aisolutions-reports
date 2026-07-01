@@ -59,6 +59,10 @@ const INSIGHTS = {
   purarrituals: {
     month: 'Março 2026 (desde dia 26)',
     text: `Primeira semana em produção com resultados promissores. O agente processou <strong>96 conversas</strong> com uma taxa de resolução de <strong>67,7%</strong> — resolvendo autonomamente questões sobre produtos, ingredientes e disponibilidade. As restantes 32% são encaminhadas para a equipa para questões mais complexas ou personalizadas.`
+  },
+  isabelpedroso: {
+    month: 'Junho 2026',
+    text: `A assistente <strong>Maria</strong> processou <strong>323 conversas</strong> (WhatsApp e Instagram), qualificando e contactando <strong>115 leads</strong>, dos quais <strong>13 avançaram para consulta agendada</strong>. Do lado da autonomia, <strong>64% dos leads</strong> foram geridos sem qualquer intervenção humana. As <strong>125 mensagens automáticas</strong> (follow-ups de leads, lembretes de prestação e pós-consulta) garantem que nenhum contacto fica sem seguimento.`
   }
 };
 
@@ -245,5 +249,15 @@ const CLIENTS = {
     domainId: null,
     startDate: '2026-06-14',  // go-live 14/6/2026
     context: 'clinica'  // clínica oftalmologia: atendimento multi-canal + comentários + qualificações (Íris)
+  },
+  isabelpedroso: {
+    name: 'Isabel Pedroso',
+    password: 'isabelpedroso2026',
+    services: ['chatbot'],
+    channels: ['whatsapp', 'instagram'],
+    schema: 'isabel_pedroso',
+    domainId: null,
+    startDate: '2026-03-13',
+    context: 'clinica_nutri'  // nutrição clínica: qualificação de leads + marcação 1ª consulta (Maria)
   }
 };

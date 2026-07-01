@@ -54,6 +54,7 @@ reports-dashboard/
 ├── fbeauty/index.html
 ├── georginamoura/index.html
 ├── hco/index.html
+├── isabelpedroso/index.html       ← nutrição clínica (context clinica_nutri)
 ├── lojaginastica/index.html       ← Be on Sport
 ├── lojinhabebe/index.html
 ├── maninc/index.html
@@ -77,7 +78,7 @@ Cada vez que se edita JS partilhado, **incrementar `?v=N` em todos os index.html
 cd reports-dashboard && find . -name "index.html" -exec sed -i 's/?v=30/?v=31/g' {} \;
 ```
 
-Versão atual: **v=32**.
+Versão atual: **v=33**.
 
 ---
 
@@ -176,6 +177,7 @@ A HCO precisa de dois preços diferentes para operacionais — atualmente `costP
 
 ## Mudanças recentes (changelog inverso)
 
+- **v=33** — Isabel Pedroso (nutrição clínica): novo context `clinica_nutri` (assistente Maria, qualificadora de leads + marcação 1ª consulta; chatbot-only). Modelo próprio: `isabel_pedroso.chat_histories` (colunas `session_id, message` jsonb; canal por prefixo do session_id — `WP-Isabel%`=WhatsApp, senão Instagram; humano por conteúdo `%atendente humano%`/`%[ATENDENTE]%`). Backend: `customChatbotQuery` (mesma shape channels do Marco Rego) + `extendedQuery` (funnel de `ghl_sync` por `current_stage`, automacao de `automsgs_log` send_status='sent', autonomia_leads = leads em `ghl_sync` sem mensagem de atendente). KPIs: Conversas, Mensagens IA, Leads Contactados, Consultas Agendadas. Blocos: donut por canal, Funil de Leads (Contactados→Agendadas→conversão), card Autonomia da IA (sobre leads), tabela Mensagens Automáticas (labels amigáveis). Sem messaging, sem Kutt. Junho: 323 conversas, funil 102→13, autonomia 74/115 (64%).
 - **v=32** — Dr. Marco Rego: novo context `clinica` (clínica oftalmologia, assistente Íris). Modelo de dados próprio: uma só `marco_rego.chat_histories` com `inbox_key` a distinguir canal (`Dr Marco Rego Oftalmologista WhatsApp`=WhatsApp, `dr.marcorego.oftalmologia`=Instagram, `Facebook`=Facebook). Backend: `customChatbotQuery` (channels shape via CASE no inbox_key; humano detetado por conteúdo `%atendente humano%`) + `extendedQuery` (comentários de `comments_log`, qualificações/escalações de `handoffs_lock` por `motivo`, leads de `leads_formulario`). KPIs: Conversas, Respostas IA, Comentários Tratados, Qualificações, Escaladas. Tabelas: comentários/canal, qualif&escal/origem, leads/fonte. Sem messaging, sem Kutt.
 - **v=31** — Costura Urbana: novo context `dual_agent` (Loja vs Assistência Técnica). Métricas por agente (resolução, conversas, mensagens IA) a partir de `data.channels` — sem alterações ao workflow. Maio: Loja 41,9% / Assistência 68,75% / global 50,3%. Escolhida resolução-por-conversa (favorável) vs deflexão-por-mensagem (pior, rejeitada).
 - **v=30** — Fix: `jsonb_array_length(clicks)` rebentava quando `clicks` não era array. Guarda `jsonb_typeof='array'` adicionada. Label `winback_90d`. Be on Sport passou a mostrar mensagens automáticas.
