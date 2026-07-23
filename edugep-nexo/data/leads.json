@@ -1,0 +1,32 @@
+{
+  "generated_at": "2026-07-23T13:57:47.497Z",
+  "leads": [
+    {
+      "id": "68",
+      "telefone": "351914169741",
+      "nome": "Josias Ponte",
+      "campanha_origem": null,
+      "status": "em_conversa",
+      "ultima_interacao": "2026-07-22T23:25:55.250Z",
+      "primeira_msg": "[Cliente enviou áudio, transcrito] Legendas pela comunidade Amara.org"
+    },
+    {
+      "id": "162",
+      "telefone": "351930577205",
+      "nome": "Joao GP",
+      "campanha_origem": null,
+      "status": "novo",
+      "ultima_interacao": "2026-07-22T14:58:19.002Z",
+      "primeira_msg": "[Cliente enviou imagem] Na imagem vê-se um campo de futebol com várias crianças a jogar. As crianças estão vestidas principalmente de roupa rosa e estão a interagir umas com as outras. Ao fundo, há edifícios e um céu parcialmente nublado."
+    },
+    {
+      "id": "31",
+      "telefone": "351969787732",
+      "nome": "Cris Picanço",
+      "campanha_origem": null,
+      "status": "novo",
+      "ultima_interacao": "2026-07-21T19:40:59.367Z",
+      "primeira_msg": "[Cliente enviou vídeo]"
+    }
+  ]
+}

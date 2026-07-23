@@ -1,0 +1,20 @@
+{
+  "generated_at": "2026-07-23T13:57:46.483Z",
+  "channels": [
+    {
+      "platform": "WhatsApp",
+      "messages": 152,
+      "sessions": 3
+    },
+    {
+      "platform": "instagram",
+      "messages": 45,
+      "sessions": 15
+    },
+    {
+      "platform": "facebook",
+      "messages": 13,
+      "sessions": 11
+    }
+  ]
+}

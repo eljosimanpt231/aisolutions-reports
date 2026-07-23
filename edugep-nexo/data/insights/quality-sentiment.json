@@ -1,0 +1,39 @@
+{
+  "generated_at": "2026-07-23T13:58:52.515Z",
+  "model": "anthropic/claude-haiku-4.5",
+  "sample_size": 6,
+  "sentiment_geral": {
+    "positivo": 4,
+    "neutro": 2,
+    "negativo": 0
+  },
+  "sentiment_por_canal": {
+    "whatsapp": {
+      "positivo": 4,
+      "neutro": 2,
+      "negativo": 0
+    },
+    "instagram": {
+      "positivo": 0,
+      "neutro": 0,
+      "negativo": 0
+    },
+    "facebook": {
+      "positivo": 0,
+      "neutro": 0,
+      "negativo": 0
+    }
+  },
+  "qualidade_media_nexo": 4.1,
+  "qualidade_reasoning": "NEXO demonstra empatia, clareza informativa e reconhecimento de limitações, mas respostas truncadas e falta de resolução técnica reduzem a nota.",
+  "melhor_resposta": {
+    "pergunta": "Nexo isso da language school, se troxer 2 amigos tenho 40% desconto?",
+    "resposta": "Há aqui uma confusão entre duas promoções diferentes da Language School, deixe-me esclarecer. 📌 A promoção *20% de desconto* é para as primeiras 20 inscrições do ano letivo 26/27 — não tem relação com trazer amigos. Já a promoção *\"Traz um Amigo\"* funciona assim: por cada amigo que traz e se inscreve, tanto você como o amigo ganham *1 mensalidade grátis* (a última, junho/27) — não é uma percent",
+    "porque": "Identifica confusão do cliente, esclarece com estrutura clara (📌), diferencia duas promoções distintas e explica mecanismo correto com detalhe."
+  },
+  "pior_resposta": {
+    "pergunta": "Legendas pela comunidade Amara.org",
+    "resposta": "Olá! 👋 Sou o NEXO, o assistente virtual da EDUGEP. Parece que o áudio não chegou com conteúdo perceptível da sua parte — só recebi uma legenda genérica, sem a sua pergunta. Pode escrever-me ou gravar novamente o que precisa? Assim ajudo-o mais rápido.",
+    "porque": "Resposta genérica a erro técnico de transcrição; não oferece alternativas práticas ou escalação; assume culpa do cliente sem investigar falha do sistema."
+  }
+}

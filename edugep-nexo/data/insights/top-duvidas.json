@@ -1,0 +1,38 @@
+{
+  "generated_at": "2026-07-23T13:58:45.888Z",
+  "model": "anthropic/claude-haiku-4.5",
+  "period_days": 30,
+  "sample_size": 100,
+  "topicos": [
+    {
+      "titulo": "Atividades e eventos de verão",
+      "count": 35,
+      "exemplo": "Imagens de piscina, praia, parque aquático com crianças",
+      "prioridade": "high"
+    },
+    {
+      "titulo": "Problemas técnicos inscrição",
+      "count": 1,
+      "exemplo": "Tentei me inscrever mas está só a dar erro",
+      "prioridade": "high"
+    },
+    {
+      "titulo": "Programas desportivos e treinos",
+      "count": 28,
+      "exemplo": "Pavilhão com crianças em treino de andebol/futebol",
+      "prioridade": "high"
+    },
+    {
+      "titulo": "Promoções e descontos",
+      "count": 1,
+      "exemplo": "Se troxer 2 amigos tenho 40% desconto?",
+      "prioridade": "medium"
+    },
+    {
+      "titulo": "Informações sobre cursos/bootcamps",
+      "count": 2,
+      "exemplo": "Bootcamp IA parece super interessante, podem me dar detalhes?",
+      "prioridade": "medium"
+    }
+  ]
+}

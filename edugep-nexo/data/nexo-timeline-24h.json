@@ -1,0 +1,167 @@
+{
+  "generated_at": "2026-07-23T13:57:47.622Z",
+  "events": [
+    {
+      "id": "285",
+      "session_id": "351930577205",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "human",
+      "preview": "[Cliente enviou imagem] A imagem mostra um grupo de crianças a praticar andebol num pavilhão desportivo. Algumas crianças vestem camisolas amarelas e outras têm vestuário mais escuro. Um treinador observa a atividade enquanto se prepara para orientar a prática.",
+      "ts": "2026-07-22T14:58:05.617Z"
+    },
+    {
+      "id": "286",
+      "session_id": "351930577205",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "human",
+      "preview": "[Cliente enviou imagem] A imagem mostra um jogo de andebol em um pavilhão desportivo. Vários jovens estão em campo, alguns usando camisolas amarelas, enquanto uma jogadora se prepara para fazer um lançamento. No fundo, pode-se ver um treinador e outros participantes.",
+      "ts": "2026-07-22T14:58:07.938Z"
+    },
+    {
+      "id": "287",
+      "session_id": "351930577205",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "human",
+      "preview": "[Cliente enviou imagem] A imagem mostra um pavilhão desportivo onde um grupo de pessoas, algumas com coletes amarelos, está a participar numa atividade desportiva. Ao fundo, é visível uma baliza e uma rede. Há também uma faixa na parede que diz \"JUNTOS PELO VITOR\".",
+      "ts": "2026-07-22T14:58:08.206Z"
+    },
+    {
+      "id": "288",
+      "session_id": "351930577205",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "human",
+      "preview": "[Cliente enviou vídeo]",
+      "ts": "2026-07-22T14:58:11.028Z"
+    },
+    {
+      "id": "289",
+      "session_id": "351930577205",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "human",
+      "preview": "[Cliente enviou vídeo]",
+      "ts": "2026-07-22T14:58:14.686Z"
+    },
+    {
+      "id": "290",
+      "session_id": "351930577205",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "human",
+      "preview": "[Cliente enviou imagem] A imagem mostra um pavilhão desportivo com várias crianças a participar num treino de basquetebol. Algumas delas estão em movimento, enquanto uma pessoa lança a bola em direção ao cesto. O espaço tem bancos verdes e um parquet de madeira no chão.",
+      "ts": "2026-07-22T14:58:17.012Z"
+    },
+    {
+      "id": "291",
+      "session_id": "351930577205",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "human",
+      "preview": "[Cliente enviou imagem] A imagem mostra um grupo de crianças a jogar numa sala de desporto. Algumas delas estão a usar coletes amarelos, e um menino vestido de negro parece estar a lançar uma bola. Ao fundo, pode-se ver uma baliza de futebol e outras crianças a brincar.",
+      "ts": "2026-07-22T14:58:17.608Z"
+    },
+    {
+      "id": "292",
+      "session_id": "351930577205",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "human",
+      "preview": "[Cliente enviou imagem] A imagem mostra um pavilhão desportivo, onde várias crianças estão alinhadas ao lado de uma baliza. Elas vestem camisolas amarelas e parecem estar a aguardar instruções. Ao fundo, há um treinador e um espaço amplo com degradação visível no piso.",
+      "ts": "2026-07-22T14:58:18.995Z"
+    },
+    {
+      "id": "293",
+      "session_id": "351914169741",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "human",
+      "preview": "Olá Nexo, queria saber mais sobre que campanhas têm de momento ativas",
+      "ts": "2026-07-22T22:58:21.661Z"
+    },
+    {
+      "id": "294",
+      "session_id": "351914169741",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "ai",
+      "preview": "Olá! 👋 Sou o NEXO, o assistente virtual da EDUGEP.\n\nTemos neste momento algumas campanhas activas:\n\n• *Language School* — promoção 20 anos (20% desconto nas primeiras 20 inscrições) e \"Traz um Amigo\" para o ano letivo 26/27 de Inglês\n• *VF Camp* — férias de verão para crianças e jovens (6-14 anos), ",
+      "ts": "2026-07-22T22:59:00.480Z"
+    },
+    {
+      "id": "295",
+      "session_id": "351914169741",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "human",
+      "preview": "Esse bootcamp IA parece super interessante, podem me dar mais detalhes?",
+      "ts": "2026-07-22T23:14:41.435Z"
+    },
+    {
+      "id": "296",
+      "session_id": "351914169741",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "ai",
+      "preview": "Claro! 😊 O *Bootcamp IA para Estudantes* é uma formação online da EDUGEP, pensada para alunos do secundário, licenciatura e mestrado.\n\n• *Duração:* 20 horas — sessões síncronas de 2h30 + desafios autónomos de 1h30-2h\n• *Conteúdos:* resumos e fichas de estudo, exercícios e simulações, técnicas de pro",
+      "ts": "2026-07-22T23:15:19.272Z"
+    },
+    {
+      "id": "297",
+      "session_id": "351914169741",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "human",
+      "preview": "Ok posso dar um olho sim",
+      "ts": "2026-07-22T23:22:22.474Z"
+    },
+    {
+      "id": "298",
+      "session_id": "351914169741",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "ai",
+      "preview": "Aqui tem o link de inscrição do *Bootcamp IA para Estudantes*:\n\n🌐 https://edugep.pt/bootcamp_ai/\n\nQualquer dúvida durante a inscrição, escreva-me por aqui que ajudo. 👋",
+      "ts": "2026-07-22T23:22:56.872Z"
+    },
+    {
+      "id": "299",
+      "session_id": "351914169741",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "human",
+      "preview": "Tentei me inscrever mas está só a dar erro, podes ajudar?",
+      "ts": "2026-07-22T23:24:32.981Z"
+    },
+    {
+      "id": "300",
+      "session_id": "351914169741",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "ai",
+      "preview": "Lamento pelo incómodo. 😕\n\nNão tenho forma de aceder ao formulário nem de ver o que está a acontecer do seu lado, por isso não consigo resolver isso por aqui.\n\nO melhor é ligar para 📞 *265 185 750*, de segunda a sexta, entre as 08:00 e as 20:30, para a equipa confirmar consigo os detalhes da inscriçã",
+      "ts": "2026-07-22T23:25:09.989Z"
+    },
+    {
+      "id": "301",
+      "session_id": "351914169741",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "human",
+      "preview": "Nexo isso da language school, se troxer 2 amigos tenho 40% desconto?",
+      "ts": "2026-07-22T23:25:55.246Z"
+    },
+    {
+      "id": "302",
+      "session_id": "351914169741",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "ai",
+      "preview": "Há aqui uma confusão entre duas promoções diferentes da Language School, deixe-me esclarecer. 📌\n\nA promoção *20% de desconto* é para as primeiras 20 inscrições do ano letivo 26/27 — não tem relação com trazer amigos.\n\nJá a promoção *\"Traz um Amigo\"* funciona assim: por cada amigo que traz e se inscr",
+      "ts": "2026-07-22T23:26:26.194Z"
+    }
+  ]
+}

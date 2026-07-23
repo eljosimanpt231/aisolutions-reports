@@ -1,0 +1,20 @@
+{
+  "generated_at": "2026-07-23T13:57:46.401Z",
+  "totals": {
+    "total_msgs": 210,
+    "msgs_human": 196,
+    "msgs_ai": 14,
+    "unique_sessions": 29,
+    "channels": 3,
+    "first_msg": "2026-06-12T11:19:14.091Z",
+    "last_msg": "2026-07-22T23:26:26.194Z",
+    "msgs_7d": 153,
+    "msgs_30d": 188,
+    "sessions_7d": 4,
+    "sessions_30d": 18,
+    "handoff_msgs": 8,
+    "reset_msgs": 0,
+    "msgs_prev_7d": 22,
+    "sessions_prev_7d": 8
+  }
+}

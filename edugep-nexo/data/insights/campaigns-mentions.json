@@ -1,0 +1,39 @@
+{
+  "generated_at": "2026-07-23T13:58:56.668Z",
+  "model": "anthropic/claude-haiku-4.5",
+  "sample_size": 100,
+  "campanhas": [
+    {
+      "slug": "language-school-traz-amigo",
+      "nome": "Language School Letivo 26-27 — Traz um amigo",
+      "count": 1,
+      "context": "Cliente pergunta sobre desconto ao trazer 2 amigos para language school"
+    },
+    {
+      "slug": "bootcamp-ia-estudantes",
+      "nome": "Bootcamp IA para Estudantes",
+      "count": 1,
+      "context": "Cliente solicita mais detalhes sobre bootcamp IA"
+    },
+    {
+      "slug": "vf-camp-regular",
+      "nome": "VF Camp Regular (6-14 anos)",
+      "count": 47,
+      "context": "Múltiplas imagens de atividades de campo com crianças em coletes laranja, piscina, praia, desportos e atividades educativas"
+    }
+  ],
+  "outros_topicos": [
+    {
+      "topic": "Problemas técnicos / Inscrições",
+      "count": 1
+    },
+    {
+      "topic": "Informações gerais sobre campanhas",
+      "count": 1
+    },
+    {
+      "topic": "Conteúdo não relacionado (imagens/vídeos sem contexto claro)",
+      "count": 50
+    }
+  ]
+}

@@ -1,0 +1,1653 @@
+{
+  "generated_at": "2026-07-23T13:57:47.413Z",
+  "transcripts": {
+    "351914169741": [
+      {
+        "id": "187",
+        "type": "human",
+        "content": "[Cliente enviou áudio, transcrito] Legendas pela comunidade Amara.org",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T18:21:30.941Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "188",
+        "type": "ai",
+        "content": "Olá! 👋 Sou o NEXO, o assistente virtual da EDUGEP.\n\nParece que o áudio não chegou com conteúdo perceptível da sua parte — só recebi uma legenda genérica, sem a sua pergunta.\n\nPode escrever-me ou gravar novamente o que precisa? Assim ajudo-o mais rápido.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T18:21:58.029Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "293",
+        "type": "human",
+        "content": "Olá Nexo, queria saber mais sobre que campanhas têm de momento ativas",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-22T22:58:21.661Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "294",
+        "type": "ai",
+        "content": "Olá! 👋 Sou o NEXO, o assistente virtual da EDUGEP.\n\nTemos neste momento algumas campanhas activas:\n\n• *Language School* — promoção 20 anos (20% desconto nas primeiras 20 inscrições) e \"Traz um Amigo\" para o ano letivo 26/27 de Inglês\n• *VF Camp* — férias de verão para crianças e jovens (6-14 anos), 15 junho a 28 agosto\n• *Bootcamp IA para Estudantes* — online, 20 a 31 julho, 99€\n• *Bootcamp Literacia Financeira* — presencial, 20 a 24 julho, 98€\n• *Bootcamp STEAM* — Programação, Robótica, IA, 1.ª quinzena de setembro, 150€\n\nAlguma destas lhe interessa em particular? Digo-lhe mais detalhes.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-22T22:59:00.480Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "295",
+        "type": "human",
+        "content": "Esse bootcamp IA parece super interessante, podem me dar mais detalhes?",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-22T23:14:41.435Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "296",
+        "type": "ai",
+        "content": "Claro! 😊 O *Bootcamp IA para Estudantes* é uma formação online da EDUGEP, pensada para alunos do secundário, licenciatura e mestrado.\n\n• *Duração:* 20 horas — sessões síncronas de 2h30 + desafios autónomos de 1h30-2h\n• *Conteúdos:* resumos e fichas de estudo, exercícios e simulações, técnicas de prompting, trabalhos académicos, apresentações, desenvolvimento de CV, preparação para entrevistas e ética na IA\n• *Datas:* 20 a 31 julho de 2026\n• *Certificado:* digital de participação, emitido pela EDUGEP\n\nO valor é *99€*, com *10% de desconto* para grupos de 3 ou mais estudantes da mesma escola.\n\nQuer que lhe dê o link de inscrição? 🌐",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-22T23:15:19.272Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "297",
+        "type": "human",
+        "content": "Ok posso dar um olho sim",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-22T23:22:22.474Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "298",
+        "type": "ai",
+        "content": "Aqui tem o link de inscrição do *Bootcamp IA para Estudantes*:\n\n🌐 https://edugep.pt/bootcamp_ai/\n\nQualquer dúvida durante a inscrição, escreva-me por aqui que ajudo. 👋",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-22T23:22:56.872Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "299",
+        "type": "human",
+        "content": "Tentei me inscrever mas está só a dar erro, podes ajudar?",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-22T23:24:32.981Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "300",
+        "type": "ai",
+        "content": "Lamento pelo incómodo. 😕\n\nNão tenho forma de aceder ao formulário nem de ver o que está a acontecer do seu lado, por isso não consigo resolver isso por aqui.\n\nO melhor é ligar para 📞 *265 185 750*, de segunda a sexta, entre as 08:00 e as 20:30, para a equipa confirmar consigo os detalhes da inscrição no Bootcamp IA e ajudar a resolver o erro.\n\nQualquer outra coisa, estou por aqui.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-22T23:25:09.989Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "301",
+        "type": "human",
+        "content": "Nexo isso da language school, se troxer 2 amigos tenho 40% desconto?",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-22T23:25:55.246Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "302",
+        "type": "ai",
+        "content": "Há aqui uma confusão entre duas promoções diferentes da Language School, deixe-me esclarecer. 📌\n\nA promoção *20% de desconto* é para as primeiras 20 inscrições do ano letivo 26/27 — não tem relação com trazer amigos.\n\nJá a promoção *\"Traz um Amigo\"* funciona assim: por cada amigo que traz e se inscreve, tanto você como o amigo ganham *1 mensalidade grátis* (a última, junho/27) — não é uma percentagem de desconto.\n\nNão são promoções que se somem numa percentagem tipo \"40%\". Se trouxer 2 amigos, o que ganha em concreto (quantas mensalidades, se combina com o desconto de aniversário) é algo que a equipa confirma consigo directamente — pode ligar para 📞 *265 185 750*, de segunda a sexta, 08:00-20:30.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-22T23:26:26.194Z",
+        "platform": "WhatsApp"
+      }
+    ],
+    "351930577205": [
+      {
+        "id": "282",
+        "type": "human",
+        "content": "[Cliente enviou imagem] Na imagem vê-se um campo de futebol com várias crianças a jogar. As crianças estão vestidas principalmente de roupa rosa e estão a interagir umas com as outras. Ao fundo, há edifícios e um céu parcialmente nublado.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-22T09:38:45.887Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "283",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra um campo de futebol com um estádio ao fundo. Algumas pessoas estão a treinar no campo, enquanto outras se encontram à volta. Ao lado direito, vê-se um edifício de apartamentos.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-22T09:38:46.700Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "284",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra um grupo de jovens a praticar futebol num campo com relvado artificial. Há vários jogadores em ação, enquanto uma estrutura verde está visível ao fundo. O ambiente parece ser um espaço desportivo ao ar livre.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-22T09:38:47.619Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "285",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra um grupo de crianças a praticar andebol num pavilhão desportivo. Algumas crianças vestem camisolas amarelas e outras têm vestuário mais escuro. Um treinador observa a atividade enquanto se prepara para orientar a prática.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-22T14:58:05.617Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "286",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra um jogo de andebol em um pavilhão desportivo. Vários jovens estão em campo, alguns usando camisolas amarelas, enquanto uma jogadora se prepara para fazer um lançamento. No fundo, pode-se ver um treinador e outros participantes.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-22T14:58:07.938Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "287",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra um pavilhão desportivo onde um grupo de pessoas, algumas com coletes amarelos, está a participar numa atividade desportiva. Ao fundo, é visível uma baliza e uma rede. Há também uma faixa na parede que diz \"JUNTOS PELO VITOR\".",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-22T14:58:08.206Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "288",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-22T14:58:11.028Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "289",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-22T14:58:14.686Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "290",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra um pavilhão desportivo com várias crianças a participar num treino de basquetebol. Algumas delas estão em movimento, enquanto uma pessoa lança a bola em direção ao cesto. O espaço tem bancos verdes e um parquet de madeira no chão.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-22T14:58:17.012Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "291",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra um grupo de crianças a jogar numa sala de desporto. Algumas delas estão a usar coletes amarelos, e um menino vestido de negro parece estar a lançar uma bola. Ao fundo, pode-se ver uma baliza de futebol e outras crianças a brincar.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-22T14:58:17.608Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "292",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra um pavilhão desportivo, onde várias crianças estão alinhadas ao lado de uma baliza. Elas vestem camisolas amarelas e parecem estar a aguardar instruções. Ao fundo, há um treinador e um espaço amplo com degradação visível no piso.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-22T14:58:18.995Z",
+        "platform": "WhatsApp"
+      }
+    ],
+    "351969787732": [
+      {
+        "id": "149",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T18:02:14.655Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "150",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T18:02:19.270Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "151",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T18:02:19.277Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "152",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T18:04:45.278Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "153",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T18:04:45.344Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "154",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T18:04:48.190Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "155",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T18:04:48.258Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "156",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T18:04:48.260Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "157",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T18:04:48.291Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "159",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T18:04:48.310Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "158",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T18:04:48.310Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "160",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T18:04:50.207Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "161",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T18:04:50.224Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "162",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T18:04:50.226Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "163",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T18:04:50.238Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "164",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T18:04:52.752Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "165",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T18:04:55.597Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "166",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T18:04:55.614Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "167",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T18:04:55.636Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "168",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T18:04:55.647Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "169",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T18:04:57.011Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "170",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T18:04:57.022Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "171",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T18:04:57.490Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "172",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T18:04:57.574Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "173",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T18:04:57.617Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "174",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T18:04:57.641Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "175",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T18:04:59.385Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "176",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T18:04:59.391Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "177",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T18:04:59.442Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "178",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T18:05:03.072Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "179",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T18:05:03.114Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "180",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T18:05:03.152Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "181",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T18:05:03.832Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "182",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T18:05:05.664Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "183",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T18:05:06.300Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "184",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T18:05:06.938Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "189",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra um grupo de jovens sentados em um espaço verde ao ar livre, com algumas pessoas de pé. Destaca-se uma bandeira verde ao primeiro plano, que contém um logotipo e é visível no centro da imagem. Ao fundo, há uma rede e estrutura desportiva.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:36:19.271Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "190",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra um campo verde onde crianças jogam à bola. Em primeiro plano, há uma bandeira verde, e ao fundo, destaca-se uma estrutura de mergulho. O céu está parcialmente nublado.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:36:20.188Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "191",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:37:32.224Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "192",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra um jovem com um par de óculos coloridos, feitos de um material que parece ser fio de plastico azul, com detalhes vermelhos. O jovem está a olhar para a câmara, e a sua expressão é descontraída. Ao fundo, vê-se um ambiente com janelas e um chão claro.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:37:33.237Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "193",
+        "type": "human",
+        "content": "[Cliente enviou imagem] Na imagem, várias crianças estão a trabalhar em mesas, usando canetas de impressão 3D para criar desenhos em papel. Todas estão vestidas com coletes laranja e parecem concentradas nas suas atividades. Uma das crianças está a mostrar um sinal com os dedos, enquanto as outras continuam a desenhar.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:37:34.251Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "194",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra três crianças a trabalhar numa mesa, utilizando canetas 3D para criar desenhos. As crianças estão concentradas, inclinadas sobre o material que estão a desenhar. Ao fundo, estão impressoras 3D e um projetor.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:37:34.959Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "195",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem apresenta uma escultura feita de livros empilhados de forma espiral, com um livro aberto no topo. A base da escultura é composta por diversos livros de várias cores e tamanhos. Ao fundo, vê-se um mapa de direção colado à parede e um extintor de incêndio.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:37:35.459Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "196",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra um jovem sorridente a usar óculos com formato de orelhas de coelho e um colete laranja. Ao fundo, há prateleiras com materiais diversos e livros. O ambiente parece ser um espaço educativo ou de trabalho.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:37:35.515Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "197",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra uma sala de aula com uma professora em frente a um ecrã. Várias crianças estão sentadas a ouvir, com algumas a levantar a mão. O ambiente é moderno, com bandeiras de diferentes países penduradas no teto.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:37:38.288Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "198",
+        "type": "human",
+        "content": "[Cliente enviou imagem] Na imagem, vê-se uma sala de aula moderna com várias bandeiras decorativas ao longo do teto. Há um grupo de crianças sentadas em cadeiras coloridas, enquanto uma mulher à frente parece estar a ensinar e levantou a mão. Um ecrã visível mostra uma apresentação, mas o conteúdo não é legível.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:37:38.477Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "199",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra um grupo de crianças e jovens numa sala com decoração colorida e luminárias pendentes. Eles estão sentados e alguns em pé, usando coletes laranja, enquanto uma educadora os observa. O ambiente é acolhedor e parece ser um local de atividades ou reunião.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:37:40.241Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "200",
+        "type": "human",
+        "content": "[Cliente enviou imagem] Na imagem, vê-se um grupo de crianças sentadas em cadeiras de aulas modernas, assistindo a uma apresentação num computador. Todas as crianças estão a usar coletes laranja. Ao fundo, há um mapa-múndi decorado com várias saudações em diferentes idiomas.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:37:40.719Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "201",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra uma mulher a tirar uma selfie, usando óculos grandes e laranja. Ela está a fazer uma expressão divertida com os lábios. Ao fundo, pode-se ver um ambiente interior com móveis e decoração simples.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:37:41.663Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "202",
+        "type": "human",
+        "content": "[Cliente enviou imagem] Na imagem, vê-se um grupo de crianças a trabalhar em um projeto de artesanato. Uma criança segura um papel com uma forma desenhada em tinta vermelha, enquanto outra trabalha com uma pistola de cola quente de cor azul. As crianças estão vestidas com coletes laranja e estão sentadas à volta de uma mesa com utensílios de trabalho.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:37:43.480Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "203",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra um pavilhão desportivo com várias crianças em atividade. Estão algumas crianças em fila, observando ou participando de um treino. O piso é de madeira e as paredes estão pintadas de verde, com redes de proteção visíveis.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:37:44.199Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "204",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra um pavilhão desportivo com várias pessoas a praticar atividades físicas. Algumas crianças e adolescentes estão a jogar com uma bola, enquanto outras se movem entre cones coloridos no chão. O ambiente é iluminado e tipicamente associado a atividades de lazer e desporto.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:37:44.726Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "205",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra um pavilhão desportivo com várias crianças e adolescentes a participar em atividades. No centro, uma jovem está a chutar uma bola, enquanto outras crianças estão sentadas em círculo à volta. Ao fundo, pode ver-se uma rede de futsal e bancadas.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:37:45.883Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "206",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra um porto com várias embarcações ancoradas. Em destaque, há um barco de cor azul e verde que tem a forma de um automóvel. O ambiente é tranquilo, refletindo águas claras e várias instalações à margem.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:38:13.024Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "207",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra um grupo de crianças e jovens a caminhar numa rua, todos a usar coletes refletivos laranja. Algumas das crianças usam chapéus e as calçadas são pavimentadas. Ao fundo, vê-se um edifício moderno e árvores.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:38:14.416Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "208",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra uma praia com várias pessoas a brincar na água. É um dia ensolarado, com algumas nuvens no céu. Há crianças e adultos, todos vestidos de banho, a disfrutar do mar.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:38:15.431Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "209",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra uma praia cheia de crianças e jovens a brincar na água. Algumas pessoas estão na areia, enquanto outras se aproximam do mar. O céu está limpo e ensolarado, com algumas nuvens.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:38:15.609Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "210",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra uma praia cheia de pessoas, principalmente crianças e adolescentes, a brincar na água. Algumas pessoas estão na areia, enquanto outras estão a entrar ou sair da água. O céu está limpo e azul, e ao fundo vê-se um edifício.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:38:16.418Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "211",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra uma criança numa praia, de costas, a usar um biquíni lilás com detalhes amarelos. Na parte traseira, está pintado um número \"67\" em branco. Ao fundo, pode-se ver várias pessoas e guarda-sóis.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:38:16.908Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "212",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra uma praia com várias pessoas a desfrutarem do mar. Há crianças e adultos a brincar na água e a apanhar sol na areia. O céu está limpo com algumas nuvens brancas.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:38:17.476Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "213",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra várias crianças na praia, com uma delas de bikini a ser ajudada a aplicar protetor solar nas costas. A criança que aplica o protetor está a segurar um frasco laranja. Ao fundo, é possível ver a areia e algumas pessoas.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:38:18.831Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "214",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra uma praia com areia clara e um grande número de pessoas a disfrutar do sol. Existem várias sombrinhas em tons de azul a ser utilizadas por grupos de pessoas que estão sentadas em toalhas. Ao fundo, podem ver-se algumas montanhas e palmeiras, além de estruturas turísticas.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:38:19.604Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "215",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:38:49.554Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "216",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra uma pessoa segurando um colete de segurança de cor laranja com faixas refletoras. O colete está sujo e apresenta manchas visíveis. Ao fundo, há folhas secas e um ambiente exterior.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:38:53.115Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "217",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra um grupo grande de crianças em um parque, todas vestidas com coletes laranja. Há um adulto à frente, que parece estar a dar instruções ou a animar as crianças. O cenário é ensolarado, com árvores e um ambiente de lazer.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:38:54.572Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "218",
+        "type": "human",
+        "content": "[Cliente enviou imagem] Na imagem, vê-se um grupo de jovens sentados num parque, alguns com coletes laranja. Uma jovem está de pé ao lado deles, aparentemente a interagir. O ambiente é ensolarado, com relva e árvores ao fundo.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:38:55.162Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "219",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra um grupo de crianças em um parque, todas vestidas com coletes laranja. Algumas crianças estão a correr, enquanto outras estão dispersas pelo espaço verde. O ambiente é ensolarado, com árvores e folhas caídas no chão.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:38:55.318Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "220",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra um grupo de crianças a jogar voleibol numa área verde, com árvores ao fundo. As crianças estão vestidas com coletes laranja e estão organizadas em duas equipas. A atmosfera é de diversão e atividade ao ar livre.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:38:55.618Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "221",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra um grupo de crianças uniformizadas com coletes laranja em um parque. Um adulto, também vestido de laranja, está em pé e parece estar a dar instruções ou a falar para o grupo. A cena é iluminada, com muitas árvores e espaço verde ao fundo.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:38:55.765Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "222",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra um parque com relva verde, onde se veem duas espreguiçadeiras brancas. No fundo, há um espaço de brincar com equipamentos de parque e uma grande escultura colorida que parece ser uma fruta. O céu está limpo e há árvores ao redor.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:38:57.808Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "223",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra um grupo de crianças a participar em atividades ao ar livre num parque. Muitas delas estão vestidas com coletes laranja, e algumas estão a jogar voleibol. Ao fundo, pode ver-se um grande boneco verde e edifícios.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:38:58.217Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "224",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra um grupo de crianças a jogar numa área verde, vestindo coletes laranja. Estão a participar em atividades desportivas, incluindo voleibol, enquanto algumas crianças seguram bolas em mãos. Ao fundo, podem ver-se árvores e um espaço público.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:38:58.744Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "225",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra um grupo grande de crianças e jovens a reunir-se num espaço verde, sob a sombra de árvores. A maioria está vestida com camisetas ou coletes de cor laranja. Ao fundo, há uma rede de voleibol montada.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:38:58.944Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "226",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra um grupo de crianças com camisetas laranja reunidas num parque sob árvores. Há uma bandeira verde que parece estar associada a um evento, com o texto parcialmente visível. O ambiente é ensolarado e parece ser um dia de atividades ao ar livre.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:38:59.554Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "227",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra um espaço verde num parque, onde diversas árvores estão visíveis. Ao fundo, um grupo de pessoas vestidas com coletes laranja está reunido. Também é visível uma bandeira com o emblema de uma instituição, destacando um programa ou evento.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:38:59.925Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "228",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra um grupo de crianças e adultos num parque, todos a usar coletes de segurança de cor laranja. Estão reunidos ao ar livre, sob árvores, numa área com folhas secas no chão. O céu está limpo e azul, sugerindo um dia ensolarado.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:39:02.202Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "229",
+        "type": "human",
+        "content": "[Cliente enviou imagem] Na imagem, uma pessoa com óculos de sol brancos faz uma expressão de beija-flor enquanto segura um pequeno objeto entre os dedos. Ao fundo, vê-se uma camioneta branca com inscrições e alguns edifícios. O céu está azul e há árvores ao redor.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:39:04.943Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "230",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra um grupo de quatro mulheres sentadas à volta de uma mesa. Algumas estão a comer, enquanto uma delas cobre o rosto com a mão. Há também garrafas de água e alimentos sobre a mesa.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:39:04.985Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "231",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra um sinal de madeira com duas placas. A placa superior diz \"Pipas garden\" e a inferior \"Jardim comunitário\". Ao fundo, existem plantas e uma parede de tijolos.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:39:07.182Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "232",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra um grupo de crianças a jogar ténis num campo ao ar livre. As crianças estão vestidas com coletes laranja e estão a praticar em várias zonas do campo, sob um céu azul. Ao fundo, pode ver-se vegetação e uma estrutura edificada.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:39:07.474Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "233",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra um espaço verde com molte árvores e uma área relvada. Ao fundo, há várias pessoas a usar roupas laranjas, aparentemente a participar em alguma atividade. O céu está limpo e ensolarado.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:39:07.901Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "234",
+        "type": "human",
+        "content": "[Cliente enviou imagem] Na imagem, uma criança com um colete laranja e uma base branca está sentada num banco, enquanto um adulto, vestido de branco, a ajuda. O adulto parece estar a avaliar ou a tratar um ferimento no braço da criança. Ao fundo, é visível um espaço ao ar livre com relva e outras pessoas.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:39:07.988Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "235",
+        "type": "human",
+        "content": "[Cliente enviou imagem] Na imagem, vê-se uma mão com um curativo grande e mal colocado, em cor castanha, que cobre uma parte do braço. A mão que está abaixo parece estar a segurar a outra mão que está ferida. O fundo é desfocado, mas pode ver-se uma superfície e calçado.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:39:09.796Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "236",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:39:49.991Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "237",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:39:51.878Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "238",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra o interior de um autocarro com cadeiras pretas e um ambiente iluminado. À frente, há uma toalha ou pano com personagens coloridos de um desenho animado, que está estendido em primeiro plano. No fundo, pode-se ver outras pessoas sentadas e as cortinas vermelhas do autocarro.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:39:52.004Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "239",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra uma piscina com várias pessoas a nadar e a brincar na água. Em primeiro plano, há uma pessoa de costas, vestindo uma t-shirt branca com a inscrição \"MONITOR\". Ao fundo, é visível um espaço de lazer com árvores e espreguiçadeiras.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:39:52.708Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "240",
+        "type": "human",
+        "content": "[Cliente enviou imagem] Na imagem vê-se uma piscina cheia de crianças e jovens a brincar na água. Em primeiro plano, está uma monitora de costas, vestida com uma t-shirt branca com a inscrição \"MONITOR\". Ao fundo, há um complexo aquático com várias pessoas a disfrutar do dia de sol.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:39:54.872Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "241",
+        "type": "human",
+        "content": "[Cliente enviou imagem] Na imagem, um grupo de crianças está reunido em um espaço ao ar livre, todas de fato de banho. Elas estão a interagir animadamente com um rapaz vestido com um fato de personagem azul, que parece ser um figura divertida. Ao fundo, pode-se ver espreguiçadeiras e sombrinhas típicas de uma piscina ou parque aquático.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:39:55.660Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "242",
+        "type": "human",
+        "content": "[Cliente enviou imagem] Na imagem, um grupo de crianças está reunido num espaço ao ar livre, aparentemente numa piscina. Um personagem vestido de fantasia azul, com grandes orelhas, está no centro da atenção das crianças, que estão a olhar para ele. Ao fundo, vê-se várias espreguiçadeiras e palmeiras.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:39:55.768Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "243",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra um grupo de crianças a rodear um personagem vestido de azul, que parece ser um extraterrestre amigável. Estão em um espaço exterior, com relvado e guarda-sóis ao fundo. É um dia de sol e as crianças estão vestidas com fatos de banho.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:39:57.996Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "244",
+        "type": "human",
+        "content": "[Cliente enviou imagem] Na imagem, vê-se uma jovem deitada numa toalha, vestindo um bikini azul. Ela parece estar a descansar, com a cabeça apoiada no braço. Atrás dela, há mochilas e outros itens de praia.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:39:58.154Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "245",
+        "type": "human",
+        "content": "[Cliente enviou imagem] Na imagem, vê-se um grupo de crianças num espaço verde a aguardar em fila. Elas estão vestidas com trajes de banho e olham para uma personagem vestida de disfraz azul. Ao fundo, há espreguiçadeiras e guarda-sóis.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:39:58.171Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "246",
+        "type": "human",
+        "content": "[Cliente enviou imagem] Na imagem, várias crianças estão a rodear uma figura com um fato de mascote azul, semelhante a um personagem conhecido. O cenário parece ser uma área de lazer ao ar livre, com guarda-sóis de palha e relvado. As crianças estão vestidas de banho e mostram-se entusiasmadas com a presença da mascote.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:39:58.247Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "247",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra um grupo de crianças de calções de banho a rodear uma figura de personagem vestida de um personagem azul. O cenário é um espaço ao ar livre, com palmeiras e guarda-sóis ao fundo. O tempo parece ensolarado, adequado para atividades de férias.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:40:00.752Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "248",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra um menino em pé na água de uma piscina cheia de pessoas. O menino tem cabelo castanho e está com uma expressão de concentração. Ao fundo, vê-se muitos adultos e crianças a brincar na água, sob um céu claro.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:40:02.460Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "249",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra várias crianças a brincar na água de uma piscina em um dia ensolarado. Algumas crianças estão a nadar, enquanto outras parecem estar a brincar umas com as outras. O ambiente é animado, com muitas pessoas à volta.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:40:02.660Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "250",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra um grupo de crianças, de fato de banho, em fila à frente de um quiosque de comidas. Ao lado delas, está uma personagem vestida de um personagem azul, semelhante a um alienígena. No fundo, é visível um dispensador de guloseimas e um quiosque que vende hot dogs.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:40:03.060Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "251",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra várias pessoas em uma piscina. Há crianças a brincar na água, com algumas a usar óculos de sol e boias. O ambiente parece ser de diversão e lazer, típico de um dia de verão.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:40:03.587Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "252",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra um grupo de pessoas a desfrutar de uma piscina. Um menino, usando óculos de mergulho e braçadeiras, está a flutuar na água. Ao fundo, há várias outras pessoas, algumas a nadar e outras a interagir.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:40:03.852Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "253",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra um grupo grande de crianças e adultos dentro de uma piscina, num dia ensolarado. As pessoas estão a divertir-se na água, algumas com óculos de sol. Ao fundo, pode-se ver mais pessoas e uma estrutura que parece ser um espaço de lazer.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:40:04.501Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "254",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra uma grande quantidade de crianças e adultos em uma piscina, com a água clara e algumas pessoas a desfrutar do sol. A maioria das crianças está a nadar ou a brincar, enquanto outras parecem estar a ouvir alguém. O ambiente é animado e alegre.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:40:04.750Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "255",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra uma piscina cheia de crianças e adultos. Muitas crianças estão a brincar na água, algumas com boias, enquanto outras estão a salpicar. O ambiente parece ser de um parque aquático, com várias pessoas ao redor.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:40:04.811Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "256",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra uma piscina ao ar livre, rodeada por pessoas a relaxar em toalhas e espreguiçadeiras. Há um grande tobogã colorido e várias palmeiras no espaço. O céu está limpo com algumas nuvens e há edifícios ao fundo.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:40:07.006Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "257",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra o interior de um autocarro com bancos organizados em filas. Há algumas crianças sentadas, algumas com coletes de segurança, e uma delas está a esticar-se para alcançar algo. A luz entra pela frente do veículo, iluminando o ambiente.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:40:08.250Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "258",
+        "type": "human",
+        "content": "[Cliente enviou imagem] Na imagem vê-se um campo de futebol com relva bem cuidada e um céu azul claro. Um homem está a andar no campo, usando uma vara, enquanto uma ave está ao seu lado. Na bancada do estádio, as paredes estão pintadas com letras em verde e amarelo.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:40:32.248Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "259",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:40:35.559Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "260",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra uma ave de rapina, provavelmente uma gavião, a pé num caminho de cimento. A ave tem penas escuras com algumas manchas mais claras e está presa a uma corda. Ao fundo, vê-se uma cerca amarela e relva.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:40:41.593Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "261",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra uma ave de rapina, provavelmente um falcão, que está a arrancar algo que parece ser comida do chão. A ave tem penas escuras e uma cauda com penas brancas. O fundo da imagem inclui um relvado e uma cerca branca.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:40:42.534Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "262",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:40:46.095Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "263",
+        "type": "human",
+        "content": "[Cliente enviou vídeo]",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:40:46.175Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "264",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra um grupo de quatro pessoas num campo ou estádio. Duas mulheres estão de pé em primeiro plano, enquanto um homem e outra pessoa aparecem ao fundo. Uma das mulheres segura uma ave de rapina.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:40:49.585Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "265",
+        "type": "human",
+        "content": "[Cliente enviou imagem] Na imagem, um homem está a carregar uma coruja grande no braço, enquanto se encontra perto de um grupo de crianças sentadas nas arquibancadas de um estádio. Ao fundo, há outra pessoa a caminhar. O céu está limpo e ensolarado.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:40:49.963Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "266",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra uma pessoa a segurar uma coruja grande, que está virada para a câmara. Atrás, há um grupo de jovens sentados em arquibancadas, muitos deles a sorrir e a observar a cena. O homem que segura a coruja parece estar a falar ou a interagir com as crianças.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:40:50.694Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "267",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra duas mulheres de pé, vestidas com camisetas brancas e calças de ganga, num ambiente que parece ser um estádio. Ao fundo, há um homem e parte das bancadas do estádio está visível. A atmosfera parece descontraída e informal.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:40:50.728Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "268",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra um homem a segurar uma coruja grande enquanto um grupo de jovens observa sentados nas bancadas de um estádio. A coruja parece estar calma e é exibida para os jovens. O ambiente é ensolarado e o público parece interessado na apresentação.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:40:51.316Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "269",
+        "type": "human",
+        "content": "[Cliente enviou imagem] Na imagem, três pessoas estão a andar numa pista em um estádio. Duas mulheres usam camisetas brancas e uma delas tem um animal (provavelmente um pássaro) pousado no braço. Ao fundo, aparece um homem com uma camiseta escura e outras pessoas sentadas nas bancadas.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:40:51.407Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "270",
+        "type": "human",
+        "content": "[Cliente enviou imagem] Na imagem, três pessoas estão em um estádio, duas mulheres à esquerda e um homem no centro. O homem está a segurar uma ave de rapina que está a voar em direção a ele. Ao fundo, vê-se a estrutura do estádio com bancadas vazias.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:40:51.873Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "271",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra um homem a segurar uma coruja grande, com penas marrons e detalhes claros. Ele usa óculos de sol e encontra-se num ambiente ao ar livre com público ao fundo. A área parece ser uma espécie de campo ou estádio.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:40:52.765Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "272",
+        "type": "human",
+        "content": "[Cliente enviou imagem] Na imagem, um homem com óculos de sol segura uma coruja na mão. O homem está a olhar para a câmara, enquanto a coruja está posicionada de forma a mostrar o seu rosto. Ao fundo, é visível um campo de relva e uma estrutura que parece ser um estádio.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:40:53.990Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "273",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra um grupo de crianças e jovens sentados nas cadeiras de um estádio, assistindo a uma apresentação. Há duas pessoas em pé à frente, uma delas segurando um animal. O ambiente é ao ar livre, com céu limpo e um palco verde visível ao fundo.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:40:54.140Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "274",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra um grupo de crianças sentadas em bancadas, ouvindo alguém que está de costas. Essa pessoa, que usa uma camisa castanha com um logo, segura um falcão na mão. O ambiente parece ser um estádio ou um espaço ao ar livre.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:40:55.973Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "275",
+        "type": "human",
+        "content": "[Cliente enviou imagem] Na imagem, vê-se um grupo de crianças sentadas em bancadas, assistindo a uma demonstração. Na frente, uma pessoa segura uma coruja, visível em primeiro plano. O ambiente parece ser um espaço ao ar livre, possivelmente um estádio ou uma arena.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:40:56.524Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "276",
+        "type": "human",
+        "content": "[Cliente enviou imagem] Na imagem, um homem está a segurar uma coruja em seu braço enquanto levanta a mão. Ele está vestido com uma camiseta castanha e calças curtas, e há um grupo de crianças ao fundo, sentadas nas bancadas de um estádio. A atmosfera é ensolarada e parece ser uma atividade educativa ou de demonstração.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:40:56.722Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "277",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra uma coruja-da-tawny, com plumagem clara e olhos escuros, sendo segurada por uma pessoa com uma luva. Ao fundo, pode ver-se uma bancada de um espaço, onde se encontram algumas pessoas sentadas. O ambiente parece ser ao ar livre, sob um céu claro.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:40:56.897Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "278",
+        "type": "human",
+        "content": "[Cliente enviou imagem] Na imagem, vê-se um grupo de crianças e adolescentes sentados em bancadas de um estádio, atentos a um jovem que se encontra de costas, segurando uma ave. O jovem veste uma camiseta com o nome \"Falcões no Oeste\". O ambiente é ensolarado e parece ser uma atividade educativa sobre aves de rapina.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:40:57.080Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "279",
+        "type": "human",
+        "content": "[Cliente enviou imagem] Na imagem, um homem está a segurar uma coruja enquanto fala para um grupo de crianças sentadas em bancadas. As crianças estão visivelmente interessadas e atentas à apresentação. O cenário parece ser um espaço ao ar livre, possivelmente um estádio ou uma área para eventos.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:40:57.541Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "280",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra uma coruja, especificamente uma coruja-da-torres, empoleirada sobre a mão de uma pessoa que usa uma luva. Ao fundo, vê-se uma bancada de um estádio com áreas verdes e azuis. Uma pessoa sentada na bancada é visível, mas não se consegue identificar detalhes dela.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:40:58.089Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "281",
+        "type": "human",
+        "content": "[Cliente enviou imagem] Na imagem, vê-se um grupo de crianças e adolescentes sentados em bancadas de um recinto, observando uma pessoa que está de costas. Esta pessoa usa uma camiseta castanha com a inscrição \"FALCÕES NO OESTE\" e segura um falcão em suas mãos. O ambiente parece ser um dia ensolarado, com um campo de desporto ao fundo.",
+        "agent_name": "NEXO",
+        "created_at": "2026-07-21T19:40:59.364Z",
+        "platform": "WhatsApp"
+      }
+    ],
+    "instagram:1000026949093662": [
+      {
+        "id": "4",
+        "type": "human",
+        "content": "👏",
+        "agent_name": null,
+        "created_at": "2026-06-13T08:14:30.173Z",
+        "platform": "instagram"
+      },
+      {
+        "id": "8",
+        "type": "human",
+        "content": "👏",
+        "agent_name": null,
+        "created_at": "2026-06-15T14:25:35.909Z",
+        "platform": "instagram"
+      },
+      {
+        "id": "14",
+        "type": "human",
+        "content": "👏",
+        "agent_name": null,
+        "created_at": "2026-06-18T06:45:17.037Z",
+        "platform": "instagram"
+      },
+      {
+        "id": "15",
+        "type": "human",
+        "content": "👏",
+        "agent_name": null,
+        "created_at": "2026-06-18T06:45:22.455Z",
+        "platform": "instagram"
+      },
+      {
+        "id": "25",
+        "type": "human",
+        "content": "👏",
+        "agent_name": null,
+        "created_at": "2026-06-24T11:57:01.881Z",
+        "platform": "instagram"
+      },
+      {
+        "id": "29",
+        "type": "human",
+        "content": "👏",
+        "agent_name": null,
+        "created_at": "2026-07-01T12:34:44.075Z",
+        "platform": "instagram"
+      },
+      {
+        "id": "30",
+        "type": "human",
+        "content": "👏",
+        "agent_name": null,
+        "created_at": "2026-07-06T15:40:02.666Z",
+        "platform": "instagram"
+      },
+      {
+        "id": "49",
+        "type": "human",
+        "content": "👏",
+        "agent_name": null,
+        "created_at": "2026-07-13T15:04:57.157Z",
+        "platform": "instagram"
+      },
+      {
+        "id": "50",
+        "type": "human",
+        "content": "👏",
+        "agent_name": null,
+        "created_at": "2026-07-13T16:08:04.352Z",
+        "platform": "instagram"
+      },
+      {
+        "id": "53",
+        "type": "human",
+        "content": "👏",
+        "agent_name": null,
+        "created_at": "2026-07-14T14:56:14.578Z",
+        "platform": "instagram"
+      },
+      {
+        "id": "54",
+        "type": "human",
+        "content": "👏",
+        "agent_name": null,
+        "created_at": "2026-07-14T19:16:41.077Z",
+        "platform": "instagram"
+      },
+      {
+        "id": "58",
+        "type": "human",
+        "content": "👏",
+        "agent_name": null,
+        "created_at": "2026-07-17T15:30:53.489Z",
+        "platform": "instagram"
+      }
+    ],
+    "facebook:27307367175600443": [
+      {
+        "id": "57",
+        "type": "human",
+        "content": "Equipa 5* 🥰",
+        "agent_name": null,
+        "created_at": "2026-07-15T15:04:49.429Z",
+        "platform": "facebook"
+      }
+    ],
+    "facebook:3323825497652882": [
+      {
+        "id": "56",
+        "type": "human",
+        "content": "[Cliente enviou uma imagem]: A imagem que você enviou parece ser um avatar ou uma figura em estilo de desenho animado, com olhos em chamas, que geralmente é um símbolo de entusiasmo ou atração. Esses tipos de avatares são frequentemente usados em aplicativos de mensagens, redes sociais ou jogos. Se precisar de mais informações sobre o contexto, fico à disposição!",
+        "agent_name": null,
+        "created_at": "2026-07-14T20:30:07.092Z",
+        "platform": "facebook"
+      }
+    ],
+    "instagram:3343568275823499": [
+      {
+        "id": "55",
+        "type": "human",
+        "content": "Boa tarde quais os valores da formação com o dr Alfredo Leite?",
+        "agent_name": null,
+        "created_at": "2026-07-14T20:14:44.550Z",
+        "platform": "instagram"
+      }
+    ],
+    "facebook:26505418659134594": [
+      {
+        "id": "52",
+        "type": "human",
+        "content": "Dear Erasmus+ colleagues,Since your institution is Erasmus+ accredited, we would like to introduce our Erasmus+ eligible training offer:Creative Methods and Movement for Self-Confidence & Team-Building Near Hamburg, Germany 3–10 September 2026Register here: ps://www.afrikanischer-tanz.de/erasmus-course-registration/This programme offers an innovative, body-based and psychologically informed approach for professionals in adult education, youth work, universities, VET and schools. It focuses on intercultural communication, leadership presence and group dynamics.As we are currently developing our programme for 2027, we would also be pleased to invite you to a short online meeting. This would allow us to understand your specific needs and explore tailored training formats or cooperation opportunities for your staff and learners.We would be happy to discuss possible Erasmus+ collaboration formats, including staff training, expert visits or customized group programmes.Please feel free to propose a date for an online meeting.Warm regards,Stephanie BangouraTanz der Kulturen Association+49 151 52013306info@tanz-der-kulturen.de",
+        "agent_name": null,
+        "created_at": "2026-07-14T01:48:12.851Z",
+        "platform": "facebook"
+      }
+    ],
+    "instagram:1004788692294561": [
+      {
+        "id": "6",
+        "type": "human",
+        "content": "😍",
+        "agent_name": null,
+        "created_at": "2026-06-15T11:30:11.929Z",
+        "platform": "instagram"
+      },
+      {
+        "id": "7",
+        "type": "human",
+        "content": "😍",
+        "agent_name": null,
+        "created_at": "2026-06-15T11:34:42.786Z",
+        "platform": "instagram"
+      },
+      {
+        "id": "36",
+        "type": "human",
+        "content": "😍",
+        "agent_name": null,
+        "created_at": "2026-07-10T16:35:23.108Z",
+        "platform": "instagram"
+      },
+      {
+        "id": "51",
+        "type": "human",
+        "content": "😍",
+        "agent_name": null,
+        "created_at": "2026-07-13T19:50:48.034Z",
+        "platform": "instagram"
+      }
+    ],
+    "instagram:1384699336855878": [
+      {
+        "id": "37",
+        "type": "human",
+        "content": "Bom dia Minha filha participará amanhã do Vc camp e ainda não recebi nenhuma instrução do que levar",
+        "agent_name": null,
+        "created_at": "2026-07-12T09:46:27.939Z",
+        "platform": "instagram"
+      },
+      {
+        "id": "39",
+        "type": "human",
+        "content": "Já olhei",
+        "agent_name": null,
+        "created_at": "2026-07-12T09:49:37.624Z",
+        "platform": "instagram"
+      },
+      {
+        "id": "40",
+        "type": "human",
+        "content": "Só tenho e-mail da fatura",
+        "agent_name": null,
+        "created_at": "2026-07-12T09:49:47.410Z",
+        "platform": "instagram"
+      },
+      {
+        "id": "44",
+        "type": "human",
+        "content": "Laura Caminhas Goncalves",
+        "agent_name": null,
+        "created_at": "2026-07-12T09:56:37.864Z",
+        "platform": "instagram"
+      },
+      {
+        "id": "45",
+        "type": "human",
+        "content": "Obrigada",
+        "agent_name": null,
+        "created_at": "2026-07-12T09:56:45.526Z",
+        "platform": "instagram"
+      },
+      {
+        "id": "48",
+        "type": "human",
+        "content": "Recebi sim. Muito obrigada",
+        "agent_name": null,
+        "created_at": "2026-07-12T15:29:54.442Z",
+        "platform": "instagram"
+      }
+    ],
+    "instagram:17841404398045807": [
+      {
+        "id": "18",
+        "type": "ai",
+        "content": "[ATENDENTE] Condução? Automóvel? }}",
+        "agent_name": null,
+        "created_at": "2026-06-22T17:17:03.291Z",
+        "platform": "instagram",
+        "tool_calls": []
+      },
+      {
+        "id": "20",
+        "type": "ai",
+        "content": "[ATENDENTE] Obrigado }}",
+        "agent_name": null,
+        "created_at": "2026-06-22T18:34:32.273Z",
+        "platform": "instagram",
+        "tool_calls": []
+      },
+      {
+        "id": "38",
+        "type": "ai",
+        "content": "[ATENDENTE] Bom dia Daniele, não recebeu um e-mail com informações? Pode ver na pasta spam? Obrigado. }}",
+        "agent_name": null,
+        "created_at": "2026-07-12T09:49:24.362Z",
+        "platform": "instagram",
+        "tool_calls": []
+      },
+      {
+        "id": "41",
+        "type": "ai",
+        "content": "[ATENDENTE] Na quarta-feira devia ter recebido o e-mail com o assunto: VFCamp by Edugep – Informações da Semana 5ªSemana }}",
+        "agent_name": null,
+        "created_at": "2026-07-12T09:51:39.390Z",
+        "platform": "instagram",
+        "tool_calls": []
+      },
+      {
+        "id": "42",
+        "type": "ai",
+        "content": "[ATENDENTE] Vou ver com as responsáveis o que se passou }}",
+        "agent_name": null,
+        "created_at": "2026-07-12T09:51:56.780Z",
+        "platform": "instagram",
+        "tool_calls": []
+      },
+      {
+        "id": "43",
+        "type": "ai",
+        "content": "[ATENDENTE] Qual o nome da sua educanda? }}",
+        "agent_name": null,
+        "created_at": "2026-07-12T09:53:02.469Z",
+        "platform": "instagram",
+        "tool_calls": []
+      },
+      {
+        "id": "46",
+        "type": "ai",
+        "content": "[ATENDENTE] A minha colega vai enviar-lhe novamente }}",
+        "agent_name": null,
+        "created_at": "2026-07-12T10:13:35.868Z",
+        "platform": "instagram",
+        "tool_calls": []
+      },
+      {
+        "id": "47",
+        "type": "ai",
+        "content": "[ATENDENTE] Quando possível verifique o e-mail e veja se já recebeu sff. Obrigado }}",
+        "agent_name": null,
+        "created_at": "2026-07-12T10:16:30.302Z",
+        "platform": "instagram",
+        "tool_calls": []
+      }
+    ],
+    "instagram:1000086869477067": [
+      {
+        "id": "35",
+        "type": "human",
+        "content": "Dear Erasmus+ colleagues,We would be delighted to introduce our unique educational approach and explore how it could be adapted to the needs of your institution and international programmes.Creative Methods and Movement for Self-Confidence & Team-BuildingInternational Erasmus+ Training Course in Germany📍 Near Hamburg, Germany      Sept 3-10, 2026A one-week immersive training with movement, rhythm, voice, live music, communication, and group experience. Could you kindly share the contact email of the Erasmus+ Coordinator, so we may exchange ideas on possible cooperation?Follow us on Instagram to stay updated on innovative methods that build cohesion and community.Thank you very much, and I look forward to hearing from you.Best regards,Stephanie BangouraRitual Dance Pedagogy, Hamburg+49 1515 2013306info@tanz-der-kulturen.deVideo impressions:https://www.youtube.com/@tanzderkulturenInstagram: @tanzderkulturen#ErasmusPlus #ErasmusTraining #ProfessionalDevelopment #Creative",
+        "agent_name": null,
+        "created_at": "2026-07-07T21:55:53.597Z",
+        "platform": "instagram"
+      }
+    ],
+    "instagram:983957177962436": [
+      {
+        "id": "24",
+        "type": "human",
+        "content": "https://cfae-minerva.edu.pt/seminario/?fbclid=PAZnRzaASoardleHRuA2FlbQIxMQBzcnRjBmFwcF9pZA8xMjQwMjQ1NzQyODc0MTQAAadAkETkeyPoy5ijSxWbX0CYMWnPo9p7EuawrAe4133taSNjJaw0gVUWezu6Mg_aem_SKKMQ6xGac5_t-A3wa6gxQ",
+        "agent_name": null,
+        "created_at": "2026-06-24T07:47:52.862Z",
+        "platform": "instagram"
+      },
+      {
+        "id": "34",
+        "type": "human",
+        "content": "Thanks 🔥",
+        "agent_name": null,
+        "created_at": "2026-07-07T19:14:02.731Z",
+        "platform": "instagram"
+      }
+    ],
+    "facebook:28074884725429400": [
+      {
+        "id": "33",
+        "type": "human",
+        "content": "⚠️⚠️⚠️Aviso importante do Facebook: Violação grave de direitos de autor",
+        "agent_name": null,
+        "created_at": "2026-07-07T12:41:10.794Z",
+        "platform": "facebook"
+      }
+    ],
+    "facebook:26968092459559332": [
+      {
+        "id": "11",
+        "type": "human",
+        "content": "Lindo!!!!",
+        "agent_name": null,
+        "created_at": "2026-06-16T13:42:15.402Z",
+        "platform": "facebook"
+      },
+      {
+        "id": "32",
+        "type": "human",
+        "content": "❤",
+        "agent_name": null,
+        "created_at": "2026-07-07T07:51:08.820Z",
+        "platform": "facebook"
+      }
+    ],
+    "facebook:37019752477615762": [
+      {
+        "id": "10",
+        "type": "human",
+        "content": "🙏",
+        "agent_name": null,
+        "created_at": "2026-06-15T21:13:39.212Z",
+        "platform": "facebook"
+      },
+      {
+        "id": "31",
+        "type": "human",
+        "content": "😂",
+        "agent_name": null,
+        "created_at": "2026-07-06T23:43:38.827Z",
+        "platform": "facebook"
+      }
+    ],
+    "instagram:889548756873199": [
+      {
+        "id": "26",
+        "type": "human",
+        "content": "👏",
+        "agent_name": null,
+        "created_at": "2026-06-25T11:13:41.519Z",
+        "platform": "instagram"
+      },
+      {
+        "id": "27",
+        "type": "human",
+        "content": "👏",
+        "agent_name": null,
+        "created_at": "2026-06-25T11:13:45.767Z",
+        "platform": "instagram"
+      },
+      {
+        "id": "28",
+        "type": "human",
+        "content": "👏",
+        "agent_name": null,
+        "created_at": "2026-06-25T11:13:59.284Z",
+        "platform": "instagram"
+      }
+    ],
+    "instagram:1917807068931823": [
+      {
+        "id": "23",
+        "type": "human",
+        "content": "👏",
+        "agent_name": null,
+        "created_at": "2026-06-23T22:02:09.050Z",
+        "platform": "instagram"
+      }
+    ],
+    "instagram:2068043077121824": [
+      {
+        "id": "22",
+        "type": "human",
+        "content": "Muito obrigada pelo apoio na divulgação 🩷 falta só permitirem que eu partilhe 🤭😅🩷 obrigada",
+        "agent_name": null,
+        "created_at": "2026-06-23T12:23:31.082Z",
+        "platform": "instagram"
+      }
+    ],
+    "facebook:28037369265860270": [
+      {
+        "id": "21",
+        "type": "human",
+        "content": "❤",
+        "agent_name": null,
+        "created_at": "2026-06-23T03:06:31.472Z",
+        "platform": "facebook"
+      }
+    ]
+  }
+}

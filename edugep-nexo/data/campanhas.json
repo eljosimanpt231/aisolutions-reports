@@ -1,0 +1,115 @@
+{
+  "generated_at": "2026-07-23T13:57:47.456Z",
+  "campanhas": [
+    {
+      "slug": "educar-com-valores",
+      "nome": "Educar com Valores",
+      "ativa": true,
+      "prioridade": "alta",
+      "publico_alvo": "Pais, mães, futuros pais, avós, educadores, professores, assistentes operacionais",
+      "descricao_curta": "Curso de parentalidade — 9 módulos (6 online + 3 presenciais), 12h, Dr. Alfredo Leite × EDUGEP.",
+      "datas": "Próxima edição: 14 setembro (M0 presencial) → 19 outubro 2026. Divulgação até 31 agosto 2026.",
+      "valor": "890€",
+      "landing_url": "https://educar-valores.pt/curso-parentalidade/"
+    },
+    {
+      "slug": "language-school-intensivos-set",
+      "nome": "Language School — Cursos Intensivos Setembro",
+      "ativa": true,
+      "prioridade": "alta",
+      "publico_alvo": "Jovens, adultos, empresas",
+      "descricao_curta": "Cursos intensivos de Inglês em Setembro — preparação Cambridge (KET/PET/FCE), professores especializados.",
+      "datas": "Divulgação até 28/08/2026. Arranque 31/08 ou 01/09 (1.ª quinzena setembro).",
+      "valor": "Adultos (50h): 269€ · Bootcamp Jovens (25h): 187€",
+      "landing_url": "https://edugep.pt/escola-de-linguas/"
+    },
+    {
+      "slug": "language-school-letivo-20anos",
+      "nome": "Language School Letivo 26-27 — Promoção 20 anos EDUGEP",
+      "ativa": true,
+      "prioridade": "alta",
+      "publico_alvo": "Novos alunos de Inglês",
+      "descricao_curta": "20% de desconto nas primeiras 20 inscrições no ano letivo 26-27 (só Inglês).",
+      "datas": "Divulgação: 1 agosto a 15 setembro 2026.",
+      "valor": "20% desconto (base preço não publicado; ranges internos)",
+      "landing_url": "https://edugep.pt/escola-de-linguas/"
+    },
+    {
+      "slug": "language-school-letivo-traz-amigo",
+      "nome": "Language School Letivo 26-27 — Traz um amigo",
+      "ativa": true,
+      "prioridade": "alta",
+      "publico_alvo": "Alunos e amigos de alunos de Inglês",
+      "descricao_curta": "1 mensalidade grátis por cada amigo inscrito + 1 mensalidade grátis para o amigo.",
+      "datas": "Divulgação: 1 agosto a 15 setembro 2026.",
+      "valor": "1 mensalidade grátis (junho/27) por parte",
+      "landing_url": "https://edugep.pt/escola-de-linguas/"
+    },
+    {
+      "slug": "language-school-letivo-dublin",
+      "nome": "Language School Letivo 26-27 — Viagem a Dublin",
+      "ativa": true,
+      "prioridade": "alta",
+      "publico_alvo": "Alunos de Inglês do ano letivo 26-27",
+      "descricao_curta": "Os 10 melhores alunos vão a Dublin durante a Páscoa de 2027.",
+      "datas": "Divulgação: 1 agosto a 15 setembro 2026. Viagem: Páscoa 2027.",
+      "valor": "Viagem oferecida aos 10 melhores",
+      "landing_url": "https://edugep.pt/escola-de-linguas/"
+    },
+    {
+      "slug": "inscricoes-2026-27",
+      "nome": "Inscrições 2026-2027 (guarda-chuva)",
+      "ativa": true,
+      "prioridade": "alta",
+      "publico_alvo": "Alunos novos e existentes de várias áreas",
+      "descricao_curta": "Landing guarda-chuva 26-27 — Language School, Cursos Aprendizagem, Escola Programação, Serviços Educativos, EFA/Modular.",
+      "datas": "15/07 a 15/09/2026 (Language) · Modulares em contínuo · outros por definir",
+      "valor": "Depende da área",
+      "landing_url": "https://edugep.pt/"
+    },
+    {
+      "slug": "bootcamp-literacia-financeira",
+      "nome": "Bootcamp Literacia Financeira",
+      "ativa": true,
+      "prioridade": "baixa",
+      "publico_alvo": "6-16 anos",
+      "descricao_curta": "Bootcamp presencial Smart Money for Smart Kids (98€, 15h, 20-24 julho).",
+      "datas": "20 a 24 julho 2026, 14h00-17h00",
+      "valor": "98€",
+      "landing_url": "https://edugep.pt/bootcamp-de-educacao-financeira/"
+    },
+    {
+      "slug": "bootcamp-ia-estudantes",
+      "nome": "Bootcamp IA para Estudantes",
+      "ativa": true,
+      "prioridade": "media",
+      "publico_alvo": "Ensino secundário, licenciatura, mestrado",
+      "descricao_curta": "Bootcamp online 20h — IA aplicada ao estudo (99€, 10% desconto grupos 3+).",
+      "datas": "20 a 31 julho 2026. Plano B: se pouca procura em julho, empurrar para 1.ª quinzena setembro.",
+      "valor": "99€ (desde 1 julho 2026). Desconto 10% grupos 3+ da mesma escola.",
+      "landing_url": "https://edugep.pt/bootcamp_ai/"
+    },
+    {
+      "slug": "bootcamp-steam",
+      "nome": "Bootcamp STEAM",
+      "ativa": true,
+      "prioridade": "media",
+      "publico_alvo": "Crianças e jovens 6-16 anos",
+      "descricao_curta": "Bootcamp presencial STEAM — Programação, Robótica, IA, Impressão 3D, Jogos (150€, 15h).",
+      "datas": "1.ª quinzena setembro 2026 (31/08 ou 01/09)",
+      "valor": "150€",
+      "landing_url": "https://edugep.pt/escola-de-programacao/"
+    },
+    {
+      "slug": "vf-camp-regular",
+      "nome": "VF Camp Regular (6-14 anos)",
+      "ativa": true,
+      "prioridade": "media",
+      "publico_alvo": "Crianças e jovens 6-14 anos",
+      "descricao_curta": "Programa de verão 11 semanas (15 jun a 28 ago), com actividades variadas em Setúbal.",
+      "datas": "15 junho a 28 agosto 2026 (11 semanas)",
+      "valor": "Preçário no formulário de inscrição (não revelar antes)",
+      "landing_url": "https://vfcamp.edugep.pt"
+    }
+  ]
+}

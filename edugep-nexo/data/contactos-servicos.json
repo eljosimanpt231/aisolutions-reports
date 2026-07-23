@@ -1,0 +1,71 @@
+{
+  "generated_at": "2026-07-23T13:57:47.539Z",
+  "servicos": [
+    {
+      "id": 1,
+      "servico_slug": "geral",
+      "nome_servico": "EDUGEP Geral",
+      "telefone": "265 185 750",
+      "email": "geral@edugep.pt",
+      "horario": "Segunda a sexta, 08:00–20:30",
+      "quando_usar": "Fallback default para qualquer tema fora de scope do agente. Preços globais, horários por turma, pagamentos, faltas, certificados, reclamações, B2B, RH, fornecedores.",
+      "landing_url": "https://edugep.pt/contactos/",
+      "ativo": true
+    },
+    {
+      "id": 2,
+      "servico_slug": "cursos-aprendizagem",
+      "nome_servico": "Cursos de Aprendizagem (IEFP)",
+      "telefone": "965 075 588",
+      "email": null,
+      "horario": "Segunda a sexta, 08:00–20:30",
+      "quando_usar": "Perguntas sobre cursos de aprendizagem IEFP (bloqueado por aprovação IFP para 26-27). Encaminhar para número dedicado + aprendizagens.pt.",
+      "landing_url": "https://aprendizagens.pt",
+      "ativo": true
+    },
+    {
+      "id": 3,
+      "servico_slug": "eti-box-aec",
+      "nome_servico": "AEC / CAF / AAAF (Escola Tempo Inteiro)",
+      "telefone": "265 185 750",
+      "email": "geral@edugep.pt",
+      "horario": "Segunda a sexta, 08:00–20:30",
+      "quando_usar": "AEC/CAF/AAAF (escola tempo inteiro em agrupamentos). URL do ETI Box a confirmar com Tiago. Enquanto isso, encaminhar para telefone geral.",
+      "landing_url": null,
+      "ativo": true
+    },
+    {
+      "id": 4,
+      "servico_slug": "formacao-modular",
+      "nome_servico": "Formação Modular / EFA / UFCDs",
+      "telefone": "265 185 750",
+      "email": "geral@edugep.pt",
+      "horario": "Segunda a sexta, 08:00–20:30",
+      "quando_usar": "Pré-inscrição contínua no site. Lembrar que é preciso comprovativo de morada fiscal para elegibilidade. Encaminhar para site + telefone.",
+      "landing_url": "https://edugep.pt/",
+      "ativo": true
+    },
+    {
+      "id": 5,
+      "servico_slug": "digital-solutions",
+      "nome_servico": "Digital Solutions (B2B)",
+      "telefone": "265 185 750",
+      "email": "geral@edugep.pt",
+      "horario": "Segunda a sexta, 08:00–20:30",
+      "quando_usar": "Pedidos B2B, cotações para empresas, projectos digitais.",
+      "landing_url": "https://digitalsolutions.edugep.pt",
+      "ativo": true
+    },
+    {
+      "id": 6,
+      "servico_slug": "erasmus",
+      "nome_servico": "Projectos Europeus / Erasmus+",
+      "telefone": "265 185 750",
+      "email": "geral@edugep.pt",
+      "horario": "Segunda a sexta, 08:00–20:30",
+      "quando_usar": "Pedidos sobre projectos europeus, Erasmus+, parcerias internacionais.",
+      "landing_url": "https://projects.edugep.pt",
+      "ativo": true
+    }
+  ]
+}
