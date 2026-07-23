@@ -112,7 +112,7 @@
       insights_duvidas: `${base}/insights/top-duvidas.json`,
       insights_quality: `${base}/insights/quality-sentiment.json`,
       insights_campaigns: `${base}/insights/campaigns-mentions.json`,
-      insights_meta: `${base}/insights/_meta.json`,
+      insights_meta: `${base}/insights/meta.json`,
     };
     const results = await Promise.all(
       Object.entries(files).map(async ([k, url]) => {
