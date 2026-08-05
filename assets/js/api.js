@@ -163,3 +163,9 @@ async function getClickMetrics(domainId, start, end) {
   const clicks = parseInt(data.clicks.chatbot_link_clicks) || 0;
   return clicks > 0 ? { total_clicks: clicks } : null;
 }
+
+// ---- Content metrics (Memo.ria — geração de blog posts SEO) ----
+async function getContentMetrics(schema, start, end) {
+  const data = await fetchData(getClientSlug(), start, end);
+  return data?.content || null;
+}

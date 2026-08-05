@@ -82,21 +82,22 @@ async function loadData() {
   showLoading();
   _cache = { key: null, data: null }; // clear cache
 
-  const [chatbot, messaging, clicks] = await Promise.all([
+  const [chatbot, messaging, clicks, content] = await Promise.all([
     (client.services.includes('chatbot') && client.schema) ? getChatbotMetrics(client.schema, start, end) : null,
     (client.services.includes('messaging') && client.schema) ? getMessagingMetrics(client.schema, start, end) : null,
-    getClickMetrics(client.domainId, start, end)
+    getClickMetrics(client.domainId, start, end),
+    (client.services.includes('content') && client.schema) ? getContentMetrics(client.schema, start, end) : null
   ]);
 
-  renderDashboard(client, chatbot, messaging, clicks);
+  renderDashboard(client, chatbot, messaging, clicks, content);
 }
 
 function showLoading() {
   document.getElementById('dashboard-content').innerHTML = '<div class="loading"><div class="spinner"></div>A carregar dados...</div>';
 }
 
-function renderDashboard(client, chatbot, messaging, clicks) {
-  const content = document.getElementById('dashboard-content');
+function renderDashboard(client, chatbot, messaging, clicks, content) {
+  const contentEl = document.getElementById('dashboard-content');
   let html = '';
   const slug = getClientSlug();
 
@@ -107,16 +108,20 @@ function renderDashboard(client, chatbot, messaging, clicks) {
     if (html) html += '<hr class="section-divider">';
     html += renderMessagingSection(client, messaging);
   }
+  if (client.services.includes('content') && content) {
+    if (html) html += '<hr class="section-divider">';
+    html += renderContentSection(client, content);
+  }
 
   // Insights — dynamic based on real data
-  const insight = generateInsight(slug, client, chatbot, messaging, clicks);
+  const insight = generateInsight(slug, client, chatbot, messaging, clicks, content);
   if (insight) {
     if (html) html += '<hr class="section-divider">';
     html += renderInsightsSection(insight);
   }
 
   if (!html) html = '<div class="loading"><p>Sem dados disponíveis para o período selecionado.</p></div>';
-  content.innerHTML = html;
+  contentEl.innerHTML = html;
 
   requestAnimationFrame(() => {
     // Init charts independently — errors in one don't block others
@@ -126,6 +131,9 @@ function renderDashboard(client, chatbot, messaging, clicks) {
     }
     if (messaging) {
       try { initMessagingCharts(messaging); } catch (e) { console.error('initMessagingCharts:', e); }
+    }
+    if (content) {
+      try { initContentCharts(content); } catch (e) { console.error('initContentCharts:', e); }
     }
     document.querySelectorAll('[data-count]').forEach(el => {
       const raw = el.dataset.count;
@@ -302,6 +310,54 @@ function renderChatbotSection(client, data, clicks) {
     kpiCards += kpiCard('Mensagens IA', msgsAI, `${formatNumber(msgsHuman)} mensagens recebidas`, 3, 'positive');
     kpiCards += kpiCard('Leads Contactados', contactados, 'qualificados pela IA', 4);
     kpiCards += kpiCard('Consultas Agendadas', agendadas, contactados > 0 ? `${((agendadas / (contactados + agendadas)) * 100).toFixed(0)}% de conversão` : 'marcações confirmadas', 5, 'positive');
+  } else if (context === 'turismo_conversas') {
+    // Trans Serrano: faturação por conversa + comentários + pré-reservas
+    const ext = data.extended || {};
+    const preReservas = parseInt(ext.pre_reservas_total) || 0;
+    const comments = (ext.comments || []).reduce((s, c) => s + (parseInt(c.total) || 0), 0);
+    const custo = (total * (client.costPerConversation || 0));
+    const custoFmt = custo.toLocaleString('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    // Substitui o card "Conversas" genérico por "Conversas Faturáveis"
+    kpiCards = kpiCard('Conversas Faturáveis', total, `${periodLabel} · ${custoFmt}€ variável`, 2, 'positive');
+    kpiCards += kpiCard('Respostas da IA', msgsAI, `${formatNumber(msgsHuman)} mensagens recebidas`, 3);
+    if (comments > 0) kpiCards += kpiCard('Comentários Tratados', comments, 'Instagram + Facebook', 4);
+    if (preReservas > 0) kpiCards += kpiCard('Pré-reservas Capturadas', preReservas, 'nome, atividade, datas', 5, 'positive');
+    kpiCards += kpiCard('Sem Intervenção Humana', aiOnly, `de ${total} conversas`, 6);
+  } else if (context === 'lead_qualifier_solar') {
+    // Fundo Solar (Clara): qualificação de leads fotovoltaicos
+    const ext = data.extended || {};
+    const fn = ext.funnel || {};
+    const au = ext.autonomia || {};
+    const novo = parseInt(fn.novo) || 0;
+    const emConv = parseInt(fn.em_conversa) || 0;
+    const qual = parseInt(fn.qualificada) || 0;
+    const totalLeads = parseInt(fn.total) || (novo + emConv + qual);
+    const taxaQual = totalLeads > 0 ? (qual / totalLeads) * 100 : 0;
+    const auTotal = parseInt(au.total_leads) || 0;
+    const auSemHumano = parseInt(au.sem_humano) || 0;
+    const auPct = auTotal > 0 ? (auSemHumano / auTotal) * 100 : 0;
+    kpiCards += kpiCard('Mensagens IA', msgsAI, `${formatNumber(msgsHuman)} mensagens recebidas`, 3, 'positive');
+    kpiCards += kpiCard('Leads Qualificados', qual, `de ${totalLeads} leads no funil`, 4, 'positive');
+    kpiCards += kpiCardPercent('Taxa Qualificação', taxaQual.toFixed(1), 5, taxaQual >= 30 ? 'positive' : taxaQual >= 15 ? '' : 'warning');
+    if (auTotal > 0) kpiCards += kpiCard('Autonomia IA', auPct.toFixed(0), `${auSemHumano}/${auTotal} leads sem humano`, 6, auPct >= 60 ? 'positive' : '', '%');
+  } else if (context === 'qualificador_mudancas') {
+    // Translowcost (Bia): qualificação leads mudanças (2 instâncias WA)
+    const ext = data.extended || {};
+    const fn = ext.funnel || {};
+    const au = ext.autonomia || {};
+    const newLeads = parseInt(ext.new_leads) || 0;
+    const aguarda = parseInt(fn.aguarda_comercial) || 0;
+    const video = parseInt(ext.videocalls_booked) || parseInt(fn.videochamada_agendada) || 0;
+    const auTotal = parseInt(au.total_qualif) || 0;
+    const auSemH = parseInt(au.sem_humano) || 0;
+    const auPct = auTotal > 0 ? (auSemH / auTotal) * 100 : 0;
+    kpiCards += kpiCard('Mensagens IA', msgsAI, `${formatNumber(msgsHuman)} mensagens recebidas`, 3, 'positive');
+    kpiCards += kpiCard('Novos Leads', newLeads, 'entradas no funil', 4);
+    if (video > 0) kpiCards += kpiCard('Videochamadas', video, 'agendadas pela Bia', 5, 'positive');
+    kpiCards += kpiCard('Aguarda Comercial', aguarda, 'entregues à equipa', 6, 'positive');
+    // Autonomia Bia: só mostra se houver dados fiáveis (sem_humano > 0). Hoje `last_human_intervention_at`
+    // é preenchido em todas as interações, tornando a métrica sempre 0% — TODO v2 refinar semântica.
+    if (auTotal > 0 && auSemH > 0) kpiCards += kpiCard('Autonomia Bia', auPct.toFixed(0), `${auSemH}/${auTotal} sem intervenção`, 6, auPct >= 60 ? 'positive' : '', '%');
   } else {
     // Standard: RR, HCO, Teclas, OdiSeguros
     kpiCards += kpiCardPercent('Taxa Resolução IA', aiRate, 3, aiRate >= 70 ? 'positive' : aiRate >= 50 ? '' : 'warning');
@@ -377,6 +433,35 @@ function renderChatbotSection(client, data, clicks) {
     // Isabel Pedroso: a resolução-por-conversa genérica não é a métrica-chave (o foco é o funil
     // de leads + autonomia sobre leads). O donut por canal (chart-channels) mostra o volume.
     // Sem radial genérico aqui.
+  } else if (context === 'turismo_conversas') {
+    // Trans Serrano: donut por canal (chart-channels) já sai automaticamente; sem radial genérico.
+  } else if (context === 'lead_qualifier_solar') {
+    // Fundo Solar: funil + donuts + bars distritos/comercial (via HTML abaixo)
+    const ext = data.extended || {};
+    if (ext.by_tipo?.length > 0) {
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Tipo de Instalação</h3><div class="chart-container" id="chart-solar-tipo"></div></div>`;
+    }
+    if (ext.by_origem?.length > 0) {
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Origem da Lead</h3><div class="chart-container" id="chart-solar-origem"></div></div>`;
+    }
+    if (ext.by_distrito?.length > 0) {
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-6"><h3>Leads por Distrito</h3><div class="chart-container" id="chart-solar-distritos"></div></div>`;
+    }
+    if (ext.by_comercial?.length > 0) {
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-6"><h3>Leads Qualificados por Comercial</h3><div class="chart-container" id="chart-solar-comercial"></div></div>`;
+    }
+  } else if (context === 'qualificador_mudancas') {
+    // Translowcost: donuts tipo/idioma/origem — bar horizontal com stages do funil
+    const ext = data.extended || {};
+    if (ext.by_service_type?.length > 0) {
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Tipo de Serviço</h3><div class="chart-container" id="chart-trans-service"></div></div>`;
+    }
+    if (ext.by_language?.length > 0) {
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Idioma</h3><div class="chart-container" id="chart-trans-lang"></div></div>`;
+    }
+    if (ext.by_lead_source?.length > 0) {
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-6"><h3>Origem da Lead</h3><div class="chart-container" id="chart-trans-source"></div></div>`;
+    }
   } else {
     chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>${context === 'porteiro' ? 'Sem Humano vs Com Humano' : 'Resolução IA'}</h3><div class="chart-container" id="chart-ai-human"></div></div>`;
   }
@@ -593,10 +678,170 @@ function renderChatbotSection(client, data, clicks) {
     }
   }
 
+  // Trans Serrano (turismo_conversas): comentários por canal + pré-reservas por atividade
+  if (context === 'turismo_conversas') {
+    const extT = data.extended || {};
+    const CHLAB = { whatsapp: 'WhatsApp', instagram: 'Instagram', facebook: 'Facebook' };
+    const comm = extT.comments || [];
+    if (comm.length > 0) {
+      const rows = comm.map(c => `<tr><td>${CHLAB[c.channel] || c.channel}</td><td class="num">${formatNumber(c.total)}</td><td class="num">${formatNumber(c.people)}</td></tr>`).join('');
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-6"><h3>Comentários Tratados por Canal</h3><table class="data-table"><thead><tr><th>Canal</th><th>Comentários</th><th>Pessoas</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    }
+    const pr = extT.pre_reservas || [];
+    if (pr.length > 0) {
+      const top = pr.slice(0, 15);
+      const rows = top.map(p => `<tr><td>${CHLAB[p.canal] || p.canal || '—'}</td><td>${p.atividade || '—'}</td><td class="num">${formatNumber(p.total)}</td></tr>`).join('');
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-6" style="grid-column: 1 / -1"><h3>Pré-reservas por Atividade</h3><table class="data-table"><thead><tr><th>Canal</th><th>Atividade</th><th>Total</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    }
+  }
+
+  // Fundo Solar (lead_qualifier_solar): funil visual com contagens por estado
+  if (context === 'lead_qualifier_solar') {
+    const extF = data.extended || {};
+    const fn = extF.funnel || {};
+    const novo = parseInt(fn.novo) || 0;
+    const emConv = parseInt(fn.em_conversa) || 0;
+    const qual = parseInt(fn.qualificada) || 0;
+    const totalLeads = parseInt(fn.total) || 0;
+    if (totalLeads > 0) {
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-5" style="grid-column: 1 / -1">
+        <h3>Funil de Leads</h3>
+        <p style="color:#9b95b8;font-size:12px;margin:-4px 0 16px 0;">Do primeiro contacto da Clara ao lead qualificado e entregue ao comercial</p>
+        <div style="display:flex;gap:16px;align-items:stretch;flex-wrap:wrap;">
+          <div style="flex:1;min-width:150px;background:rgba(112,102,168,0.12);border-radius:12px;padding:18px;text-align:center;">
+            <div style="font-size:2rem;font-weight:700;color:#9B8FD0;">${formatNumber(novo)}</div>
+            <div style="color:#9b95b8;font-size:13px;margin-top:4px;">Novo</div>
+          </div>
+          <div style="display:flex;align-items:center;color:#6b6785;font-size:1.5rem;">→</div>
+          <div style="flex:1;min-width:150px;background:rgba(255,181,71,0.12);border-radius:12px;padding:18px;text-align:center;">
+            <div style="font-size:2rem;font-weight:700;color:#FFB547;">${formatNumber(emConv)}</div>
+            <div style="color:#9b95b8;font-size:13px;margin-top:4px;">Em Conversa</div>
+          </div>
+          <div style="display:flex;align-items:center;color:#6b6785;font-size:1.5rem;">→</div>
+          <div style="flex:1;min-width:150px;background:rgba(0,212,170,0.12);border-radius:12px;padding:18px;text-align:center;">
+            <div style="font-size:2rem;font-weight:700;color:#00D4AA;">${formatNumber(qual)}</div>
+            <div style="color:#9b95b8;font-size:13px;margin-top:4px;">Qualificada</div>
+          </div>
+        </div>
+      </div>`;
+    }
+  }
+
+  // Translowcost (qualificador_mudancas): funil visual 5 stages
+  if (context === 'qualificador_mudancas') {
+    const extTL = data.extended || {};
+    const fn = extTL.funnel || {};
+    const stages = [
+      ['lead_recebida', 'Lead Recebida', '#9B8FD0'],
+      ['em_qualificacao', 'Em Qualificação', '#FFB547'],
+      ['aguarda_comercial', 'Aguarda Comercial', '#00D4AA'],
+      ['videochamada_agendada', 'Videochamada', '#7066A8']
+    ];
+    const totalStages = stages.reduce((s, [k]) => s + (parseInt(fn[k]) || 0), 0);
+    if (totalStages > 0) {
+      const boxes = stages.map(([k, label, color], i) => {
+        const val = parseInt(fn[k]) || 0;
+        return `<div style="flex:1;min-width:140px;background:${color}22;border-radius:12px;padding:18px;text-align:center;">
+          <div style="font-size:1.75rem;font-weight:700;color:${color};">${formatNumber(val)}</div>
+          <div style="color:#9b95b8;font-size:12px;margin-top:4px;">${label}</div>
+        </div>${i < stages.length - 1 ? '<div style="display:flex;align-items:center;color:#6b6785;font-size:1.3rem;">→</div>' : ''}`;
+      }).join('');
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-5" style="grid-column: 1 / -1">
+        <h3>Funil de Qualificação</h3>
+        <p style="color:#9b95b8;font-size:12px;margin:-4px 0 16px 0;">Estado das leads no PipeDrive no período selecionado</p>
+        <div style="display:flex;gap:12px;align-items:stretch;flex-wrap:wrap;">${boxes}</div>
+      </div>`;
+    }
+  }
+
   return `
     <div class="section-title fade-in fade-in-1">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7066A8" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
       Agente IA
+    </div>
+    <div class="kpi-grid">${kpiCards}</div>
+    <div class="charts-grid">${chartsHtml}</div>
+  `;
+}
+
+// ---- Content Section (Memo.ria — geração de blog posts SEO) ----
+function renderContentSection(client, data) {
+  const t = data.totals || {};
+  const posts = parseInt(t.posts_gerados) || 0;
+  const publicados = parseInt(t.publicados) || 0;
+  const taxaPub = parseFloat(t.taxa_publicacao) || 0;
+  const pilares = parseInt(t.pilares_cobertos) || 0;
+  const photoBank = data.photo_bank || {};
+  const livres = parseInt(photoBank.livres) || 0;
+  const totalPhotos = parseInt(photoBank.total) || 0;
+  const usadas = parseInt(photoBank.usadas) || 0;
+  const photoColorClass = livres > 30 ? 'positive' : livres >= 10 ? '' : 'warning';
+
+  const periodLabel = { '7d': '7 dias', '15d': '15 dias', '30d': '30 dias', 'this-month': 'este mês', 'last-month': 'mês anterior', 'custom': 'personalizado' }[currentPeriod] || '30 dias';
+
+  let kpiCards = '';
+  kpiCards += kpiCard('Posts Gerados', posts, periodLabel, 2);
+  kpiCards += kpiCard('Publicados', publicados, `${taxaPub.toFixed(0)}% taxa de publicação`, 3, publicados > 0 ? 'positive' : '');
+  kpiCards += kpiCard('Pilares Cobertos', pilares, 'de 7 áreas clínicas', 4);
+  kpiCards += kpiCard('Fotos Disponíveis', livres, `de ${formatNumber(totalPhotos)} · ${formatNumber(usadas)} usadas`, 5, photoColorClass);
+  if (data.last_run) {
+    const lastRun = String(data.last_run).substring(0, 16).replace('T', ' ');
+    kpiCards += kpiCard('Última Execução', lastRun, 'último post gerado', 6);
+  }
+
+  let chartsHtml = '';
+  if ((data.posts_by_day || []).length > 0) {
+    chartsHtml += `<div class="chart-card glass fade-in fade-in-5" style="grid-column: 1 / -1"><h3>Produção Diária</h3><div class="chart-container" id="chart-content-daily" style="height:280px"></div></div>`;
+  }
+  if ((data.posts_by_pillar || []).length > 0) {
+    chartsHtml += `<div class="chart-card glass fade-in fade-in-6"><h3>Distribuição por Pilar</h3><div class="chart-container" id="chart-content-pillars"></div></div>`;
+  }
+  if ((data.posts_by_status || []).length > 0) {
+    chartsHtml += `<div class="chart-card glass fade-in fade-in-6"><h3>Status Pipeline</h3><div class="chart-container" id="chart-content-status"></div></div>`;
+  }
+
+  // Latest posts table
+  const PILLAR_LAB = {
+    estimulacao_cognitiva: 'Estimulação Cognitiva',
+    reabilitacao_avc: 'Reabilitação AVC',
+    demencia_alzheimer: 'Demência / Alzheimer',
+    terapia_ocupacional: 'Terapia Ocupacional',
+    neurodesenvolvimento: 'Neurodesenvolvimento',
+    psicologia_clinica: 'Psicologia Clínica',
+    psicogerontologia: 'Psicogerontologia'
+  };
+  const STATUS_LAB = {
+    pending_review: '<span class="tag tag-op">Aguarda Revisão</span>',
+    manually_published: '<span class="tag tag-mk">Publicado</span>',
+    archived: '<span class="tag" style="background:#333;color:#999;">Arquivado</span>'
+  };
+  const latest = data.latest_posts || [];
+  if (latest.length > 0) {
+    const rows = latest.slice(0, 10).map(p => {
+      const dateStr = (p.created_at || '').substring(0, 10);
+      const status = STATUS_LAB[p.status] || `<span class="tag">${p.status || '—'}</span>`;
+      const title = p.webflow_url ? `<a href="${p.webflow_url}" target="_blank" rel="noopener" style="color:#9B8FD0;text-decoration:none;">${p.title}</a>` : p.title;
+      return `<tr><td style="max-width:400px;">${title}</td><td>${PILLAR_LAB[p.pillar] || p.pillar || '—'}</td><td>${status}</td><td class="num">${dateStr}</td></tr>`;
+    }).join('');
+    chartsHtml += `<div class="chart-card glass fade-in fade-in-6" style="grid-column: 1 / -1"><h3>Últimos Posts</h3><table class="data-table"><thead><tr><th>Título</th><th>Pilar</th><th>Estado</th><th>Data</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  }
+
+  // Keyword coverage
+  const kws = data.keyword_coverage || [];
+  if (kws.length > 0) {
+    const zeroKw = kws.filter(k => (parseInt(k.uses) || 0) === 0).length;
+    const rows = kws.slice(0, 20).map(k => {
+      const uses = parseInt(k.uses) || 0;
+      const usesCell = uses === 0 ? `<span style="color:#FF6B6B;">0</span>` : String(uses);
+      return `<tr><td>${k.keyword}</td><td>${PILLAR_LAB[k.pillar] || k.pillar || '—'}</td><td class="num">${usesCell}</td></tr>`;
+    }).join('');
+    chartsHtml += `<div class="chart-card glass fade-in fade-in-6" style="grid-column: 1 / -1"><h3>Cobertura de Keywords <span style="font-size:12px;color:#9b95b8;font-weight:400;">(${kws.length} keywords ativas · ${zeroKw} nunca usadas no período)</span></h3><table class="data-table"><thead><tr><th>Keyword</th><th>Pilar</th><th>Posts no período</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  }
+
+  return `
+    <div class="section-title fade-in fade-in-1">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7066A8" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+      Geração de Conteúdo
     </div>
     <div class="kpi-grid">${kpiCards}</div>
     <div class="charts-grid">${chartsHtml}</div>
@@ -831,8 +1076,8 @@ function kpiCardPercent(label, value, fadeN, colorClass) {
 // ============================================================
 // Dynamic insight generation based on real data
 // ============================================================
-function generateInsight(slug, client, chatbot, messaging, clicks) {
-  if (!chatbot && !messaging) return null;
+function generateInsight(slug, client, chatbot, messaging, clicks, content) {
+  if (!chatbot && !messaging && !content) return null;
 
   const periodLabel = currentPeriod === 'this-month' ? 'este mês' : currentPeriod === 'last-month' ? 'no mês anterior' : `nos últimos ${currentPeriod.replace('d', ' dias')}`;
   const bits = [];
@@ -893,6 +1138,32 @@ function generateInsight(slug, client, chatbot, messaging, clicks) {
         bits.push(`A assistente Maria processou <strong>${total.toLocaleString('pt-PT')} conversas</strong> ${periodLabel} (WhatsApp e Instagram), com <strong>${aiMsgs.toLocaleString('pt-PT')} respostas automáticas</strong>.`);
         if (contactados > 0) bits.push(`Foram qualificados e contactados <strong>${contactados} leads</strong>, dos quais <strong>${agendadas} avançaram para consulta agendada</strong>.`);
         if (auTotal > 0) bits.push(`<strong>${auPct}% dos leads</strong> foram geridos inteiramente pela IA, sem intervenção da equipa.`);
+      } else if (context === 'turismo_conversas') {
+        const ext = chatbot.extended || {};
+        const preReservas = parseInt(ext.pre_reservas_total) || 0;
+        const comments = (ext.comments || []).reduce((s, c) => s + (parseInt(c.total) || 0), 0);
+        const cost = client.costPerConversation || 0;
+        const custo = total * cost;
+        const custoFmt = custo.toLocaleString('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        bits.push(`A IA processou <strong>${total.toLocaleString('pt-PT')} conversas faturáveis</strong> ${periodLabel} em WhatsApp, Instagram e Facebook, correspondendo a <strong>${custoFmt}€ de custo variável</strong>.`);
+        if (comments > 0) bits.push(`Foram tratados <strong>${comments.toLocaleString('pt-PT')} comentários</strong> em posts Meta com resposta pública e abertura automática de DM.`);
+        if (preReservas > 0) bits.push(`A IA capturou <strong>${preReservas} pré-reservas</strong> diretamente na conversa (nome, atividade, datas, nº pessoas).`);
+      } else if (context === 'lead_qualifier_solar') {
+        const ext = chatbot.extended || {};
+        const fn = ext.funnel || {};
+        const qual = parseInt(fn.qualificada) || 0;
+        const totalLeads = parseInt(fn.total) || 0;
+        const taxa = totalLeads > 0 ? Math.round((qual / totalLeads) * 100) : 0;
+        bits.push(`A <strong>Clara</strong> processou <strong>${total.toLocaleString('pt-PT')} conversas</strong> ${periodLabel} em anúncios Facebook, Instagram e tráfego direto de WhatsApp.`);
+        if (totalLeads > 0) bits.push(`Foram abertos <strong>${totalLeads} leads</strong> na base, dos quais <strong>${qual} já qualificados</strong> (${taxa}%).`);
+      } else if (context === 'qualificador_mudancas') {
+        const ext = chatbot.extended || {};
+        const fn = ext.funnel || {};
+        const newLeads = parseInt(ext.new_leads) || 0;
+        const aguarda = parseInt(fn.aguarda_comercial) || 0;
+        const video = parseInt(ext.videocalls_booked) || 0;
+        bits.push(`A <strong>Bia</strong> processou <strong>${total.toLocaleString('pt-PT')} conversas</strong> ${periodLabel} nas duas instâncias WhatsApp, com <strong>${aiMsgs.toLocaleString('pt-PT')} respostas automáticas</strong>.`);
+        if (newLeads > 0) bits.push(`Entraram <strong>${newLeads} novos leads</strong> no funil de qualificação${aguarda > 0 ? `, com <strong>${aguarda}</strong> já em "Aguarda Comercial"` : ''}${video > 0 ? ` e <strong>${video} videochamadas agendadas</strong>` : ''}.`);
       } else {
         bits.push(`O agente processou <strong>${total.toLocaleString('pt-PT')} conversas</strong> ${periodLabel}, resolvendo <strong>${Math.round(aiRate)}%</strong> sem intervenção humana.`);
       }
@@ -944,6 +1215,19 @@ function generateInsight(slug, client, chatbot, messaging, clicks) {
       if (totalOrders > 0) {
         bits.push(`Estas campanhas geraram <strong>${totalOrders} encomendas atribuídas</strong> (${totalRevenue.toLocaleString('pt-PT', { minimumFractionDigits: 2 })}€ em receita).`);
       }
+    }
+  }
+
+  // ---- Content insights (Memo.ria) ----
+  if (content) {
+    const t = content.totals || {};
+    const posts = parseInt(t.posts_gerados) || 0;
+    const publicados = parseInt(t.publicados) || 0;
+    const pilares = parseInt(t.pilares_cobertos) || 0;
+    const livres = parseInt(content.photo_bank?.livres) || 0;
+    if (posts > 0) {
+      bits.push(`O sistema gerou <strong>${posts.toLocaleString('pt-PT')} blog posts</strong> ${periodLabel}, cobrindo <strong>${pilares} áreas clínicas</strong>${publicados > 0 ? ` — <strong>${publicados}</strong> já publicados manualmente` : ''}.`);
+      if (livres > 0) bits.push(`Banco de fotos com <strong>${livres} imagens livres</strong>${livres < 30 ? ' — atenção: nível baixo' : ''}.`);
     }
   }
 

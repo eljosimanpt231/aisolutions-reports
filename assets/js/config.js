@@ -63,6 +63,22 @@ const INSIGHTS = {
   isabelpedroso: {
     month: 'Junho 2026',
     text: `A assistente <strong>Maria</strong> processou <strong>323 conversas</strong> (WhatsApp e Instagram), qualificando e contactando <strong>115 leads</strong>, dos quais <strong>13 avançaram para consulta agendada</strong>. Do lado da autonomia, <strong>64% dos leads</strong> foram geridos sem qualquer intervenção humana. As <strong>125 mensagens automáticas</strong> (follow-ups de leads, lembretes de prestação e pós-consulta) garantem que nenhum contacto fica sem seguimento.`
+  },
+  transserrano: {
+    month: 'Julho 2026',
+    text: `A IA processou <strong>789 conversas faturáveis</strong> em Julho (WhatsApp: 275, Instagram: 305, Facebook: 209), representando <strong>62,33 € de variável</strong> (76,67 € c/IVA). Foram tratados <strong>1.394 comentários</strong> em posts de Instagram e Facebook com resposta pública + abertura automática de DM, um dos principais motores de volume nos canais Meta. A IA capturou <strong>64 pré-reservas</strong> diretamente na conversa (nome, atividade, datas, nº pessoas). O filtro do marker <em>"[Mensagem enviada por um atendente humano]"</em> exclui 73% de mensagens que o Chatwoot regista como IA mas são atendentes reais — sem este filtro a fatura estaria inflacionada em ~3×.`
+  },
+  fundosolar: {
+    month: 'Agosto 2026 (primeira análise, ~3 semanas de dados)',
+    text: `A <strong>Clara</strong> arrancou em produção a 14/07 e nas primeiras semanas processou <strong>~49 conversas</strong> vindas de anúncios Facebook (85%) e Instagram (14%), das quais <strong>38 abriram lead</strong> no CRM (22 em conversa, 5 já qualificadas para os comerciais). A distribuição geográfica confirma a força da região <strong>Centro/Beira Interior</strong> (Castelo Branco a puxar; Faro/Algarve em 2º) e a esmagadora maioria dos pedidos são para sistemas <strong>monofásicos</strong> (69%). Como este é o primeiro mês real, os números servem sobretudo de baseline: a taxa de qualificação, o tempo até handoff e o ratio conversas/leads vão ganhar leitura fiável a partir de Setembro.`
+  },
+  translowcost: {
+    month: 'Julho 2026',
+    text: `A Bia processou <strong>828 mensagens</strong> em Julho (wa1+wa2), com <strong>86 novos leads</strong> a entrar no funil de qualificação. Volume abaixo dos meses anteriores (queda vs Junho, com 742 novos leads) — a validar com a equipa se está ligado a pausa comercial ou ban temporário do número. <strong>85% dos pedidos são mudanças</strong>, com uma minoria de transporte de viaturas, mercadorias e armazenamento. <strong>85% em português</strong>, 10% inglês, 5% francês — cobertura multi-idioma a funcionar. Cumulativo desde arranque: <strong>1.709 leads em "Aguarda Comercial"</strong>, entregues à equipa pela Bia sem intervenção manual.`
+  },
+  memoria: {
+    month: 'Agosto 2026',
+    text: `O sistema gerou <strong>58 blog posts</strong> desde o arranque (31 Maio), com uma média de <strong>~20 posts/mês</strong> a partir de Junho. <strong>15 posts</strong> já foram publicados manualmente pela equipa clínica; <strong>43</strong> aguardam revisão. A correção aplicada em 27/07 (rotação de keywords + desativação da "estimulação cognitiva" genérica) começa a diversificar a distribuição de pilares — os próximos posts devem cobrir <strong>7 áreas clínicas</strong> em vez de convergirem para uma. Banco de fotos com <strong>93 imagens livres</strong> (~4-5 meses de autonomia).`
   }
 };
 
@@ -259,5 +275,46 @@ const CLIENTS = {
     domainId: null,
     startDate: '2026-03-13',
     context: 'clinica_nutri'  // nutrição clínica: qualificação de leads + marcação 1ª consulta (Maria)
+  },
+  transserrano: {
+    name: 'Trans Serrano',
+    password: 'transserrano2026',
+    services: ['chatbot'],
+    channels: ['whatsapp', 'instagram', 'facebook'],
+    schema: 'transserrano',
+    domainId: null,
+    startDate: '2026-04-26',           // primeira mensagem em chat_histories
+    context: 'turismo_conversas',      // turismo aventura: faturação por conversa + comentários + pré-reservas
+    costPerConversation: 0.079         // €/conversa faturável (variável)
+  },
+  fundosolar: {
+    name: 'Fundo Solar',
+    password: 'fundosolar2026',
+    services: ['chatbot'],
+    channels: ['whatsapp', 'instagram', 'facebook'],
+    schema: 'fundo_solar',
+    domainId: null,
+    startDate: '2026-07-14',           // go-live real
+    context: 'lead_qualifier_solar'    // qualificação de leads fotovoltaicos (Clara)
+  },
+  translowcost: {
+    name: 'Translowcost',
+    password: 'translowcost2026',
+    services: ['chatbot'],
+    channels: ['whatsapp'],
+    schema: 'translowcost',
+    domainId: null,
+    startDate: '2026-04-17',           // primeira msg wa1 (kickoff)
+    context: 'qualificador_mudancas'   // qualificação leads mudanças (Bia, 2 instâncias WA)
+  },
+  memoria: {
+    name: 'Memo.ria',
+    password: 'memoria2026',
+    services: ['content'],             // sem chatbot / messaging — geração de blog posts SEO
+    channels: [],
+    schema: 'centro_memoria',
+    domainId: null,
+    startDate: '2026-05-31',           // primeiro post real em produção
+    context: 'content_generation'
   }
 };

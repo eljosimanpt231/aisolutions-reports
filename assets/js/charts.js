@@ -311,6 +311,130 @@ function initExtendedCharts(data) {
     } catch(e) { console.error('chart-abadias-categorias err:', e); }
   }
 
+  // Fundo Solar: Tipo instalação (donut mono/tri)
+  if (ext.by_tipo?.length > 0 && document.getElementById('chart-solar-tipo')) {
+    try {
+      const TIPO_LAB = { mono: 'Monofásico', tri: 'Trifásico' };
+      const items = ext.by_tipo;
+      new ApexCharts(document.getElementById('chart-solar-tipo'), {
+        ...baseChartOptions,
+        chart: { ...baseChartOptions.chart, type: 'donut', height: 280 },
+        series: items.map(i => parseInt(i.total) || 0),
+        labels: items.map(i => TIPO_LAB[i.tipo] || i.tipo),
+        colors: [COLORS.primary, COLORS.accent],
+        plotOptions: { pie: { donut: { size: '65%', labels: { show: true, total: { show: true, label: 'Total', color: COLORS.text, formatter: (w) => w.globals.seriesTotals.reduce((a, b) => a + b, 0).toLocaleString('pt-PT') }, value: { color: '#e8e6f0', fontSize: '24px', fontWeight: 700 } } } } },
+        legend: { position: 'bottom', labels: { colors: COLORS.text } },
+        dataLabels: { enabled: false }, stroke: { width: 0 }
+      }).render();
+    } catch (e) { console.error('chart-solar-tipo err:', e); }
+  }
+
+  // Fundo Solar: Origem (donut fb/ig/direto)
+  if (ext.by_origem?.length > 0 && document.getElementById('chart-solar-origem')) {
+    try {
+      const ORIG_LAB = { anuncio_fb: 'Anúncio Facebook', anuncio_ig: 'Anúncio Instagram', direto: 'Direto (WA)' };
+      const items = ext.by_origem;
+      new ApexCharts(document.getElementById('chart-solar-origem'), {
+        ...baseChartOptions,
+        chart: { ...baseChartOptions.chart, type: 'donut', height: 280 },
+        series: items.map(i => parseInt(i.total) || 0),
+        labels: items.map(i => ORIG_LAB[i.origem] || i.origem),
+        colors: [COLORS.facebook, COLORS.instagram, COLORS.accent, COLORS.primaryLight],
+        plotOptions: { pie: { donut: { size: '65%', labels: { show: true, total: { show: true, label: 'Total', color: COLORS.text, formatter: (w) => w.globals.seriesTotals.reduce((a, b) => a + b, 0).toLocaleString('pt-PT') }, value: { color: '#e8e6f0', fontSize: '24px', fontWeight: 700 } } } } },
+        legend: { position: 'bottom', labels: { colors: COLORS.text }, fontSize: '12px' },
+        dataLabels: { enabled: false }, stroke: { width: 0 }
+      }).render();
+    } catch (e) { console.error('chart-solar-origem err:', e); }
+  }
+
+  // Fundo Solar: Distritos (bar horizontal)
+  if (ext.by_distrito?.length > 0 && document.getElementById('chart-solar-distritos')) {
+    try {
+      const items = ext.by_distrito.slice(0, 8);
+      new ApexCharts(document.getElementById('chart-solar-distritos'), {
+        ...baseChartOptions,
+        chart: { ...baseChartOptions.chart, type: 'bar', height: 280 },
+        series: [{ name: 'Leads', data: items.map(i => parseInt(i.total) || 0) }],
+        xaxis: { categories: items.map(i => i.distrito || '—') },
+        colors: [COLORS.primary],
+        plotOptions: { bar: { horizontal: true, borderRadius: 6, barHeight: '60%' } },
+        dataLabels: { enabled: true, style: { colors: ['#e8e6f0'], fontSize: '12px', fontWeight: 700 } },
+        legend: { show: false }
+      }).render();
+    } catch (e) { console.error('chart-solar-distritos err:', e); }
+  }
+
+  // Fundo Solar: Comerciais (bar)
+  if (ext.by_comercial?.length > 0 && document.getElementById('chart-solar-comercial')) {
+    try {
+      const items = ext.by_comercial.slice(0, 6);
+      new ApexCharts(document.getElementById('chart-solar-comercial'), {
+        ...baseChartOptions,
+        chart: { ...baseChartOptions.chart, type: 'bar', height: 280 },
+        series: [{ name: 'Leads Qualif.', data: items.map(i => parseInt(i.total) || 0) }],
+        xaxis: { categories: items.map(i => i.comercial || '—') },
+        colors: [COLORS.accent],
+        plotOptions: { bar: { horizontal: true, borderRadius: 6, barHeight: '60%' } },
+        dataLabels: { enabled: true, style: { colors: ['#e8e6f0'], fontSize: '12px', fontWeight: 700 } },
+        legend: { show: false }
+      }).render();
+    } catch (e) { console.error('chart-solar-comercial err:', e); }
+  }
+
+  // Translowcost: Tipo de serviço (donut)
+  if (ext.by_service_type?.length > 0 && document.getElementById('chart-trans-service')) {
+    try {
+      const SVC_LAB = { mudanca: 'Mudança', mercadoria: 'Mercadoria', viatura: 'Viatura', armazenamento: 'Armazenamento', nao_definido: 'Sem tipo' };
+      const items = ext.by_service_type;
+      new ApexCharts(document.getElementById('chart-trans-service'), {
+        ...baseChartOptions,
+        chart: { ...baseChartOptions.chart, type: 'donut', height: 280 },
+        series: items.map(i => parseInt(i.total) || 0),
+        labels: items.map(i => SVC_LAB[i.tipo] || i.tipo),
+        colors: [COLORS.primary, COLORS.accent, COLORS.warning, COLORS.primaryLight, '#6B7280'],
+        plotOptions: { pie: { donut: { size: '65%', labels: { show: true, total: { show: true, label: 'Total', color: COLORS.text, formatter: (w) => w.globals.seriesTotals.reduce((a, b) => a + b, 0).toLocaleString('pt-PT') }, value: { color: '#e8e6f0', fontSize: '24px', fontWeight: 700 } } } } },
+        legend: { position: 'bottom', labels: { colors: COLORS.text }, fontSize: '12px' },
+        dataLabels: { enabled: false }, stroke: { width: 0 }
+      }).render();
+    } catch (e) { console.error('chart-trans-service err:', e); }
+  }
+
+  // Translowcost: Idioma (donut)
+  if (ext.by_language?.length > 0 && document.getElementById('chart-trans-lang')) {
+    try {
+      const LANG_LAB = { PT: 'Português', EN: 'Inglês', FR: 'Francês', ES: 'Espanhol' };
+      const items = ext.by_language;
+      new ApexCharts(document.getElementById('chart-trans-lang'), {
+        ...baseChartOptions,
+        chart: { ...baseChartOptions.chart, type: 'donut', height: 280 },
+        series: items.map(i => parseInt(i.total) || 0),
+        labels: items.map(i => LANG_LAB[i.lang] || i.lang),
+        colors: [COLORS.primary, COLORS.accent, COLORS.warning, COLORS.primaryLight],
+        plotOptions: { pie: { donut: { size: '65%', labels: { show: true, total: { show: true, label: 'Total', color: COLORS.text, formatter: (w) => w.globals.seriesTotals.reduce((a, b) => a + b, 0).toLocaleString('pt-PT') }, value: { color: '#e8e6f0', fontSize: '24px', fontWeight: 700 } } } } },
+        legend: { position: 'bottom', labels: { colors: COLORS.text } },
+        dataLabels: { enabled: false }, stroke: { width: 0 }
+      }).render();
+    } catch (e) { console.error('chart-trans-lang err:', e); }
+  }
+
+  // Translowcost: Origem (donut)
+  if (ext.by_lead_source?.length > 0 && document.getElementById('chart-trans-source')) {
+    try {
+      const SRC_LAB = { form_site: 'Formulário Site', wa_direct: 'WhatsApp Direto', wa_comercial_outgoing: 'WhatsApp Comercial', unknown: 'Desconhecido' };
+      const items = ext.by_lead_source;
+      new ApexCharts(document.getElementById('chart-trans-source'), {
+        ...baseChartOptions,
+        chart: { ...baseChartOptions.chart, type: 'donut', height: 280 },
+        series: items.map(i => parseInt(i.total) || 0),
+        labels: items.map(i => SRC_LAB[i.source] || i.source),
+        colors: [COLORS.accent, COLORS.primary, COLORS.warning, '#6B7280'],
+        plotOptions: { pie: { donut: { size: '65%', labels: { show: true, total: { show: true, label: 'Total', color: COLORS.text, formatter: (w) => w.globals.seriesTotals.reduce((a, b) => a + b, 0).toLocaleString('pt-PT') }, value: { color: '#e8e6f0', fontSize: '24px', fontWeight: 700 } } } } },
+        legend: { position: 'bottom', labels: { colors: COLORS.text }, fontSize: '12px' },
+        dataLabels: { enabled: false }, stroke: { width: 0 }
+      }).render();
+    } catch (e) { console.error('chart-trans-source err:', e); }
+  }
+
   // Georgina Moura: Leads by source donut
   if (ext.leads_by_source?.length > 0 && document.getElementById('chart-leads-sources')) {
     try {
@@ -532,6 +656,77 @@ function initExtendedCharts(data) {
         stroke: { width: 0 }
       }).render();
     } catch(e) { console.error('chart-agents err:', e); }
+  }
+}
+
+// Content charts (Memo.ria)
+function initContentCharts(data) {
+  if (!data) return;
+  const PILLAR_LAB = {
+    estimulacao_cognitiva: 'Estimulação Cognitiva',
+    reabilitacao_avc: 'Reabilitação AVC',
+    demencia_alzheimer: 'Demência / Alzheimer',
+    terapia_ocupacional: 'Terapia Ocupacional',
+    neurodesenvolvimento: 'Neurodesenvolvimento',
+    psicologia_clinica: 'Psicologia Clínica',
+    psicogerontologia: 'Psicogerontologia'
+  };
+  const STATUS_LAB = {
+    pending_review: 'Aguarda Revisão',
+    manually_published: 'Publicado',
+    archived: 'Arquivado'
+  };
+  const STATUS_COLORS = { pending_review: COLORS.warning, manually_published: COLORS.accent, archived: '#6B7280' };
+
+  // Produção diária
+  if ((data.posts_by_day || []).length > 0 && document.getElementById('chart-content-daily')) {
+    try {
+      const days = data.posts_by_day.map(d => String(d.day).substring(0, 10));
+      new ApexCharts(document.getElementById('chart-content-daily'), {
+        ...baseChartOptions,
+        chart: { ...baseChartOptions.chart, type: 'bar', height: 280 },
+        series: [{ name: 'Posts', data: data.posts_by_day.map(d => parseInt(d.total) || 0) }],
+        xaxis: { categories: days, labels: { rotate: -45, style: { fontSize: '9px' }, formatter: (v) => v?.substring(5) || '' } },
+        colors: [COLORS.primary],
+        plotOptions: { bar: { borderRadius: 4, columnWidth: '65%' } },
+        dataLabels: { enabled: false },
+        legend: { show: false }
+      }).render();
+    } catch (e) { console.error('chart-content-daily err:', e); }
+  }
+
+  // Donut pilares
+  if ((data.posts_by_pillar || []).length > 0 && document.getElementById('chart-content-pillars')) {
+    try {
+      const items = data.posts_by_pillar;
+      new ApexCharts(document.getElementById('chart-content-pillars'), {
+        ...baseChartOptions,
+        chart: { ...baseChartOptions.chart, type: 'donut', height: 280 },
+        series: items.map(i => parseInt(i.total) || 0),
+        labels: items.map(i => PILLAR_LAB[i.pillar] || i.pillar),
+        colors: [COLORS.primary, COLORS.accent, COLORS.warning, COLORS.primaryLight, '#00B894', '#E1306C', '#FDCB6E'],
+        plotOptions: { pie: { donut: { size: '60%', labels: { show: true, total: { show: true, label: 'Total', color: COLORS.text, formatter: (w) => w.globals.seriesTotals.reduce((a, b) => a + b, 0).toLocaleString('pt-PT') }, value: { color: '#e8e6f0', fontSize: '22px', fontWeight: 700 } } } } },
+        legend: { position: 'bottom', labels: { colors: COLORS.text }, fontSize: '11px' },
+        dataLabels: { enabled: false }, stroke: { width: 0 }
+      }).render();
+    } catch (e) { console.error('chart-content-pillars err:', e); }
+  }
+
+  // Donut status
+  if ((data.posts_by_status || []).length > 0 && document.getElementById('chart-content-status')) {
+    try {
+      const items = data.posts_by_status;
+      new ApexCharts(document.getElementById('chart-content-status'), {
+        ...baseChartOptions,
+        chart: { ...baseChartOptions.chart, type: 'donut', height: 280 },
+        series: items.map(i => parseInt(i.total) || 0),
+        labels: items.map(i => STATUS_LAB[i.status] || i.status),
+        colors: items.map(i => STATUS_COLORS[i.status] || COLORS.primary),
+        plotOptions: { pie: { donut: { size: '60%', labels: { show: true, total: { show: true, label: 'Total', color: COLORS.text, formatter: (w) => w.globals.seriesTotals.reduce((a, b) => a + b, 0).toLocaleString('pt-PT') }, value: { color: '#e8e6f0', fontSize: '22px', fontWeight: 700 } } } } },
+        legend: { position: 'bottom', labels: { colors: COLORS.text }, fontSize: '12px' },
+        dataLabels: { enabled: false }, stroke: { width: 0 }
+      }).render();
+    } catch (e) { console.error('chart-content-status err:', e); }
   }
 }
 
