@@ -311,6 +311,27 @@ function initExtendedCharts(data) {
     } catch(e) { console.error('chart-abadias-categorias err:', e); }
   }
 
+  // Isabel Pedroso: Origem das conversas (donut quiz/anúncio/direto)
+  // Ordem e cores fixas por origem — a cor segue a entidade, não o rank
+  if (ext.origens?.length > 0 && document.getElementById('chart-ips-origem')) {
+    try {
+      const ORIG_ORDER = ['anuncio', 'direto', 'quiz'];
+      const ORIG_LAB = { anuncio: 'Anúncio (msg padrão)', direto: 'Mensagem direta', quiz: 'Quiz' };
+      const ORIG_COL = { anuncio: COLORS.primaryLight, direto: COLORS.accent, quiz: COLORS.warning };
+      const items = ORIG_ORDER.map(k => ext.origens.find(o => o.origem === k)).filter(Boolean);
+      new ApexCharts(document.getElementById('chart-ips-origem'), {
+        ...baseChartOptions,
+        chart: { ...baseChartOptions.chart, type: 'donut', height: 280 },
+        series: items.map(i => parseInt(i.conversas) || 0),
+        labels: items.map(i => ORIG_LAB[i.origem] || i.origem),
+        colors: items.map(i => ORIG_COL[i.origem] || COLORS.primary),
+        plotOptions: { pie: { donut: { size: '65%', labels: { show: true, total: { show: true, label: 'Total', color: COLORS.text, formatter: (w) => w.globals.seriesTotals.reduce((a, b) => a + b, 0).toLocaleString('pt-PT') }, value: { color: '#e8e6f0', fontSize: '24px', fontWeight: 700 } } } } },
+        legend: { position: 'bottom', labels: { colors: COLORS.text }, fontSize: '12px' },
+        dataLabels: { enabled: false }, stroke: { width: 0 }
+      }).render();
+    } catch (e) { console.error('chart-ips-origem err:', e); }
+  }
+
   // Fundo Solar: Tipo instalação (donut mono/tri)
   if (ext.by_tipo?.length > 0 && document.getElementById('chart-solar-tipo')) {
     try {

@@ -303,13 +303,20 @@ function renderChatbotSection(client, data, clicks) {
     if (escal > 0) kpiCards += kpiCard('Escaladas p/ Equipa', escal, 'passadas à assistente', 6);
   } else if (context === 'clinica_nutri') {
     // Isabel Pedroso (Maria): qualificação de leads + marcação 1ª consulta (nutrição clínica)
+    // Nota: `agendadas` inclui `confirmadas` — no GHL o current_stage move para "Cliente confirmado"
+    // após pagamento, e uma consulta paga continua a ser uma consulta agendada.
     const ext = data.extended || {};
     const fn = ext.funnel || {};
     const contactados = parseInt(fn.contactados) || 0;
-    const agendadas = parseInt(fn.agendadas) || 0;
+    const confirmadas = parseInt(fn.confirmadas) || 0;
+    const agendadas = (parseInt(fn.agendadas) || 0) + confirmadas;
+    const pag = ext.pagamentos || {};
+    const pagas = parseInt(pag.pagas) || 0;
+    const valorPago = parseFloat(pag.valor_pago) || 0;
     kpiCards += kpiCard('Mensagens IA', msgsAI, `${formatNumber(msgsHuman)} mensagens recebidas`, 3, 'positive');
     kpiCards += kpiCard('Leads Contactados', contactados, 'qualificados pela IA', 4);
     kpiCards += kpiCard('Consultas Agendadas', agendadas, contactados > 0 ? `${((agendadas / (contactados + agendadas)) * 100).toFixed(0)}% de conversão` : 'marcações confirmadas', 5, 'positive');
+    if (pagas > 0) kpiCards += kpiCard('Reservas Pagas', pagas, `${valorPago.toLocaleString('pt-PT', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}€ via link de pagamento`, 6, 'positive');
   } else if (context === 'turismo_conversas') {
     // Trans Serrano: faturação por conversa + comentários + pré-reservas
     const ext = data.extended || {};
@@ -609,19 +616,26 @@ function renderChatbotSection(client, data, clicks) {
     }
   }
 
-  // Isabel Pedroso (clinica_nutri): Funil de Leads + Autonomia sobre leads + Mensagens Automáticas
+  // Isabel Pedroso (clinica_nutri): Funil de Leads + Origem das Leads + Autonomia + Mensagens Automáticas
   if (context === 'clinica_nutri') {
     const extN = data.extended || {};
     const fn = extN.funnel || {};
     const contactados = parseInt(fn.contactados) || 0;
-    const agendadas = parseInt(fn.agendadas) || 0;
+    const confirmadas = parseInt(fn.confirmadas) || 0;
+    const agendadas = (parseInt(fn.agendadas) || 0) + confirmadas;
     const funnelTotal = contactados + agendadas;
     const convRate = funnelTotal > 0 ? (agendadas / funnelTotal) * 100 : 0;
 
-    // Funil de Leads — 3 etapas visuais (Contactados → Agendadas → conversão)
+    // Funil de Leads — Contactados → Agendadas → Confirmados (pagos) → conversão
+    const confirmadosBox = confirmadas > 0 ? `
+        <div style="display:flex;align-items:center;color:#6b6785;font-size:1.5rem;">→</div>
+        <div style="flex:1;min-width:150px;background:rgba(37,211,102,0.12);border-radius:12px;padding:18px;text-align:center;">
+          <div style="font-size:2rem;font-weight:700;color:#25D366;">${formatNumber(confirmadas)}</div>
+          <div style="color:#9b95b8;font-size:13px;margin-top:4px;">Clientes Confirmados</div>
+        </div>` : '';
     chartsHtml += `<div class="chart-card glass fade-in fade-in-5" style="grid-column: 1 / -1">
       <h3>Funil de Leads</h3>
-      <p style="color:#9b95b8;font-size:12px;margin:-4px 0 16px 0;">Do primeiro contacto pela IA à consulta agendada</p>
+      <p style="color:#9b95b8;font-size:12px;margin:-4px 0 16px 0;">Do primeiro contacto pela IA à consulta agendada${confirmadas > 0 ? ' e confirmada com pagamento' : ''}</p>
       <div style="display:flex;gap:16px;align-items:stretch;flex-wrap:wrap;">
         <div style="flex:1;min-width:150px;background:rgba(112,102,168,0.12);border-radius:12px;padding:18px;text-align:center;">
           <div style="font-size:2rem;font-weight:700;color:#9B8FD0;">${formatNumber(contactados)}</div>
@@ -631,7 +645,7 @@ function renderChatbotSection(client, data, clicks) {
         <div style="flex:1;min-width:150px;background:rgba(0,212,170,0.12);border-radius:12px;padding:18px;text-align:center;">
           <div style="font-size:2rem;font-weight:700;color:#00D4AA;">${formatNumber(agendadas)}</div>
           <div style="color:#9b95b8;font-size:13px;margin-top:4px;">Consultas Agendadas</div>
-        </div>
+        </div>${confirmadosBox}
         <div style="display:flex;align-items:center;color:#6b6785;font-size:1.5rem;">=</div>
         <div style="flex:1;min-width:150px;background:rgba(255,181,71,0.12);border-radius:12px;padding:18px;text-align:center;">
           <div style="font-size:2rem;font-weight:700;color:#FFB547;">${convRate.toFixed(1)}%</div>
@@ -639,6 +653,23 @@ function renderChatbotSection(client, data, clicks) {
         </div>
       </div>
     </div>`;
+
+    // Origem das Leads — de onde chegam as conversas (1ª mensagem do cliente):
+    // quiz do site, mensagem padrão dos anúncios, ou mensagem escrita diretamente
+    const origens = extN.origens || [];
+    if (origens.length > 0) {
+      const ORIG_ORDER = ['anuncio', 'direto', 'quiz'];
+      const ORIG_LABELS = { anuncio: 'Anúncio (msg padrão)', direto: 'Mensagem direta', quiz: 'Quiz' };
+      const ordered = ORIG_ORDER.map(k => origens.find(o => o.origem === k)).filter(Boolean)
+        .concat(origens.filter(o => !ORIG_ORDER.includes(o.origem)));
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-6"><h3>Origem das Conversas</h3><div class="chart-container" id="chart-ips-origem"></div></div>`;
+      const rows = ordered.map(o => `<tr><td>${ORIG_LABELS[o.origem] || o.origem}</td><td class="num">${formatNumber(parseInt(o.conversas) || 0)}</td><td class="num">${formatNumber(parseInt(o.leads) || 0)}</td><td class="num">${formatNumber(parseInt(o.agendadas) || 0)}</td><td class="num">${formatNumber(parseInt(o.pagas) || 0)}</td></tr>`).join('');
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-6">
+        <h3>Resultados por Origem</h3>
+        <table class="data-table"><thead><tr><th>Origem</th><th>Conversas</th><th>Leads</th><th>Consultas</th><th>Pagas</th></tr></thead><tbody>${rows}</tbody></table>
+        <p style="color:#6b6785;font-size:11px;margin:10px 0 0 0;">Origem identificada pela primeira mensagem do cliente. "Leads" pode exceder "Conversas" quando a qualificação acontece depois do período da primeira conversa.</p>
+      </div>`;
+    }
 
     // Autonomia da IA (sobre leads)
     const au = extN.autonomia_leads || {};
@@ -1130,13 +1161,25 @@ function generateInsight(slug, client, chatbot, messaging, clicks, content) {
         const ext = chatbot.extended || {};
         const fn = ext.funnel || {};
         const contactados = parseInt(fn.contactados) || 0;
-        const agendadas = parseInt(fn.agendadas) || 0;
+        const confirmadas = parseInt(fn.confirmadas) || 0;
+        const agendadas = (parseInt(fn.agendadas) || 0) + confirmadas;
+        const pag = ext.pagamentos || {};
+        const pagas = parseInt(pag.pagas) || 0;
+        const valorPago = parseFloat(pag.valor_pago) || 0;
         const au = ext.autonomia_leads || {};
         const auTotal = parseInt(au.total) || 0;
         const auSoIa = parseInt(au.so_ia) || 0;
         const auPct = auTotal > 0 ? Math.round((auSoIa / auTotal) * 100) : 0;
         bits.push(`A assistente Maria processou <strong>${total.toLocaleString('pt-PT')} conversas</strong> ${periodLabel} (WhatsApp e Instagram), com <strong>${aiMsgs.toLocaleString('pt-PT')} respostas automáticas</strong>.`);
         if (contactados > 0) bits.push(`Foram qualificados e contactados <strong>${contactados} leads</strong>, dos quais <strong>${agendadas} avançaram para consulta agendada</strong>.`);
+        if (pagas > 0) bits.push(`Deste percurso resultaram <strong>${pagas} reservas pagas</strong>, num total de <strong>${valorPago.toLocaleString('pt-PT')}€</strong> cobrados via link de pagamento.`);
+        const origs = ext.origens || [];
+        if (origs.length > 0) {
+          const ORIG_LAB = { anuncio: 'a mensagem padrão dos anúncios', direto: 'mensagens escritas diretamente', quiz: 'o quiz' };
+          const top = origs.slice().sort((a, b) => (parseInt(b.conversas) || 0) - (parseInt(a.conversas) || 0))[0];
+          const totalConv = origs.reduce((s, o) => s + (parseInt(o.conversas) || 0), 0);
+          if (top && totalConv > 0) bits.push(`A principal porta de entrada foi <strong>${ORIG_LAB[top.origem] || top.origem}</strong> (${Math.round(((parseInt(top.conversas) || 0) / totalConv) * 100)}% das conversas novas).`);
+        }
         if (auTotal > 0) bits.push(`<strong>${auPct}% dos leads</strong> foram geridos inteiramente pela IA, sem intervenção da equipa.`);
       } else if (context === 'turismo_conversas') {
         const ext = chatbot.extended || {};
