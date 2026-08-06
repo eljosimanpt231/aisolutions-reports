@@ -666,7 +666,7 @@ function renderChatbotSection(client, data, clicks) {
       const rows = ordered.map(o => `<tr><td>${ORIG_LABELS[o.origem] || o.origem}</td><td class="num">${formatNumber(parseInt(o.conversas) || 0)}</td><td class="num">${formatNumber(parseInt(o.leads) || 0)}</td><td class="num">${formatNumber(parseInt(o.agendadas) || 0)}</td><td class="num">${formatNumber(parseInt(o.pagas) || 0)}</td></tr>`).join('');
       chartsHtml += `<div class="chart-card glass fade-in fade-in-6">
         <h3>Resultados por Origem</h3>
-        <table class="data-table"><thead><tr><th>Origem</th><th>Conversas</th><th>Leads</th><th>Consultas</th><th>Pagas</th></tr></thead><tbody>${rows}</tbody></table>
+        <div style="overflow-x:auto"><table class="data-table" style="min-width:440px"><thead><tr><th>Origem</th><th>Conversas</th><th>Leads</th><th>Consultas</th><th>Pagas</th></tr></thead><tbody>${rows}</tbody></table></div>
         <p style="color:#6b6785;font-size:11px;margin:10px 0 0 0;">Origem identificada pela primeira mensagem do cliente. "Leads" pode exceder "Conversas" quando a qualificação acontece depois do período da primeira conversa.</p>
       </div>`;
     }
