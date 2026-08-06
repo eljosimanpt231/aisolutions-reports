@@ -1170,7 +1170,7 @@ function generateInsight(slug, client, chatbot, messaging, clicks, content) {
         const auTotal = parseInt(au.total) || 0;
         const auSoIa = parseInt(au.so_ia) || 0;
         const auPct = auTotal > 0 ? Math.round((auSoIa / auTotal) * 100) : 0;
-        bits.push(`A assistente Maria processou <strong>${total.toLocaleString('pt-PT')} conversas</strong> ${periodLabel} (WhatsApp e Instagram), com <strong>${aiMsgs.toLocaleString('pt-PT')} respostas automáticas</strong>.`);
+        bits.push(`A assistente Maria processou <strong>${total.toLocaleString('pt-PT')} conversas</strong> ${periodLabel} (WhatsApp e Facebook), com <strong>${aiMsgs.toLocaleString('pt-PT')} respostas automáticas</strong>.`);
         if (contactados > 0) bits.push(`Foram qualificados e contactados <strong>${contactados} leads</strong>, dos quais <strong>${agendadas} avançaram para consulta agendada</strong>.`);
         if (pagas > 0) bits.push(`Deste percurso resultaram <strong>${pagas} reservas pagas</strong>, num total de <strong>${valorPago.toLocaleString('pt-PT')}€</strong> cobrados via link de pagamento.`);
         const origs = ext.origens || [];

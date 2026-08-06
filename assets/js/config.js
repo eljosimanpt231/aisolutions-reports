@@ -61,8 +61,8 @@ const INSIGHTS = {
     text: `Primeira semana em produção com resultados promissores. O agente processou <strong>96 conversas</strong> com uma taxa de resolução de <strong>67,7%</strong> — resolvendo autonomamente questões sobre produtos, ingredientes e disponibilidade. As restantes 32% são encaminhadas para a equipa para questões mais complexas ou personalizadas.`
   },
   isabelpedroso: {
-    month: 'Junho 2026',
-    text: `A assistente <strong>Maria</strong> processou <strong>323 conversas</strong> (WhatsApp e Instagram), qualificando e contactando <strong>115 leads</strong>, dos quais <strong>13 avançaram para consulta agendada</strong>. Do lado da autonomia, <strong>64% dos leads</strong> foram geridos sem qualquer intervenção humana. As <strong>125 mensagens automáticas</strong> (follow-ups de leads, lembretes de prestação e pós-consulta) garantem que nenhum contacto fica sem seguimento.`
+    month: 'Julho 2026',
+    text: `A assistente <strong>Maria</strong> processou <strong>mais de 500 conversas</strong> (WhatsApp e Facebook), qualificando e contactando <strong>302 leads</strong>, dos quais <strong>61 avançaram para consulta agendada</strong> — e, com o novo fluxo de reservas com pagamento (live desde 27/07), <strong>14 reservas foram pagas diretamente na conversa (1.190€)</strong>. A principal porta de entrada é a mensagem padrão dos anúncios, seguida das mensagens diretas e do quiz. <strong>60% dos leads</strong> foram geridos sem qualquer intervenção humana.`
   },
   transserrano: {
     month: 'Julho 2026',
@@ -270,7 +270,7 @@ const CLIENTS = {
     name: 'Isabel Pedroso',
     password: 'isabelpedroso2026',
     services: ['chatbot'],
-    channels: ['whatsapp', 'instagram'],
+    channels: ['whatsapp', 'facebook'],
     schema: 'isabel_pedroso',
     domainId: null,
     startDate: '2026-03-13',

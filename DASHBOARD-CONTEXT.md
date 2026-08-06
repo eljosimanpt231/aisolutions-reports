@@ -78,7 +78,7 @@ Cada vez que se edita JS partilhado, **incrementar `?v=N` em todos os index.html
 cd reports-dashboard && find . -name "index.html" -exec sed -i 's/?v=30/?v=31/g' {} \;
 ```
 
-Versão atual: **v=34**.
+Versão atual: **v=36**.
 
 ---
 
@@ -93,7 +93,7 @@ O `dashboard.js` adapta a secção chatbot ao `client.context`:
 - `'porteiro'` — OdiSeguros (classificação clientes existentes vs novos leads)
 - `'dual_agent'` — Costura Urbana (2 agentes IA em tabelas separadas: Loja + Assistência Técnica; KPIs + gráfico resolução por agente + donut conversas por agente + tabela detalhe). Dados já vêm por canal (`wp_loja`/`wp_assistencia`); o transform preserva `conversations_ai_only`/`with_human` por canal
 - `'clinica'` — Dr. Marco Rego (assistente Íris; oftalmologia). Multi-canal (WA/IG/FB) numa só `chat_histories` via `inbox_key`. KPIs: Conversas, Respostas IA, Comentários Tratados, Qualificações, Escaladas. Extended: comentários (`comments_log`), qualif/escal (`handoffs_lock.motivo`), leads (`leads_formulario`)
-- `'clinica_nutri'` — Isabel Pedroso (assistente Maria; nutrição). WhatsApp + Instagram numa só `chat_histories` (canal via prefixo `WP-Isabel%`). KPIs: Conversas, Msgs IA, Leads Contactados, Consultas Agendadas + card Autonomia da IA (sobre leads). Extended: funil `ghl_sync.current_stage`, mensagens `automsgs_log`
+- `'clinica_nutri'` — Isabel Pedroso (assistente Maria; nutrição). WhatsApp + **Facebook** numa só `chat_histories` (canal via prefixo `WP-Isabel%`; resto = FB, inbox "Isabel Pedroso Silva"). KPIs: Conversas, Msgs IA, Leads Contactados, Consultas Agendadas (= stage agendada + confirmado), Reservas Pagas (€). Extended: funil `ghl_sync.current_stage` (contactado→agendada→confirmado), pagamentos `payment_links`, origens da 1ª msg (quiz/anúncio/direto), mensagens `automsgs_log`
 - `'turismo_conversas'` — Trans Serrano (turismo aventura Serra da Estrela). Multi-canal (WA/IG/FB) numa só `chat_histories` via prefixo do `session_id`. **Faturação por conversa** (`costPerConversation: 0.079` €). KPIs: Conversas Faturáveis + custo variável, Respostas da IA, Comentários Tratados (`page_comments.router_decision='PUBLIC_AND_DM_LIVE'`), Pré-reservas Capturadas (`pre_reservas`). Tabelas: comentários/canal, pré-reservas/atividade. Filtro crítico: excluir `%[Mensagem enviada por um atendente humano]%` para não inflacionar contagem em ~3×
 - `'lead_qualifier_solar'` — Fundo Solar (assistente Clara; qualificação leads fotovoltaicos). Multi-canal WA/IG/FB Cloud API via prefixo `session_id` (`Clara da Fundo Solar WhatsApp%`=WA, `fundosolar10%`=IG, `Fundo Solar%`=FB). KPIs: Conversas, Msgs IA, Leads Qualificados, Taxa Qualificação, Autonomia IA. Funil visual (novo→em conversa→qualificada), donuts tipo instalação (mono/tri)/origem (fb/ig/direto), bars top 8 distritos (whitelist 18 distritos PT)/comerciais. Sujidade nas colunas `distrito`/`tipo_instalacao` — filtrada
 - `'qualificador_mudancas'` — Translowcost (assistente Bia; mudanças/transportes). Duas instâncias WA (`wp_chat_histories` + `wp_chat_histories_wa2`) unidas via `UNION ALL`. Sync PipeDrive via `client_state.current_stage`. KPIs: Conversas, Msgs IA, Novos Leads, Videochamadas, Aguarda Comercial + card Autonomia Bia. Funil visual 4 stages, donuts tipo serviço/idioma/origem
@@ -182,6 +182,12 @@ A HCO precisa de dois preços diferentes para operacionais — atualmente `costP
 
 ## Mudanças recentes (changelog inverso)
 
+- **v=36** — Isabel Pedroso: origem das leads + reservas pagas + fix canal.
+  - **Origem das conversas** derivada da 1ª mensagem do cliente em `chat_histories`: `%quiz%` = Quiz · templates verbatim dos anúncios ("saber mais sobre a consulta de nutri%" / "saber mais informa%es sobre os vossos servi%") = Anúncio (msg padrão) · resto = Mensagem direta. Donut `chart-ips-origem` (cores fixas por entidade: anúncio=primaryLight, direto=accent, quiz=warning) + tabela "Resultados por Origem" (conversas/leads/consultas/pagas).
+  - **Pagamentos** de `isabel_pedroso.payment_links` (is_test=false): KPI "Reservas Pagas" com € cobrados; join a origens via `'WP-Isabel:' || client_contact = session_id`.
+  - **Funil** ganha 3º stage GHL "Cliente confirmado" (`052d2dc8-...`); "Consultas Agendadas" no frontend = agendadas + confirmadas (o current_stage move para confirmado após pagamento — sem esta soma o KPI descia desde o go-live de pagamentos 27/07).
+  - **Fix canal**: sessões não-`WP-Isabel%` são **Facebook** (inbox "Isabel Pedroso Silva", PSIDs Messenger), não Instagram — corrigido em config.js/insight (frontend) e no `CASE` do chatbotQuery (backend).
+  - Frontend backward-compatible (guards) — blocos novos só renderizam quando o backend devolver `origens`/`pagamentos`/`confirmadas`. Backend em `tmp_explore/patch_ips_origens.js` (SQL validado na BD; PUT bloqueado pelo classifier — correr manualmente).
 - **v=34** — 4 novos dashboards em produção (contexts próprios):
   - **Trans Serrano** (`turismo_conversas`): faturação por conversa (0,079€/conv), comentários Meta (page_comments PUBLIC_AND_DM_LIVE) e pré-reservas capturadas na conversa. Multi-canal (WA/IG/FB) numa só `chat_histories` via prefixo `session_id`. Filtro crítico exclui `[Mensagem enviada por um atendente humano]`.
   - **Fundo Solar** (`lead_qualifier_solar`): qualificação leads fotovoltaicos pela Clara. Funil visual + donuts tipo instalação/origem + bars distritos/comerciais. Whitelist 18 distritos PT para descartar sujidade LLM em `leads_database.distrito`.
