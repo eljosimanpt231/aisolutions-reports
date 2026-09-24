@@ -82,7 +82,7 @@ const INSIGHTS = {
   },
   nubia: {
     month: 'Setembro 2026 (1 a 22)',
-    text: `A Núbia respondeu a <strong>495 conversas</strong> nos três canais e enviou <strong>1.916 mensagens</strong>. Em <strong>74,5%</strong> delas ninguém da equipa precisou de intervir, e quatro em cada dez mensagens de clientes chegaram fora do horário comercial. Nos comentários de Facebook e Instagram, a IA respondeu a <strong>138</strong> e abriu 117 conversas privadas; 50 pessoas responderam. Do lado das mensagens automáticas saíram <strong>1.543 envios</strong>, com 256 cliques e <strong>16 encomendas atribuídas</strong> (1.927,44 €), a maior parte vinda da terceira mensagem do carrinho abandonado.`
+    text: `A Núbia respondeu a <strong>495 conversas</strong> nos três canais e enviou <strong>1.916 mensagens</strong>. Em <strong>74,5%</strong> delas ninguém da equipa precisou de intervir, e quatro em cada dez mensagens de clientes chegaram fora do horário comercial. Nos comentários de Facebook e Instagram, a IA respondeu a <strong>138</strong> e abriu 117 conversas privadas; 50 pessoas responderam. Do lado das mensagens automáticas saíram <strong>1.543 envios</strong>, com 257 cliques e <strong>44 encomendas atribuídas</strong> (4.564,75 €), metade delas vinda da primeira mensagem do carrinho abandonado.`
   }
 };
 
@@ -330,6 +330,7 @@ const CLIENTS = {
     domainId: null,                    // o agente não envia shortlinks Kutt; os cliques vêm das mensagens automáticas
     startDate: '2026-08-31',           // agente aberto ao público a 31/08 19:20 UTC (o backend corta o chatbot nessa hora)
     context: 'ecommerce_multicanal',   // e-commerce: agente WA/IG/FB + comentários + carrinho, upsell e operacionais
+    revenueHero: true,                 // receita atribuída em destaque no topo (é o número que a cliente quer ver)
     opSubLabel: 'avisos de pagamento MB e MB Way',
     mktSubLabel: 'carrinho abandonado e upsell'
     // sem costPerMessage: a cliente paga as mensagens Meta no próprio cartão; ROI desligado até haver valor acordado

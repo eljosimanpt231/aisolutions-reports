@@ -101,6 +101,11 @@ function renderDashboard(client, chatbot, messaging, clicks, content) {
   let html = '';
   const slug = getClientSlug();
 
+  // Receita atribuída em destaque no topo, para clientes em que é o número principal (revenueHero no config)
+  if (client.revenueHero && messaging && messaging.total_revenue > 0) {
+    html += renderRevenueHero(messaging);
+  }
+
   if (client.services.includes('chatbot') && chatbot) {
     html += renderChatbotSection(client, chatbot, clicks);
   }
@@ -1157,6 +1162,39 @@ function kpiCard(label, value, sub, fadeN, colorClass, suffix) {
       <div class="kpi-label">${label}</div>
       <div class="kpi-value ${colorClass || ''}" data-count="${value}"${suffixAttr}>0</div>
       ${sub ? `<div class="kpi-sub">${sub}</div>` : ''}
+    </div>`;
+}
+
+function renderRevenueHero(data) {
+  // Formato de fatura (4.564,75 €): o toLocaleString pt-PT não agrupa números de 4 dígitos
+  const eur = v => {
+    const [int, dec] = Math.abs(v).toFixed(2).split('.');
+    return (v < 0 ? '-' : '') + int.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ',' + dec + ' €';
+  };
+  const porCat = {};
+  for (const m of data.marketing || []) {
+    if (!m.revenue) continue;
+    porCat[m.categoria] = porCat[m.categoria] || { revenue: 0, orders: 0 };
+    porCat[m.categoria].revenue += m.revenue;
+    porCat[m.categoria].orders += m.orders;
+  }
+  const chips = Object.entries(porCat)
+    .sort((a, b) => b[1].revenue - a[1].revenue)
+    .map(([cat, v]) => `
+      <div class="revenue-hero-chip">
+        <span>${cat}</span>
+        <strong>${eur(v.revenue)}</strong>
+        <em>${v.orders} encomenda${v.orders === 1 ? '' : 's'}</em>
+      </div>`).join('');
+  const n = data.total_orders;
+  return `
+    <div class="revenue-hero glass fade-in fade-in-1">
+      <div class="revenue-hero-main">
+        <div class="kpi-label">Vendas geradas pelas mensagens automáticas</div>
+        <div class="revenue-hero-value">${eur(data.total_revenue)}</div>
+        <div class="kpi-sub">${n} encomenda${n === 1 ? '' : 's'} de clientes que clicaram numa mensagem até 5 dias antes de comprar</div>
+      </div>
+      ${chips ? `<div class="revenue-hero-chips">${chips}</div>` : ''}
     </div>`;
 }
 
