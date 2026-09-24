@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXO · Dashboard EduGEP</title>
+<meta name="description" content="Dashboard operacional do agente NEXO — o novo membro IA da equipa EduGEP.">
+<meta name="theme-color" content="#29235c">
+
+<link rel="icon" type="image/png" href="./assets/img/edugep-icon-192.png">
+<link rel="apple-touch-icon" href="./assets/img/edugep-icon-192.png">
+
+<link rel="stylesheet" href="./assets/css/edugep.css">
+</head>
+<body>
+
+<!-- ============ PASSWORD OVERLAY ============ -->
+<div class="edugep-password-overlay" id="edugep-pw-overlay">
+  <div class="edugep-password-card">
+    <div class="edugep-password-logo">
+      <img src="./assets/img/edugep-icon-192.png" alt="EduGEP">
+      <svg viewBox="0 0 48 48" fill="none" class="edugep-nexo-mark" style="width:36px;height:36px" aria-hidden="true">
+        <path d="M 24 24 Q 12 12 8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.6" class="edugep-nexo-arc-1"/>
+        <path d="M 24 24 Q 36 12 40 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.6" class="edugep-nexo-arc-2"/>
+        <path d="M 24 24 Q 24 38 24 42" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.6" class="edugep-nexo-arc-3"/>
+        <circle cx="8" cy="8" r="3.5" fill="currentColor" class="edugep-nexo-sat-1"/>
+        <circle cx="40" cy="8" r="3.5" fill="currentColor" class="edugep-nexo-sat-2"/>
+        <circle cx="24" cy="42" r="3.5" fill="currentColor" class="edugep-nexo-sat-3"/>
+        <circle cx="24" cy="24" r="5" fill="url(#pwGrad)" class="edugep-nexo-core"/>
+        <defs>
+          <radialGradient id="pwGrad">
+            <stop offset="0%" stop-color="#22D3EE"/>
+            <stop offset="100%" stop-color="#4a3f9c"/>
+          </radialGradient>
+        </defs>
+      </svg>
+    </div>
+    <h1 class="edugep-password-title">NEXO · EduGEP</h1>
+    <p class="edugep-password-subtitle">Introduza a palavra-passe partilhada da equipa para aceder</p>
+    <form id="edugep-pw-form">
+      <input type="password" class="edugep-password-input" id="edugep-pw-input" placeholder="Palavra-passe" autofocus autocomplete="current-password">
+      <button type="submit" class="edugep-password-btn">Entrar</button>
+      <div class="edugep-password-error" id="edugep-pw-error"></div>
+    </form>
+    <div class="edugep-password-footer">Acesso restrito · Colaboradores EduGEP</div>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div class="edugep-app" id="edugep-app" style="display:none">
+
+  <!-- ============ HEADER ============ -->
+  <header class="edugep-header">
+    <div class="edugep-brand-block">
+      <img src="./assets/img/edugep-logo.png" alt="EduGEP" class="edugep-brand-logo">
+      <svg viewBox="0 0 48 48" fill="none" class="edugep-nexo-mark" aria-label="NEXO">
+        <path d="M 24 24 Q 12 12 8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.6" class="edugep-nexo-arc-1"/>
+        <path d="M 24 24 Q 36 12 40 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.6" class="edugep-nexo-arc-2"/>
+        <path d="M 24 24 Q 24 38 24 42" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.6" class="edugep-nexo-arc-3"/>
+        <circle cx="8" cy="8" r="3.5" fill="currentColor" class="edugep-nexo-sat-1"/>
+        <circle cx="40" cy="8" r="3.5" fill="currentColor" class="edugep-nexo-sat-2"/>
+        <circle cx="24" cy="42" r="3.5" fill="currentColor" class="edugep-nexo-sat-3"/>
+        <circle cx="24" cy="24" r="5" fill="url(#nexoGrad)" class="edugep-nexo-core"/>
+        <defs>
+          <radialGradient id="nexoGrad">
+            <stop offset="0%" stop-color="#22D3EE"/>
+            <stop offset="100%" stop-color="#4a3f9c"/>
+          </radialGradient>
+        </defs>
+      </svg>
+      <div class="edugep-brand-titles">
+        <div class="edugep-brand-title">NEXO <span class="edugep-x">×</span> EduGEP</div>
+        <div class="edugep-brand-subtitle">Dashboard operacional do agente IA</div>
+      </div>
+    </div>
+
+    <div class="edugep-header-actions">
+      <span class="edugep-live" title="Última mensagem"><span class="edugep-live-dot"></span> <span id="edugep-live-label">Live</span></span>
+      <span class="edugep-badge"><span class="edugep-badge-dot"></span> Fase Pilot · Whitelist activa</span>
+      <button class="edugep-logout" id="edugep-logout-btn" title="Terminar sessão">Sair</button>
+    </div>
+  </header>
+
+  <!-- ============ KPIs ============ -->
+  <section class="edugep-section">
+    <h2 class="edugep-section-title">Visão geral · últimos 30 dias</h2>
+    <div class="edugep-kpi-grid edugep-stagger" id="edugep-kpi-grid">
+      <!-- KPIs preenchidos por JS -->
+    </div>
+  </section>
+
+  <!-- ============ AI INSIGHTS ============ -->
+  <section class="edugep-section">
+    <h2 class="edugep-section-title">Insights IA · o que os utilizadores estão a perguntar</h2>
+    <div class="edugep-bento">
+      <div class="edugep-card edugep-col-8">
+        <div class="edugep-card-header">
+          <h3 class="edugep-card-title">Top dúvidas dos utilizadores <span class="edugep-ai-badge">✦ IA</span></h3>
+          <span class="edugep-card-hint" id="edugep-duvidas-meta">—</span>
+        </div>
+        <div id="edugep-duvidas-list"></div>
+      </div>
+      <div class="edugep-card edugep-col-4">
+        <div class="edugep-card-header">
+          <h3 class="edugep-card-title">Qualidade das respostas <span class="edugep-ai-badge">✦ IA</span></h3>
+        </div>
+        <div id="edugep-quality"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CHARTS ============ -->
+  <section class="edugep-section">
+    <h2 class="edugep-section-title">Volume de conversas · por canal</h2>
+    <div class="edugep-bento">
+      <div class="edugep-card edugep-col-8">
+        <div class="edugep-card-header">
+          <h3 class="edugep-card-title">Mensagens por dia (últimos 30 dias)</h3>
+          <span class="edugep-card-hint">WhatsApp + Instagram + Facebook</span>
+        </div>
+        <div id="edugep-chart-series" class="edugep-chart"></div>
+      </div>
+      <div class="edugep-card edugep-col-4">
+        <div class="edugep-card-header">
+          <h3 class="edugep-card-title">Distribuição por canal</h3>
+        </div>
+        <div id="edugep-chart-channels" class="edugep-chart"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CAMPANHAS ============ -->
+  <section class="edugep-section">
+    <h2 class="edugep-section-title">Campanhas mencionadas</h2>
+    <div class="edugep-bento">
+      <div class="edugep-card edugep-col-6">
+        <div class="edugep-card-header">
+          <h3 class="edugep-card-title">Detectadas pelo NEXO <span class="edugep-ai-badge">✦ IA</span></h3>
+          <span class="edugep-card-hint">amostra 100 msgs · 30d</span>
+        </div>
+        <div class="edugep-camp-list" id="edugep-camp-list"></div>
+      </div>
+      <div class="edugep-card edugep-col-6">
+        <div class="edugep-card-header">
+          <h3 class="edugep-card-title">Mapa de actividade · dia da semana × hora</h3>
+          <span class="edugep-card-hint">30d · sem bulk-uploads</span>
+        </div>
+        <div id="edugep-heatmap"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CHAT VIEWER ============ -->
+  <section class="edugep-section">
+    <h2 class="edugep-section-title">Conversas do NEXO</h2>
+    <div class="edugep-card edugep-col-12">
+      <div class="edugep-card-header">
+        <h3 class="edugep-card-title">Últimas sessões (clica para ver transcrição)</h3>
+        <span class="edugep-card-hint" id="edugep-sessions-hint">—</span>
+      </div>
+      <div class="edugep-chat-viewer">
+        <div class="edugep-sessions-list" id="edugep-sessions-list"></div>
+        <div class="edugep-transcript" id="edugep-transcript">
+          <div class="edugep-transcript-empty">
+            <div style="font-size:40px;opacity:0.4">💬</div>
+            <div style="font-size:14px">Selecciona uma sessão</div>
+            <div style="font-size:12px;opacity:0.6">para ver a transcrição completa</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TIMELINE 24H ============ -->
+  <section class="edugep-section">
+    <h2 class="edugep-section-title">Timeline · últimas 24h</h2>
+    <div class="edugep-card edugep-col-12">
+      <div class="edugep-card-header">
+        <h3 class="edugep-card-title">Cronologia de eventos do NEXO</h3>
+        <span class="edugep-card-hint" id="edugep-tl-count">—</span>
+      </div>
+      <div class="edugep-timeline" id="edugep-timeline"></div>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="edugep-footer">
+    <div class="edugep-footer-tagline" id="edugep-footer-tag">20 anos a ligar pessoas · 2006—2026</div>
+    <div class="edugep-footer-meta">EduGEP · Setúbal · <a href="https://edugep.pt" target="_blank" rel="noopener">edugep.pt</a> · <a href="mailto:dpo@edugep.pt">dpo@edugep.pt</a></div>
+    <div class="edugep-footer-meta"><span id="edugep-updated-at">Actualizado agora</span></div>
+    <div class="edugep-powered">powered by <a href="https://aisolutions.pt" target="_blank" rel="noopener">AI Solutions</a></div>
+  </footer>
+
+</div>
+
+<script src="./assets/vendor/apexcharts.min.js"></script>
+<script src="./assets/js/auth.js"></script>
+<script src="./assets/js/dashboard.js"></script>
+
+</body>
+</html>

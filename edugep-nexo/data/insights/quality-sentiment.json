@@ -1,0 +1,39 @@
+{
+  "generated_at": "2026-08-11T12:34:22.141Z",
+  "model": "anthropic/claude-haiku-4.5",
+  "sample_size": 30,
+  "sentiment_geral": {
+    "positivo": 26,
+    "neutro": 4,
+    "negativo": 0
+  },
+  "sentiment_por_canal": {
+    "whatsapp": {
+      "positivo": 26,
+      "neutro": 4,
+      "negativo": 0
+    },
+    "instagram": {
+      "positivo": 0,
+      "neutro": 0,
+      "negativo": 0
+    },
+    "facebook": {
+      "positivo": 0,
+      "neutro": 0,
+      "negativo": 0
+    }
+  },
+  "qualidade_media_nexo": 4.4,
+  "qualidade_reasoning": "NEXO demonstra excelente capacidade de contextualização, empatia e resolução de problemas, com encaminhamentos eficientes e informação consistente sobre inscrições; fraquezas pontuais em clareza quando informação está incompleta.",
+  "melhor_resposta": {
+    "pergunta": "Mas formulario ja fechado",
+    "resposta": "O formulário que tenho registado ainda deveria estar acessível — pode ser um problema temporário ou de browser. Pode tentar novamente mais tarde, ou se preferir eu encaminho o pedido à equipa para o ajudarem diretamente com a inscrição. Para isso, pode dizer-me o seu nome?",
+    "porque": "Resposta empática que oferece duas soluções práticas (tentar novamente ou encaminhamento), reconhece a frustração do cliente e recolhe informação essencial para ação imediata."
+  },
+  "pior_resposta": {
+    "pergunta": "[Cliente enviou imagem] A imagem mostra duas crianças numa sala com mesas e cadeiras...",
+    "resposta": "Olá! Boa tarde, sou o NEXO, o assistente virtual da EDUGEP. 👋 Recebi as imagens — parecem fotos de atividades com crianças, talvez do VF Camp, mas não percebi ainda o que precisa de mim. Pode dizer-me em que posso ajudar?",
+    "porque": "Resposta vaga que não reconhece claramente a limitação do chatbot em processar imagens; deveria ter sido mais direto a explicar que não consegue analisar conteúdo visual e solicitar descrição textual."
+  }
+}

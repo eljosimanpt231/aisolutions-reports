@@ -1,0 +1,257 @@
+{
+  "generated_at": "2026-08-11T12:34:01.926Z",
+  "events": [
+    {
+      "id": "283",
+      "session_id": "351 9•• ••• 917",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "human",
+      "preview": "Olá, quero saber mais sobre as inscrições para o ano letivo 2026-2027 se ainda aceitam",
+      "ts": "2026-08-10T15:35:48.736Z"
+    },
+    {
+      "id": "284",
+      "session_id": "351 9•• ••• 917",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "ai",
+      "preview": "Olá! 👋 Boa tarde, sou o NEXO, o assistente virtual da EDUGEP.\n\nSim, as inscrições para o ano letivo *2026-2027* estão *abertas*, mas variam por área:\n\n• *Escola de Línguas* — inscrições de *15/07 a 15/09/2026*\n• *EFA/Modular* — pré-inscrição contínua, com opções cofinanciadas\n• *Escola de Programaçã",
+      "ts": "2026-08-10T15:35:48.738Z"
+    },
+    {
+      "id": "285",
+      "session_id": "351 9•• ••• 917",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "human",
+      "preview": "Escola de programação e serviços educativos",
+      "ts": "2026-08-10T15:38:18.625Z"
+    },
+    {
+      "id": "286",
+      "session_id": "351 9•• ••• 917",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "ai",
+      "preview": "Para essas duas áreas, as datas concretas de inscrição *ainda não estão definidas* — fazem parte do guarda-chuva 2026-2027, mas sem calendário fechado ainda.\n\nO que já sei:\n\n• *Escola de Programação* — dos pré-escolar ao secundário, abordagem STEAM, presencial e online.\n• *Serviços Educativos* (Apoi",
+      "ts": "2026-08-10T15:38:18.627Z"
+    },
+    {
+      "id": "287",
+      "session_id": "351 9•• ••• 917",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "human",
+      "preview": "Nicolly Souza Teixeira para escola de programação",
+      "ts": "2026-08-10T15:40:00.098Z"
+    },
+    {
+      "id": "288",
+      "session_id": "351 9•• ••• 917",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "ai",
+      "preview": "Já contactei a equipa da EDUGEP, Nicolly — vão entrar em contacto consigo assim que as inscrições da Escola de Programação abrirem.\n\nSe preferir contacto directo, pode ligar para 📞 *265 185 750* (Seg-Sex, 08:00–20:30).",
+      "ts": "2026-08-10T15:40:00.125Z"
+    },
+    {
+      "id": "289",
+      "session_id": "351 9•• ••• 508",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "human",
+      "preview": "[Cliente enviou imagem] A imagem mostra duas crianças numa sala com mesas e cadeiras. Uma delas está a segurar um objeto parecido com um cabo enquanto olha para uma caixa de papelão. No chão, há também um monte de utensílios, incluindo um mopia.\n[Cliente enviou imagem] A imagem mostra uma estrutura ",
+      "ts": "2026-08-10T16:03:43.606Z"
+    },
+    {
+      "id": "290",
+      "session_id": "351 9•• ••• 508",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "ai",
+      "preview": "Olá! Boa tarde, sou o NEXO, o assistente virtual da EDUGEP. 👋\n\nRecebi as imagens — parecem fotos de atividades com crianças, talvez do VF Camp, mas não percebi ainda o que precisa de mim.\n\nPode dizer-me em que posso ajudar? Por exemplo, se quer saber mais sobre uma campanha em concreto, inscrições, ",
+      "ts": "2026-08-10T16:03:43.607Z"
+    },
+    {
+      "id": "291",
+      "session_id": "351 9•• ••• 679",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "human",
+      "preview": "Olá, quero saber mais sobre as inscrições para o ano letivo 2026-2027\nN estou a conseguir fazer a renovação dos meus filhos para o próximo ano",
+      "ts": "2026-08-10T18:26:49.267Z"
+    },
+    {
+      "id": "292",
+      "session_id": "351 9•• ••• 679",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "ai",
+      "preview": "Olá! Boa noite, sou o NEXO, o assistente virtual da EDUGEP. 👋\n\nAs inscrições para 2026-2027 já estão abertas, mas variam por área — por exemplo, a Escola de Línguas decorre entre *15/07 e 15/09*, enquanto noutras áreas os prazos ainda estão a ser definidos.\n\nPara eu ajudar melhor com a renovação dos",
+      "ts": "2026-08-10T18:26:49.271Z"
+    },
+    {
+      "id": "293",
+      "session_id": "351 9•• ••• 679",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "human",
+      "preview": "[Cliente enviou imagem] A imagem mostra uma página da web com a mensagem \"Account Suspended\" em destaque. Abaixo, está escrito \"This Account has been suspended.\" e \"Contact your hosting provider for more information.\" A parte inferior da página está em branco.\nLegenda do cliente: Da me esta informaç",
+      "ts": "2026-08-10T18:27:10.524Z"
+    },
+    {
+      "id": "294",
+      "session_id": "351 9•• ••• 679",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "ai",
+      "preview": "Cíntia, boa noite. Obrigado pela imagem — de facto o site parece estar temporariamente indisponível, por isso já não depende de si.\n\nJá encaminhei o seu pedido de renovação de inscrição dos seus filhos para a equipa da EDUGEP, que vai entrar em contacto consigo assim que possível.\n\nSe preferir avanç",
+      "ts": "2026-08-10T18:27:10.526Z"
+    },
+    {
+      "id": "295",
+      "session_id": "351 9•• ••• 679",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "human",
+      "preview": "Há 5 min estava a dar\nEstava a meio do preenchimento\nE apareceu me isto\nEnquanto fui retirar a declaração do abono da seg social",
+      "ts": "2026-08-10T18:28:28.292Z"
+    },
+    {
+      "id": "296",
+      "session_id": "351 9•• ••• 679",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "ai",
+      "preview": "Percebo, Cíntia — isso não teve nada a ver consigo, foi mesmo uma falha momentânea do site enquanto preenchia.\n\n✅ Já contactei a equipa da EDUGEP a explicar que estava a meio da renovação quando o site caiu — vão entrar em contacto consigo assim que possível para dar seguimento sem ter de recomeçar ",
+      "ts": "2026-08-10T18:28:28.293Z"
+    },
+    {
+      "id": "297",
+      "session_id": "351 9•• ••• 679",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "human",
+      "preview": "Ok\nAgradeco\nGrata",
+      "ts": "2026-08-10T18:29:11.586Z"
+    },
+    {
+      "id": "298",
+      "session_id": "351 9•• ••• 679",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "ai",
+      "preview": "De nada, Cíntia. 🙂\n\nFique tranquila, o seu pedido já foi encaminhado à equipa.\n\nQualquer coisa, estou por aqui. Boa noite!",
+      "ts": "2026-08-10T18:29:11.588Z"
+    },
+    {
+      "id": "299",
+      "session_id": "351 9•• ••• 679",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "human",
+      "preview": "Ok",
+      "ts": "2026-08-10T18:31:26.719Z"
+    },
+    {
+      "id": "300",
+      "session_id": "351 9•• ••• 679",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "ai",
+      "preview": "Boa noite, Cíntia! 👋",
+      "ts": "2026-08-10T18:31:26.720Z"
+    },
+    {
+      "id": "301",
+      "session_id": "351 9•• ••• 229",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "human",
+      "preview": "Olá, quero saber mais sobre as inscrições para o ano letivo 2026-2027",
+      "ts": "2026-08-10T20:37:28.806Z"
+    },
+    {
+      "id": "302",
+      "session_id": "351 9•• ••• 229",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "ai",
+      "preview": "Olá! Boa noite, sou o NEXO, o assistente virtual da EDUGEP. 👋\n\nAs inscrições para o ano letivo 2026-2027 estão *abertas*, mas variam por área:\n\n• *Escola de Línguas*: inscrições até *15/09/2026* (há promoções específicas activas)\n• *EFA/Modular* (formandos adultos, cofinanciados): pré-inscrição cont",
+      "ts": "2026-08-10T20:37:28.809Z"
+    },
+    {
+      "id": "303",
+      "session_id": "351 9•• ••• 229",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "human",
+      "preview": "CAF e AAAF da escola da vila chã barreiro",
+      "ts": "2026-08-10T20:39:56.439Z"
+    },
+    {
+      "id": "304",
+      "session_id": "351 9•• ••• 229",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "ai",
+      "preview": "A informação que encontrei não cobre especificamente CAF/AAAF na Escola da Vila Chã, no Barreiro.\n\nPode confirmar-me se é sobre uma escola onde a EDUGEP presta este serviço? Não tenho essa confirmação disponível aqui.\n\nPara lhe dar uma resposta certa, o melhor é encaminhar o seu pedido à equipa. Pod",
+      "ts": "2026-08-10T20:39:56.441Z"
+    },
+    {
+      "id": "305",
+      "session_id": "351 9•• ••• 229",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "human",
+      "preview": "Agrupamento escolas santo António",
+      "ts": "2026-08-10T20:41:03.571Z"
+    },
+    {
+      "id": "306",
+      "session_id": "351 9•• ••• 229",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "ai",
+      "preview": "Boa notícia: a EDUGEP tem parceria com o *Agrupamento de Escolas Santo António* para a Escola a Tempo Inteiro (AEC/CAF/AAAF). 👍\n\nPara a inscrição:\n\n• *CAF*: feita através da plataforma *ETI Box*, cujo link é enviado pela escola aos encarregados de educação\n• *AAAF*: em alguns casos usa-se a platafor",
+      "ts": "2026-08-10T20:41:03.579Z"
+    },
+    {
+      "id": "307",
+      "session_id": "351 9•• ••• 229",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "human",
+      "preview": "Clara Isa da Silva Costa",
+      "ts": "2026-08-10T20:42:30.111Z"
+    },
+    {
+      "id": "308",
+      "session_id": "351 9•• ••• 229",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "ai",
+      "preview": "Já contactei a equipa da EDUGEP sobre a sua inscrição de CAF/AAAF no Agrupamento de Escolas Santo António — vão entrar em contacto consigo assim que possível, Clara.\n\nSe preferir, também pode ligar directamente para 📞 *265 185 750* (Seg-Sex, 08:00–20:30).",
+      "ts": "2026-08-10T20:42:30.112Z"
+    },
+    {
+      "id": "309",
+      "session_id": "351 9•• ••• 229",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "human",
+      "preview": "Eu recebi o link mas não encontro no email",
+      "ts": "2026-08-10T20:43:41.038Z"
+    },
+    {
+      "id": "310",
+      "session_id": "351 9•• ••• 229",
+      "platform": "WhatsApp",
+      "agent": "NEXO",
+      "type": "ai",
+      "preview": "Já contactei novamente a equipa, Clara, a pedir o reenvio do link do ETI Box para o seu email. ✅\n\nVão entrar em contacto consigo assim que possível.\n\nSe preferir despachar já, pode ligar para 📞 *265 185 750* (Seg-Sex, 08:00–20:30).",
+      "ts": "2026-08-10T20:43:41.040Z"
+    }
+  ]
+}

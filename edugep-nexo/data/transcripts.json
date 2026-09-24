@@ -1,0 +1,832 @@
+{
+  "generated_at": "2026-08-11T12:34:01.332Z",
+  "transcripts": {
+    "351 9•• ••• 229": [
+      {
+        "id": "301",
+        "type": "human",
+        "content": "Olá, quero saber mais sobre as inscrições para o ano letivo 2026-2027",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-10T20:37:28.806Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "302",
+        "type": "ai",
+        "content": "Olá! Boa noite, sou o NEXO, o assistente virtual da EDUGEP. 👋\n\nAs inscrições para o ano letivo 2026-2027 estão *abertas*, mas variam por área:\n\n• *Escola de Línguas*: inscrições até *15/09/2026* (há promoções específicas activas)\n• *EFA/Modular* (formandos adultos, cofinanciados): pré-inscrição contínua\n• *Escola de Programação* e *Serviços Educativos* (Apoio Escolar/Explicações): datas ainda por definir\n• *Cursos de Aprendizagem (IEFP)*: oferta bloqueada, à espera de aprovação do IFP\n\nPara lhe dar informação mais concreta — pode dizer-me qual destas áreas lhe interessa, e se é para si ou para um familiar?",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-10T20:37:28.809Z",
+        "platform": "WhatsApp",
+        "tool_calls": []
+      },
+      {
+        "id": "303",
+        "type": "human",
+        "content": "CAF e AAAF da escola da vila chã barreiro",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-10T20:39:56.439Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "304",
+        "type": "ai",
+        "content": "A informação que encontrei não cobre especificamente CAF/AAAF na Escola da Vila Chã, no Barreiro.\n\nPode confirmar-me se é sobre uma escola onde a EDUGEP presta este serviço? Não tenho essa confirmação disponível aqui.\n\nPara lhe dar uma resposta certa, o melhor é encaminhar o seu pedido à equipa. Pode dizer-me o seu nome, por favor?",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-10T20:39:56.441Z",
+        "platform": "WhatsApp",
+        "tool_calls": []
+      },
+      {
+        "id": "305",
+        "type": "human",
+        "content": "Agrupamento escolas santo António",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-10T20:41:03.571Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "306",
+        "type": "ai",
+        "content": "Boa notícia: a EDUGEP tem parceria com o *Agrupamento de Escolas Santo António* para a Escola a Tempo Inteiro (AEC/CAF/AAAF). 👍\n\nPara a inscrição:\n\n• *CAF*: feita através da plataforma *ETI Box*, cujo link é enviado pela escola aos encarregados de educação\n• *AAAF*: em alguns casos usa-se a plataforma municipal *SIGA*\n\nPara 2026/27, a cobertura exacta e o processo específico deste agrupamento são confirmados caso a caso pela equipa. Pode dizer-me o seu nome para eu encaminhar o pedido e obter essa confirmação?",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-10T20:41:03.579Z",
+        "platform": "WhatsApp",
+        "tool_calls": []
+      },
+      {
+        "id": "307",
+        "type": "human",
+        "content": "Clara Isa da Silva Costa",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-10T20:42:30.111Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "308",
+        "type": "ai",
+        "content": "Já contactei a equipa da EDUGEP sobre a sua inscrição de CAF/AAAF no Agrupamento de Escolas Santo António — vão entrar em contacto consigo assim que possível, Clara.\n\nSe preferir, também pode ligar directamente para 📞 *265 185 750* (Seg-Sex, 08:00–20:30).",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-10T20:42:30.112Z",
+        "platform": "WhatsApp",
+        "tool_calls": []
+      },
+      {
+        "id": "309",
+        "type": "human",
+        "content": "Eu recebi o link mas não encontro no email",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-10T20:43:41.038Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "310",
+        "type": "ai",
+        "content": "Já contactei novamente a equipa, Clara, a pedir o reenvio do link do ETI Box para o seu email. ✅\n\nVão entrar em contacto consigo assim que possível.\n\nSe preferir despachar já, pode ligar para 📞 *265 185 750* (Seg-Sex, 08:00–20:30).",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-10T20:43:41.040Z",
+        "platform": "WhatsApp",
+        "tool_calls": []
+      }
+    ],
+    "351 9•• ••• 679": [
+      {
+        "id": "291",
+        "type": "human",
+        "content": "Olá, quero saber mais sobre as inscrições para o ano letivo 2026-2027\nN estou a conseguir fazer a renovação dos meus filhos para o próximo ano",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-10T18:26:49.267Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "292",
+        "type": "ai",
+        "content": "Olá! Boa noite, sou o NEXO, o assistente virtual da EDUGEP. 👋\n\nAs inscrições para 2026-2027 já estão abertas, mas variam por área — por exemplo, a Escola de Línguas decorre entre *15/07 e 15/09*, enquanto noutras áreas os prazos ainda estão a ser definidos.\n\nPara eu ajudar melhor com a renovação dos seus filhos, pode dizer-me em que área estão inscritos (Escola de Línguas, Apoio Escolar, Programação, ou outra)?\n\nE qual é a dificuldade que está a sentir na renovação — não aparece a opção, dá erro, ou não sabe por onde começar?",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-10T18:26:49.271Z",
+        "platform": "WhatsApp",
+        "tool_calls": []
+      },
+      {
+        "id": "293",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra uma página da web com a mensagem \"Account Suspended\" em destaque. Abaixo, está escrito \"This Account has been suspended.\" e \"Contact your hosting provider for more information.\" A parte inferior da página está em branco.\nLegenda do cliente: Da me esta informação\nObrigada\nCíntia Fino",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-10T18:27:10.524Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "294",
+        "type": "ai",
+        "content": "Cíntia, boa noite. Obrigado pela imagem — de facto o site parece estar temporariamente indisponível, por isso já não depende de si.\n\nJá encaminhei o seu pedido de renovação de inscrição dos seus filhos para a equipa da EDUGEP, que vai entrar em contacto consigo assim que possível.\n\nSe preferir avançar mais rapidamente, pode ligar para 📞 *265 185 750* (Seg-Sex, 08:00–20:30) e tratar a renovação directamente com a equipa.",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-10T18:27:10.526Z",
+        "platform": "WhatsApp",
+        "tool_calls": []
+      },
+      {
+        "id": "295",
+        "type": "human",
+        "content": "Há 5 min estava a dar\nEstava a meio do preenchimento\nE apareceu me isto\nEnquanto fui retirar a declaração do abono da seg social",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-10T18:28:28.292Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "296",
+        "type": "ai",
+        "content": "Percebo, Cíntia — isso não teve nada a ver consigo, foi mesmo uma falha momentânea do site enquanto preenchia.\n\n✅ Já contactei a equipa da EDUGEP a explicar que estava a meio da renovação quando o site caiu — vão entrar em contacto consigo assim que possível para dar seguimento sem ter de recomeçar tudo.\n\nSe preferir não esperar, pode ligar directamente para 📞 *265 185 750* (Seg-Sex, 08:00–20:30) e tratar já com a equipa.",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-10T18:28:28.293Z",
+        "platform": "WhatsApp",
+        "tool_calls": []
+      },
+      {
+        "id": "297",
+        "type": "human",
+        "content": "Ok\nAgradeco\nGrata",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-10T18:29:11.586Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "298",
+        "type": "ai",
+        "content": "De nada, Cíntia. 🙂\n\nFique tranquila, o seu pedido já foi encaminhado à equipa.\n\nQualquer coisa, estou por aqui. Boa noite!",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-10T18:29:11.588Z",
+        "platform": "WhatsApp",
+        "tool_calls": []
+      },
+      {
+        "id": "299",
+        "type": "human",
+        "content": "Ok",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-10T18:31:26.719Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "300",
+        "type": "ai",
+        "content": "Boa noite, Cíntia! 👋",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-10T18:31:26.720Z",
+        "platform": "WhatsApp",
+        "tool_calls": []
+      }
+    ],
+    "351 9•• ••• 508": [
+      {
+        "id": "289",
+        "type": "human",
+        "content": "[Cliente enviou imagem] A imagem mostra duas crianças numa sala com mesas e cadeiras. Uma delas está a segurar um objeto parecido com um cabo enquanto olha para uma caixa de papelão. No chão, há também um monte de utensílios, incluindo um mopia.\n[Cliente enviou imagem] A imagem mostra uma estrutura feita com várias caixas, sacos e outros objetos empilhados. Há também dois baldes brancos na base e um cabo de vassoura ou bastão ao lado. O ambiente parece ser uma sala com mesas e cadeiras.\n[Cliente enviou imagem] A imagem mostra uma sala com mesas, uma cadeira e uma estrutura instável feita de caixas empilhadas. No topo, há uma caixa de cartão que parece estar a flutuar. Ao fundo, há um pano verde e um extintor de incêndio na parede.\n[Cliente enviou imagem] Na imagem, um jovem está a construir uma torre com caixas de jogo, que estão empilhadas sobre uma base estruturada. O fundo é uma parede clara com um pano verde e há mesas redondas visíveis. O jovem está a usar meias cinzentas e aparenta estar concentrado na construção.\n[Cliente enviou imagem] A imagem mostra uma menina a organizar latas em uma prateleira situada diante de um balcão. O ambiente parece ser um espaço público, possivelmente uma câmara municipal ou uma sala de reuniões. Ao fundo, pode-se ver uma bandeira verde e um emblema do clube VFC Setúbal.\n[Cliente enviou imagem] A imagem mostra uma espécie de estrutura feita com caixas de jogos de tabuleiro empilhadas, com um contentor branco coberto por um saco azul no topo. Há várias crianças a brincar ao redor, com uma parede verde ao fundo. Um dos rapazes parece estar em movimento, enquanto uma menina segura um objeto rosa.\n[Cliente enviou imagem] Na imagem, várias crianças estão reunidas a brincar com um jogo de mini-golfe em um espaço interno. Algumas crianças estão a preparar-se para fazer o seu golpe, enquanto outras observam. O ambiente parece ser parte de um evento ou atividade recreativa.\n[Cliente enviou imagem] A imagem mostra um rapaz agachado no chão, a olhar para uma bola branca. Ao seu redor, estão ferramentas de limpeza como um esfregão e uma vassoura, bem como uma estrutura de cartolina que parece ser parte de um jogo ou atividade. No fundo, vê-se uma área com mesas e cadeiras.\n[Cliente enviou imagem] A imagem mostra um espaço interior decorado com um tema de pirata, incluindo uma parede com um mapa antigo. Há crianças na imagem, segurando ferramentas como um esfregão e uma vassoura, possivelmente a participar num jogo ou atividade. A decoração e o ambiente sugerem um evento ou festa.",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-10T16:03:43.606Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "290",
+        "type": "ai",
+        "content": "Olá! Boa tarde, sou o NEXO, o assistente virtual da EDUGEP. 👋\n\nRecebi as imagens — parecem fotos de atividades com crianças, talvez do VF Camp, mas não percebi ainda o que precisa de mim.\n\nPode dizer-me em que posso ajudar? Por exemplo, se quer saber mais sobre uma campanha em concreto, inscrições, ou tem alguma questão sobre uma atividade específica.",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-10T16:03:43.607Z",
+        "platform": "WhatsApp",
+        "tool_calls": []
+      }
+    ],
+    "351 9•• ••• 917": [
+      {
+        "id": "283",
+        "type": "human",
+        "content": "Olá, quero saber mais sobre as inscrições para o ano letivo 2026-2027 se ainda aceitam",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-10T15:35:48.736Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "284",
+        "type": "ai",
+        "content": "Olá! 👋 Boa tarde, sou o NEXO, o assistente virtual da EDUGEP.\n\nSim, as inscrições para o ano letivo *2026-2027* estão *abertas*, mas variam por área:\n\n• *Escola de Línguas* — inscrições de *15/07 a 15/09/2026*\n• *EFA/Modular* — pré-inscrição contínua, com opções cofinanciadas\n• *Escola de Programação* e *Serviços Educativos* (Explicações, Apoio Escolar) — datas ainda por definir\n• *Cursos de Aprendizagem (IEFP)* — bloqueados pendente de aprovação oficial\n\nPara qual destas áreas quer inscrever-se (ou é para um filho/familiar)? Assim posso ajudar com mais detalhe.",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-10T15:35:48.738Z",
+        "platform": "WhatsApp",
+        "tool_calls": []
+      },
+      {
+        "id": "285",
+        "type": "human",
+        "content": "Escola de programação e serviços educativos",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-10T15:38:18.625Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "286",
+        "type": "ai",
+        "content": "Para essas duas áreas, as datas concretas de inscrição *ainda não estão definidas* — fazem parte do guarda-chuva 2026-2027, mas sem calendário fechado ainda.\n\nO que já sei:\n\n• *Escola de Programação* — dos pré-escolar ao secundário, abordagem STEAM, presencial e online.\n• *Serviços Educativos* (Apoio Escolar/Explicações) — Apoio Escolar do 1.º ao 9.º ano; Explicações cobrem básico e secundário. Nas Explicações, a EDUGEP privilegia visita ao Centro Pedagógico para definir o formato ideal.\n\nComo as datas ainda não estão fechadas, o melhor é deixar o seu interesse registado para ser contactado assim que abrirem.\n\nPode dizer-me o seu nome para eu encaminhar o pedido?",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-10T15:38:18.627Z",
+        "platform": "WhatsApp",
+        "tool_calls": []
+      },
+      {
+        "id": "287",
+        "type": "human",
+        "content": "Nicolly Souza Teixeira para escola de programação",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-10T15:40:00.098Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "288",
+        "type": "ai",
+        "content": "Já contactei a equipa da EDUGEP, Nicolly — vão entrar em contacto consigo assim que as inscrições da Escola de Programação abrirem.\n\nSe preferir contacto directo, pode ligar para 📞 *265 185 750* (Seg-Sex, 08:00–20:30).",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-10T15:40:00.125Z",
+        "platform": "WhatsApp",
+        "tool_calls": []
+      }
+    ],
+    "351 9•• ••• 908": [
+      {
+        "id": "279",
+        "type": "human",
+        "content": "Olá, quero saber mais sobre as inscrições para o ano letivo 2026-2027\nEscola vila cha. Actividades pre escolar",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-10T11:18:14.835Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "280",
+        "type": "ai",
+        "content": "Olá! Boa tarde, sou o NEXO, o assistente virtual da EDUGEP. 👋\n\nAs inscrições para o ano letivo 2026-2027 estão abertas, mas os detalhes variam por área — a data e as condições ainda estão por definir para vários serviços educativos.\n\nQuanto às Actividades de Enriquecimento/Pré-Escolar na Escola de Vila Chã especificamente, não tenho aqui informação detalhada sobre esse polo.\n\nPara eu conseguir encaminhar o seu pedido correctamente, pode dizer-me o seu nome?",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-10T11:18:14.837Z",
+        "platform": "WhatsApp",
+        "tool_calls": []
+      },
+      {
+        "id": "281",
+        "type": "human",
+        "content": "Andreia Guerreiro",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-10T11:19:18.332Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "282",
+        "type": "ai",
+        "content": "Obrigado, Andreia.\n\nSobre as Actividades Pré-Escolar (AAAF), estas são organizadas em parceria com o agrupamento escolar, por isso a cobertura específica da Escola de Vila Chã precisa de confirmação da nossa equipa.\n\nJá encaminhei o seu pedido — vão contactá-la assim que possível.\n\nSe preferir uma resposta mais imediata, pode ligar para 📞 *265 185 750* (Seg-Sex, 08:00–20:30).",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-10T11:19:18.334Z",
+        "platform": "WhatsApp",
+        "tool_calls": []
+      }
+    ],
+    "351 9•• ••• 741": [
+      {
+        "id": "241",
+        "type": "human",
+        "content": "olá\ntudo bem?",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-07T10:55:30.000Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "242",
+        "type": "ai",
+        "content": "Olá! Boa manhã, sou o NEXO, o assistente virtual da EDUGEP. 👋\n\nTudo bem por aqui! Como posso ajudar? Se me disser o que procura — para si ou para um familiar, curso curto ou algo mais prolongado — ajudo a encontrar a opção certa.",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-07T10:55:30.000Z",
+        "platform": "WhatsApp",
+        "tool_calls": []
+      },
+      {
+        "id": "271",
+        "type": "human",
+        "content": "Olá NEXO! Os intensivos de inglês de setembro ainda têm vagas para adultos?",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-10T01:54:01.463Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "272",
+        "type": "ai",
+        "content": "Sim, ainda há vagas! 😊\n\nOs *Cursos Intensivos de Inglês* da Language School estão abertos, com divulgação até *28/08* e arranque a *31/08 ou 01/09*.\n\nPara adultos: *50h por 269€*, com preparação para certificação Cambridge (KET/PET/FCE). Há ainda teste de nível gratuito, presencial, de 30 minutos.\n\nMais informação e inscrição em 🌐 https://edugep.pt/escola-de-linguas/",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-10T01:54:01.485Z",
+        "platform": "WhatsApp",
+        "tool_calls": []
+      },
+      {
+        "id": "277",
+        "type": "human",
+        "content": "E o curso Educar com Valores, ainda está aberto?",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-10T11:06:09.476Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "278",
+        "type": "ai",
+        "content": "Sim, está aberto! 🙌\n\nO *Educar com Valores* é um curso de parentalidade, criado pelo Dr. Alfredo Leite, com arranque a *14 de setembro* (sessão presencial) e término a *19 de outubro de 2026*. Divulgação até *31 de agosto*.\n\nFormato híbrido: 6 sessões online + 3 presenciais na sede EDUGEP em Setúbal. Valor: *890€*.\n\nMais informação e inscrição em 🌐 https://educar-valores.pt/curso-parentalidade/",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-10T11:06:09.480Z",
+        "platform": "WhatsApp",
+        "tool_calls": []
+      }
+    ],
+    "351 9•• ••• 833": [
+      {
+        "id": "273",
+        "type": "human",
+        "content": "Bom dia, estou a tentar inscrever o meu educando nas ferias escolares na plataforma da edugepbmas, o separador do pre escolar e primeiro ciclo não está a funcionar. podem ajudar por favor?",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-10T08:05:45.609Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "274",
+        "type": "ai",
+        "content": "Bom dia! 👋 Sou o NEXO, o assistente virtual da EDUGEP.\n\nLamento a situação — isso parece ser um problema técnico na plataforma de inscrições, que não consigo resolver diretamente por aqui.\n\nPara encaminhar o seu pedido à equipa responsável, pode indicar-me o seu nome?",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-10T08:05:45.614Z",
+        "platform": "WhatsApp",
+        "tool_calls": []
+      },
+      {
+        "id": "275",
+        "type": "human",
+        "content": "Ana T.. Obrigada",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-10T08:06:48.889Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "276",
+        "type": "ai",
+        "content": "Obrigada, Ana. ✅ Já contactei a equipa da EDUGEP, que vai entrar em contacto consigo o mais brevemente possível para resolver esse problema técnico na plataforma.\n\nSe preferir, pode também ligar directamente para 📞 *265 185 750* (Seg-Sex, 08:00–20:30).",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-10T08:06:48.891Z",
+        "platform": "WhatsApp",
+        "tool_calls": []
+      }
+    ],
+    "351 9•• ••• 914": [
+      {
+        "id": "259",
+        "type": "human",
+        "content": "Olá, quero saber mais sobre as inscrições para o ano letivo 2026-2027",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-09T17:29:05.000Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "260",
+        "type": "ai",
+        "content": "Olá! Boa tarde, sou o NEXO, o assistente virtual da EDUGEP. 👋\n\nAs inscrições para o ano letivo 2026-2027 já estão *abertas*, mas variam por área:\n\n• *Escola de Línguas* — inscrições de 15/07 a 15/09/2026, com promoções específicas a decorrer\n• *Formação Modular/EFA* — pré-inscrição contínua, com cofinanciamento\n• *Escola de Programação* e *Serviços Educativos* (Explicações, Apoio Escolar) — datas por definir\n• *Cursos de Aprendizagem (IEFP)* — oferta 2026-27 ainda depende de aprovação do IFP\n\nPara lhe dar informação mais precisa, diga-me: é para si ou para um filho/familiar, e qual a área que lhe interessa (línguas, programação, apoio escolar, outra)?",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-09T17:29:50.000Z",
+        "platform": "WhatsApp",
+        "tool_calls": []
+      },
+      {
+        "id": "261",
+        "type": "human",
+        "content": "Boa tarde!\nComo eu faço pra saber se fiz a inscrição corretamente da minha filha do CAF\nApoio escolar",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-09T17:30:35.000Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "262",
+        "type": "ai",
+        "content": "A inscrição na CAF não é feita directamente na EDUGEP — é feita através do agrupamento escolar da sua filha, na plataforma *ETI Box*, cujo link é enviado pela escola aos encarregados de educação.\n\nOu seja: para confirmar se a inscrição ficou bem feita, deve verificar o acesso/estado na plataforma ETI Box (ou confirmar junto do agrupamento).\n\nNão tenho acesso ao sistema de inscrições, por isso não consigo verificar o estado específico da sua filha. Quer que eu encaminhe o seu caso à equipa para confirmarem a cobertura do agrupamento e o estado da inscrição? Se sim, diga-me o seu nome, por favor.",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-09T17:31:20.000Z",
+        "platform": "WhatsApp",
+        "tool_calls": []
+      },
+      {
+        "id": "263",
+        "type": "human",
+        "content": "Eu tenho acesso a éticos como eu confirmo",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-09T17:32:05.000Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "264",
+        "type": "ai",
+        "content": "Já tem acesso à plataforma *ETI Box* — nessa plataforma consegue ver o estado da inscrição da sua filha (submetida, aceite, etc.), pois é lá que fica registado o processo.\n\nSe, ao entrar, não encontrar o nome da sua filha ou não tiver a certeza se está tudo correcto, aí sim recomendo confirmar directamente com a equipa da EDUGEP, que verifica a cobertura do agrupamento e o estado exacto do processo.\n\nQuer que eu já encaminhe esse pedido de confirmação? Se sim, preciso do seu nome para o fazer.",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-09T17:32:50.000Z",
+        "platform": "WhatsApp",
+        "tool_calls": []
+      },
+      {
+        "id": "265",
+        "type": "human",
+        "content": "Sim. Meu nome é Mirna Costa Santos e a minha filha é Júlia Tereza Silva Santos",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-09T17:33:35.000Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "266",
+        "type": "ai",
+        "content": "Já encaminhei o seu pedido, Mirna — a equipa vai confirmar o estado da inscrição da Júlia na CAF/Apoio Escolar e entra em contacto consigo.\n\nSe preferir mais rápido, pode ligar já para 📞 *265 185 750* (Seg-Sex, 08:00–20:30).",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-09T17:34:20.000Z",
+        "platform": "WhatsApp",
+        "tool_calls": []
+      },
+      {
+        "id": "267",
+        "type": "human",
+        "content": "Eu prefiro que a eduget entre em contato como através do email: •••@gmail.com",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-09T17:35:05.000Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "268",
+        "type": "ai",
+        "content": "✅ Já contactei a equipa da EDUGEP com o seu pedido e o email indicado (•••@gmail.com) — vão entrar em contacto consigo assim que possível.\n\nSe preferir mais rápido, pode sempre ligar para 📞 *265 185 750* (Seg-Sex, 08:00–20:30).",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-09T17:35:50.000Z",
+        "platform": "WhatsApp",
+        "tool_calls": []
+      },
+      {
+        "id": "269",
+        "type": "human",
+        "content": "Obrigada",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-09T17:36:35.000Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "270",
+        "type": "ai",
+        "content": "Sempre à disposição, Mirna! 😊\n\nSe precisar de mais alguma coisa, é só escrever.",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-09T17:37:20.000Z",
+        "platform": "WhatsApp",
+        "tool_calls": []
+      }
+    ],
+    "351 9•• ••• 241": [
+      {
+        "id": "251",
+        "type": "human",
+        "content": "Olá, quero saber mais sobre o VF Camp.\nTem lugar para menino 9 anos?",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-09T13:11:55.000Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "252",
+        "type": "ai",
+        "content": "Olá! 👋 Boa tarde.\n\nO *VF Camp* está *ABERTO*, para crianças e jovens dos *6 aos 14 anos* — por isso um menino de 9 anos entra perfeitamente no público-alvo.\n\nDecorre até *28 de agosto de 2026*, em Setúbal (sede no Estádio do Bonfim), com atividades como canoagem, surf, laser tag, piscina, praia e acampamento. Transporte, seguro e equipamento estão incluídos.\n\nAs inscrições são feitas diretamente no formulário: 🌐 https://edugep.scl.pt/formulario.php?f=96\n\nSe quiser saber mais detalhes antes de inscrever, pode consultar a página completa: 🌐 https://vfcamp.edugep.pt",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-09T13:12:30.000Z",
+        "platform": "WhatsApp",
+        "tool_calls": []
+      },
+      {
+        "id": "253",
+        "type": "human",
+        "content": "Mas formulario ja fechado",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-09T13:13:05.000Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "254",
+        "type": "ai",
+        "content": "O formulário que tenho registado ainda deveria estar acessível — pode ser um problema temporário ou de browser.\n\nPode tentar novamente mais tarde, ou se preferir eu encaminho o pedido à equipa para o ajudarem diretamente com a inscrição.\n\nPara isso, pode dizer-me o seu nome?",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-09T13:13:40.000Z",
+        "platform": "WhatsApp",
+        "tool_calls": []
+      },
+      {
+        "id": "255",
+        "type": "human",
+        "content": "Sviatoslav Mazur",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-09T13:14:15.000Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "256",
+        "type": "ai",
+        "content": "Já contactei a equipa da EDUGEP sobre a inscrição do seu filho no VF Camp — vão entrar em contacto consigo, Sviatoslav, o mais breve possível.\n\nSe preferir resolver já, pode ligar diretamente para 📞 *265 185 750* (Seg-Sex, 08:00–20:30).",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-09T13:14:50.000Z",
+        "platform": "WhatsApp",
+        "tool_calls": []
+      },
+      {
+        "id": "257",
+        "type": "human",
+        "content": "Obrigado",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-09T13:15:25.000Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "258",
+        "type": "ai",
+        "content": "De nada, Sviatoslav! 😊\n\nQualquer coisa, estou por aqui.",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-09T13:16:00.000Z",
+        "platform": "WhatsApp",
+        "tool_calls": []
+      }
+    ],
+    "351 9•• ••• 223": [
+      {
+        "id": "243",
+        "type": "human",
+        "content": "Olá, quero saber mais sobre as inscrições para o ano letivo 2026-2027",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-08T04:28:30.000Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "244",
+        "type": "ai",
+        "content": "Olá! 👋 Bom dia, sou o NEXO, o assistente virtual da EDUGEP.\n\nAs inscrições para o ano letivo 2026-2027 já estão abertas, mas variam por área:\n\n• *Escola de Línguas* — inscrições de 15/07 a 15/09/2026, com promoções específicas.\n• *EFA / Modular* — pré-inscrição contínua, cursos cofinanciados.\n• *Escola de Programação* e *Serviços Educativos* (Explicações, Apoio Escolar) — datas ainda por definir.\n• *Cursos de Aprendizagem* — a oferta 2026-27 está sujeita a aprovação do IFP.\n\nPara lhe dar informação mais precisa, diga-me: em que área está interessado (línguas, apoio escolar, programação, cursos EFA/Modular, ou outra)? E é para si ou para um familiar?",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-08T04:30:00.000Z",
+        "platform": "WhatsApp",
+        "tool_calls": []
+      },
+      {
+        "id": "245",
+        "type": "human",
+        "content": "CAF inscrição para ano letivo 2026/27 para o meu filho, \nEscola Básica cidade Sol pré-escolar",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-08T04:31:30.000Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "246",
+        "type": "ai",
+        "content": "Como o seu filho está no pré-escolar, tecnicamente aplica-se a **AAAF** (Atividades de Animação e Apoio à Família) e não a CAF — a CAF é para o 1.º ciclo.\n\nDe qualquer forma, a inscrição não é feita diretamente com a EDUGEP: é feita através do agrupamento escolar da Escola Básica Cidade Sol. Nalguns casos usa-se a plataforma *SIGA* municipal para AAAF, ou a *ETI Box* para CAF (o link é enviado pela escola aos encarregados de educação).\n\nNão tenho aqui confirmação se a EDUGEP presta este serviço nesse agrupamento específico. Quer que eu encaminhe o seu pedido à equipa para confirmarem a cobertura e o processo de inscrição? Se sim, pode indicar-me o seu nome?",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-08T04:33:00.000Z",
+        "platform": "WhatsApp",
+        "tool_calls": []
+      },
+      {
+        "id": "247",
+        "type": "human",
+        "content": "Sim \nEduardo Nhaga",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-08T04:34:30.000Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "248",
+        "type": "ai",
+        "content": "Já encaminhei o seu pedido, Eduardo — a equipa vai confirmar se a EDUGEP tem AAAF na Escola Básica Cidade Sol e como avançar com a inscrição do seu filho.\n\nVão entrar em contacto consigo assim que possível.\n\nSe preferir mais rápido, pode ligar para 📞 *265 185 750* (Seg-Sex, 08:00-20:30).",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-08T04:36:00.000Z",
+        "platform": "WhatsApp",
+        "tool_calls": []
+      },
+      {
+        "id": "249",
+        "type": "human",
+        "content": "Obrigado pela informação.",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-08T04:37:30.000Z",
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "250",
+        "type": "ai",
+        "content": "De nada, Eduardo! 👋\n\nSe precisar de mais alguma coisa, estou por aqui. Boa tarde!",
+        "agent_name": "NEXO",
+        "created_at": "2026-08-08T04:39:00.000Z",
+        "platform": "WhatsApp",
+        "tool_calls": []
+      }
+    ],
+    "351 9•• ••• 434": [
+      {
+        "id": "225",
+        "type": "human",
+        "content": "uero inscrever-me no apoio educativo, como fazer?",
+        "agent_name": "NEXO",
+        "created_at": null,
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "226",
+        "type": "ai",
+        "content": "O Apoio Educativo destina-se a alunos do 1.º ao 9.º ano, em sessões de 90 minutos, com foco em métodos de estudo e autonomia — e inclui, quando necessário, diagnóstico e apoio especializado (psicologia, terapia, orientação).\n\nA inscrição é feita via formulário no site ou directamente com a equipa da EDUGEP — não há inscrição automática online.\n\nPara o ano letivo 2026/2027, esta área está ainda \"por definir\" nas inscrições gerais, por isso o melhor é confirmar com a equipa os detalhes actuais.\n\nPode dizer-me o seu nome? Assim encaminho já o seu pedido de inscrição no Apoio Educativo à equipa.",
+        "agent_name": "NEXO",
+        "created_at": null,
+        "platform": "WhatsApp",
+        "tool_calls": []
+      }
+    ],
+    "351 9•• ••• 018": [
+      {
+        "id": "199",
+        "type": "human",
+        "content": "Olá",
+        "agent_name": "NEXO",
+        "created_at": null,
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "200",
+        "type": "ai",
+        "content": "Olá! Boa tarde, sou o NEXO, o assistente virtual da EDUGEP. 👋\n\nComo posso ajudar? Pode ser sobre uma campanha específica (ex: Educar com Valores, Language School, VF Camp), ou sobre qualquer área da nossa oferta educativa e de formação.",
+        "agent_name": "NEXO",
+        "created_at": null,
+        "platform": "WhatsApp",
+        "tool_calls": []
+      },
+      {
+        "id": "201",
+        "type": "human",
+        "content": "Quero saber mais sobre a Escola de Programação",
+        "agent_name": "NEXO",
+        "created_at": null,
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "202",
+        "type": "ai",
+        "content": "A Escola de Programação da EDUGEP tem 9 programas, com abordagem STEAM, para idades desde o pré-escolar até ao secundário:\n\n• *E-CODE* (Desperta para a Programação) — curso introdutório\n• Robótica\n• *E-GAME* (Desenvolvimento de Jogos)\n• Informática\n• YouTube (criação de conteúdo)\n• *E-PRINT* (Impressão 3D)\n• *E-DRONE* (Drones)\n• \"Código para o Amanhã\"\n• IA4KIDS (Inteligência Artificial)\n\nExistem cursos, workshops e ateliês de férias, em regime presencial ou online — consoante o programa.\n\nTem interesse num programa em particular, ou quer saber para que idade é indicado?",
+        "agent_name": "NEXO",
+        "created_at": null,
+        "platform": "WhatsApp",
+        "tool_calls": []
+      },
+      {
+        "id": "203",
+        "type": "human",
+        "content": "Para jovens adultos têm alguma coisa?",
+        "agent_name": "NEXO",
+        "created_at": null,
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "204",
+        "type": "ai",
+        "content": "Sim, temos duas opções interessantes para jovens adultos:\n\n*Código para o Amanhã* — programa focado em literacia digital e competências de programação para o mercado de trabalho, com desafios práticos e networking.\n\n*Bootcamp de IA para Estudantes* (secundário, licenciatura, mestrado) — 20h, sessões online, prompting, trabalhos académicos, CV e entrevistas, com certificado digital. Valor: *99€*. Atenção: esta edição decorre até *hoje, 31 de julho*, portanto está a terminar.\n\nQuer que lhe envie o link de inscrição do Bootcamp de IA, ou prefere saber mais sobre o Código para o Amanhã?",
+        "agent_name": "NEXO",
+        "created_at": null,
+        "platform": "WhatsApp",
+        "tool_calls": []
+      },
+      {
+        "id": "205",
+        "type": "human",
+        "content": "E formação certificada nesta área?",
+        "agent_name": "NEXO",
+        "created_at": null,
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "206",
+        "type": "ai",
+        "content": "Sim, temos formação certificada nesta área para adultos:\n\n*Percursos de Competências Digitais* (Formação Modular, em Lisboa) — três níveis: Básico (100h), Intermédio (200h) e Avançado (150h). São cofinanciados pelo Fundo Social Europeu, por isso *gratuitos*, e incluem subsídio de alimentação e seguro, condicionados à assiduidade.\n\nRequisitos: estar empregado ou desempregado, com 9.º ano ou mais, e fazer um teste de diagnóstico prévio na Academia Portugal Digital.\n\nExiste também o curso *Programador(a) de Informática* (Curso de Aprendizagem), mas a oferta 2026-27 está ainda pendente de aprovação pelo IFP — quer que verifique o encaminhamento oficial para essa área?",
+        "agent_name": "NEXO",
+        "created_at": null,
+        "platform": "WhatsApp",
+        "tool_calls": []
+      },
+      {
+        "id": "207",
+        "type": "human",
+        "content": "Não é IFP é IEFP. Instituto de Emprego e Formação Profissional",
+        "agent_name": "NEXO",
+        "created_at": null,
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "208",
+        "type": "ai",
+        "content": "Tem razão, peço desculpa pelo lapso — é o IEFP (Instituto de Emprego e Formação Profissional).\n\nQuer que verifique o encaminhamento oficial para os Cursos de Aprendizagem 2026-27?",
+        "agent_name": "NEXO",
+        "created_at": null,
+        "platform": "WhatsApp",
+        "tool_calls": []
+      },
+      {
+        "id": "209",
+        "type": "human",
+        "content": "Não",
+        "agent_name": "NEXO",
+        "created_at": null,
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "210",
+        "type": "ai",
+        "content": "Sem problema.\n\nSe mais tarde quiser saber mais sobre os Percursos de Competências Digitais ou outra área, estou por aqui.",
+        "agent_name": "NEXO",
+        "created_at": null,
+        "platform": "WhatsApp",
+        "tool_calls": []
+      }
+    ],
+    "351 9•• ••• 636": [
+      {
+        "id": "195",
+        "type": "human",
+        "content": "Quero pagar uma mensalidade",
+        "agent_name": "NEXO",
+        "created_at": null,
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "196",
+        "type": "ai",
+        "content": "Olá! Boa tarde, sou o NEXO, o assistente virtual da EDUGEP. 👋\n\nSobre pagamentos de mensalidades não tenho acesso ao sistema de gestão de alunos, por isso não consigo processar isso por aqui.\n\nPosso encaminhar o seu pedido à equipa. Pode dizer-me o seu nome, por favor?",
+        "agent_name": "NEXO",
+        "created_at": null,
+        "platform": "WhatsApp",
+        "tool_calls": []
+      },
+      {
+        "id": "197",
+        "type": "human",
+        "content": "Joaquim",
+        "agent_name": "NEXO",
+        "created_at": null,
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "198",
+        "type": "ai",
+        "content": "Já contactei a equipa da EDUGEP, Joaquim — vão entrar em contacto consigo assim que possível para tratar do pagamento da mensalidade.\n\nSe preferir resolver mais rápido, pode ligar directamente para 📞 *265 185 750* (Seg-Sex, 08:00–20:30).",
+        "agent_name": "NEXO",
+        "created_at": null,
+        "platform": "WhatsApp",
+        "tool_calls": []
+      }
+    ],
+    "351 9•• ••• 516": [
+      {
+        "id": "227",
+        "type": "human",
+        "content": "Olá!",
+        "agent_name": "NEXO",
+        "created_at": null,
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "228",
+        "type": "ai",
+        "content": "Olá! Boa tarde, sou o NEXO, o assistente virtual da EDUGEP. 👋\n\nComo posso ajudar? Se me disser o que procura — para si, para um filho ou familiar, curso curto ou algo mais prolongado — ajudo a encontrar a opção certa.",
+        "agent_name": "NEXO",
+        "created_at": null,
+        "platform": "WhatsApp",
+        "tool_calls": []
+      },
+      {
+        "id": "229",
+        "type": "human",
+        "content": "Quais são os preços dos intensivos de inglês?",
+        "agent_name": "NEXO",
+        "created_at": null,
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "230",
+        "type": "ai",
+        "content": "Encontrei os *Intensivos de Inglês de Setembro* da Language School:\n\n• *Adultos* (50h): 269€\n• *Bootcamp Jovens* (25h): 187€\n\nArranque a *31 de agosto ou 1 de setembro*, com divulgação/inscrições até 28/08. Incluem preparação para certificação Cambridge (KET/PET/FCE) e um teste de nível gratuito (presencial, 30 min).\n\nQuer que a encaminhe para inscrição ou tem mais alguma dúvida?",
+        "agent_name": "NEXO",
+        "created_at": null,
+        "platform": "WhatsApp",
+        "tool_calls": []
+      },
+      {
+        "id": "239",
+        "type": "human",
+        "content": "Quero saber mais sobre o Educar com Valores",
+        "agent_name": "NEXO",
+        "created_at": null,
+        "platform": "WhatsApp"
+      },
+      {
+        "id": "240",
+        "type": "ai",
+        "content": "O *Educar com Valores* está com inscrições abertas até *31 de agosto*.\n\nÉ um curso de parentalidade criado pelo Dr. Alfredo Leite (psicólogo especialista em Psicologia Positiva), em formato híbrido: 6 sessões online + 3 presenciais na sede EDUGEP, em Setúbal.\n\n• *Arranque:* 14 de setembro (sessão presencial) até 19 de outubro 2026\n• *Valor:* 890€\n• *Público:* pais, mães, futuros pais, avós, educadores e professores\n\nAborda gestão de emoções e conflitos, comunicação e presença parental, rotinas e limites, e resiliência familiar — com certificação EDUGEP (entidade formadora DGERT).\n\nPode inscrever-se aqui: 🌐 https://educar-valores.pt/curso-parentalidade/",
+        "agent_name": "NEXO",
+        "created_at": null,
+        "platform": "WhatsApp",
+        "tool_calls": []
+      }
+    ]
+  }
+}

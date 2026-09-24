@@ -1,0 +1,1367 @@
+// Main dashboard orchestrator
+let currentPeriod = '30d';
+let currentClient = null;
+let customStartDate = null;
+let customEndDate = null;
+
+// Animated counter
+function animateValue(el, target, duration = 1800) {
+  if (!el || isNaN(target)) { if (el) el.textContent = target; return; }
+  const isFloat = String(target).includes('.');
+  const startTime = performance.now();
+  function update(now) {
+    const progress = Math.min((now - startTime) / duration, 1);
+    const ease = 1 - Math.pow(1 - progress, 3);
+    const current = target * ease;
+    el.textContent = isFloat
+      ? current.toLocaleString('pt-PT', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
+      : Math.round(current).toLocaleString('pt-PT');
+    if (progress < 1) requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+}
+
+async function initDashboard(slug) {
+  currentClient = CLIENTS[slug];
+  if (!currentClient) return;
+  setupPeriodSelector();
+  await loadData();
+}
+
+function setupPeriodSelector() {
+  const customRange = document.getElementById('custom-range');
+  const dateStart = document.getElementById('date-start');
+  const dateEnd = document.getElementById('date-end');
+  const dateApply = document.getElementById('date-apply');
+  const slug = getClientSlug();
+  const clientConf = CLIENTS[slug];
+  const today = new Date();
+  const thirtyAgo = new Date(today);
+  thirtyAgo.setDate(today.getDate() - 30);
+
+  // Enforce client start date
+  const minDate = clientConf?.startDate || '2025-01-01';
+  const effectiveStart = thirtyAgo < new Date(minDate) ? minDate : formatDate(thirtyAgo);
+
+  dateEnd.value = formatDate(today);
+  dateStart.value = effectiveStart;
+  dateStart.min = minDate;
+  dateEnd.min = minDate;
+
+  document.querySelectorAll('.period-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      document.querySelector('.period-btn.active')?.classList.remove('active');
+      btn.classList.add('active');
+      if (btn.dataset.period === 'custom') { customRange.style.display = 'flex'; return; }
+      customRange.style.display = 'none';
+      currentPeriod = btn.dataset.period;
+      customStartDate = null; customEndDate = null;
+      await loadData();
+    });
+  });
+  dateApply.addEventListener('click', async () => {
+    if (dateStart.value && dateEnd.value) {
+      customStartDate = dateStart.value; customEndDate = dateEnd.value;
+      currentPeriod = 'custom';
+      await loadData();
+    }
+  });
+}
+
+async function loadData() {
+  let { start, end } = (currentPeriod === 'custom' && customStartDate && customEndDate)
+    ? { start: customStartDate, end: customEndDate }
+    : getDateRange(currentPeriod);
+  const slug = getClientSlug();
+  const client = CLIENTS[slug];
+
+  // Enforce client start date — never query before IA went live
+  if (client.startDate && start < client.startDate) {
+    start = client.startDate;
+  }
+  showLoading();
+  _cache = { key: null, data: null }; // clear cache
+
+  const [chatbot, messaging, clicks, content] = await Promise.all([
+    (client.services.includes('chatbot') && client.schema) ? getChatbotMetrics(client.schema, start, end) : null,
+    (client.services.includes('messaging') && client.schema) ? getMessagingMetrics(client.schema, start, end) : null,
+    getClickMetrics(client.domainId, start, end),
+    (client.services.includes('content') && client.schema) ? getContentMetrics(client.schema, start, end) : null
+  ]);
+
+  renderDashboard(client, chatbot, messaging, clicks, content);
+}
+
+function showLoading() {
+  document.getElementById('dashboard-content').innerHTML = '<div class="loading"><div class="spinner"></div>A carregar dados...</div>';
+}
+
+function renderDashboard(client, chatbot, messaging, clicks, content) {
+  const contentEl = document.getElementById('dashboard-content');
+  let html = '';
+  const slug = getClientSlug();
+
+  if (client.services.includes('chatbot') && chatbot) {
+    html += renderChatbotSection(client, chatbot, clicks);
+  }
+  if (client.services.includes('messaging') && messaging) {
+    if (html) html += '<hr class="section-divider">';
+    html += renderMessagingSection(client, messaging);
+  }
+  if (client.services.includes('content') && content) {
+    if (html) html += '<hr class="section-divider">';
+    html += renderContentSection(client, content);
+  }
+
+  // Insights — dynamic based on real data
+  const insight = generateInsight(slug, client, chatbot, messaging, clicks, content);
+  if (insight) {
+    if (html) html += '<hr class="section-divider">';
+    html += renderInsightsSection(insight);
+  }
+
+  if (!html) html = '<div class="loading"><p>Sem dados disponíveis para o período selecionado.</p></div>';
+  contentEl.innerHTML = html;
+
+  requestAnimationFrame(() => {
+    // Init charts independently — errors in one don't block others
+    if (chatbot) {
+      try { initChatbotCharts(client, chatbot); } catch (e) { console.error('initChatbotCharts:', e); }
+      try { initExtendedCharts(chatbot); } catch (e) { console.error('initExtendedCharts:', e); }
+    }
+    if (messaging) {
+      try { initMessagingCharts(messaging); } catch (e) { console.error('initMessagingCharts:', e); }
+    }
+    if (content) {
+      try { initContentCharts(content); } catch (e) { console.error('initContentCharts:', e); }
+    }
+    document.querySelectorAll('[data-count]').forEach(el => {
+      const raw = el.dataset.count;
+      const val = parseFloat(raw);
+      const suffix = el.dataset.suffix || '';
+      if (isNaN(val) || /[a-zA-Z]/.test(raw)) {
+        el.textContent = raw; // keep strings like "14s", "2.3h"
+      } else {
+        animateValue(el, val);
+        if (suffix) setTimeout(() => { el.textContent += suffix; }, 1900);
+      }
+    });
+  });
+}
+
+// ---- Chatbot Section (adapts per client context) ----
+function renderChatbotSection(client, data, clicks) {
+  const total = data.total_conversations;
+  const aiRate = data.ai_resolution_rate;
+  const msgsAI = data.messages_ai;
+  const msgsHuman = data.messages_human;
+  const aiOnly = data.conversations_ai_only;
+  const withHuman = data.conversations_with_human;
+  const kuttClicks = clicks?.total_clicks || 0;
+  const activeChannels = Object.keys(data.channels || {});
+  const context = client.context || 'standard';
+  const leads = data.leads_total || data.leads_period || 0;
+
+  const periodLabel = { '7d': '7 dias', '15d': '15 dias', '30d': '30 dias', 'this-month': 'este mês', 'last-month': 'mês anterior', 'custom': 'personalizado' }[currentPeriod] || '30 dias';
+
+  // Adapt KPIs based on client context
+  let kpiCards = '';
+
+  // Conversas — always shown
+  kpiCards += kpiCard('Conversas', total, periodLabel, 2);
+
+  if (context === 'driving_school') {
+    // Abadias: dual agent (alunos + leads)
+    const ext = data.extended || {};
+    const b = ext.breakdown || {};
+    const lr = ext.leads_recolhidos || {};
+    const alunosTotal = parseInt(b.alunos_total) || 0;
+    const leadsTotal = parseInt(b.leads_total) || 0;
+    const alunosTaxa = parseFloat(b.alunos_taxa_pct) || 0;
+    const leadsTaxa = parseFloat(b.leads_taxa_pct) || 0;
+    const leadsRec = parseInt(lr.total) || 0;
+    const totalAll = alunosTotal + leadsTotal;
+    const alunosPct = totalAll > 0 ? Math.round((alunosTotal / totalAll) * 100) : 0;
+    const leadsPct = totalAll > 0 ? Math.round((leadsTotal / totalAll) * 100) : 0;
+
+    kpiCards += kpiCardPercent('Taxa Resolução IA', aiRate, 3, aiRate >= 70 ? 'positive' : aiRate >= 50 ? '' : 'warning');
+    if (alunosTotal > 0) kpiCards += kpiCard('Conversas Alunos', alunosTotal, `${alunosPct}% do total · ${alunosTaxa}% IA`, 4);
+    if (leadsTotal > 0) kpiCards += kpiCard('Conversas Leads', leadsTotal, `${leadsPct}% do total · ${leadsTaxa}% IA`, 5);
+    if (leadsRec > 0) kpiCards += kpiCard('Leads Recolhidos', leadsRec, 'qualificados pela IA', 6, 'positive');
+  } else if (context === 'credit_qualifier') {
+    // Georgina Moura: lead qualification (multi-source) + reactivation for credit/loans
+    const ext = data.extended || {};
+    const ls = ext.leads_stats || {};
+    const rs = ext.reactivation_stats || {};
+    const qBySrc = ext.qualification_by_source || [];
+    const totalLeads = parseInt(ls.total) || 0;
+    const qualificadas = parseInt(ls.qualificadas) || 0;
+    const emQual = parseInt(ls.em_qualificacao) || 0;
+    const taxaQual = parseFloat(ls.taxa_qualificacao_pct) || 0;
+    const reactSent = parseInt(rs.enviadas_periodo) || 0;
+    const reactPendente = parseInt(rs.pendentes) || 0;
+
+    // Find specific sources
+    const ads = qBySrc.find(s => s.source === 'meta_ads');
+    const inbound = qBySrc.find(s => s.source === 'inbound');
+
+    kpiCards += kpiCard('Leads Totais', totalLeads, 'todas as fontes', 3);
+    kpiCards += kpiCard('Leads Qualificadas', qualificadas, `${taxaQual}% taxa de qualificação`, 4, 'positive');
+    if (emQual > 0) kpiCards += kpiCard('Em Qualificação', emQual, 'IA ainda em conversa', 5);
+
+    // Meta Ads specific KPI — most relevant for ROI
+    if (ads) {
+      const adsQual = parseInt(ads.qualificadas) || 0;
+      const adsTotal = parseInt(ads.total) || 0;
+      const adsRate = parseFloat(ads.taxa_pct) || 0;
+      kpiCards += kpiCard('Leads Meta Ads', `${adsQual}/${adsTotal}`, `${adsRate}% qualificadas das pagas`, 6, adsRate >= 50 ? 'positive' : 'warning');
+    }
+
+    if (reactSent > 0) {
+      kpiCards += kpiCard('Reativações Enviadas', reactSent, `${reactPendente} pendentes na base`, 6);
+    }
+  } else if (context === 'qualificador') {
+    // OdiSeguros: uses real classification from odiseguros.contatos_bloqueados
+    const cls = data.extended?.classification || {};
+    const existentes = parseInt(cls.clientes_existentes) || 0;
+    const novosLeads = parseInt(cls.novos_leads) || 0;
+    const urgentes = parseInt(cls.urgentes) || 0;
+    const intHumana = parseInt(cls.intervencao_humana) || 0;
+    const naoClassif = parseInt(cls.nao_classificados) || 0;
+
+    kpiCards += kpiCard('Mensagens IA', msgsAI, 'qualificação + recolha dados', 3);
+    kpiCards += kpiCard('Novos Leads', novosLeads, 'qualificados + dados recolhidos', 4, 'positive');
+    kpiCards += kpiCard('Clientes Existentes', existentes, 'identificados pela IA', 5);
+    if (urgentes > 0) kpiCards += kpiCard('Urgentes', urgentes, 'precisam seguro hoje', 6, 'warning');
+    else if (naoClassif > 0) kpiCards += kpiCard('Em Qualificação', naoClassif, 'conversas a decorrer', 6);
+  } else if (context === 'lead_gen') {
+    // Now Fitness: comments → DMs → leads funnel
+    const t = data;
+    const totalLeads = t.total_leads || 0;
+    const uniqueUsers = t.unique_users || total;
+    const comments = t.total_comments || 0;
+    const dmsStarted = t.dms_initiated || 0;
+    const convRate = t.conversion_rate || 0;
+    const followUps = t.total_follow_ups || 0;
+    const pilates = t.pilates_leads || 0;
+    const pt = t.pt_leads || 0;
+
+    kpiCards = ''; // reset
+    kpiCards += kpiCard('Utilizadores Únicos', uniqueUsers, periodLabel, 2);
+    kpiCards += kpiCard('Leads Registados', totalLeads, pilates > 0 || pt > 0 ? `Pilates: ${pilates} | PT: ${pt}` : '', 3, 'positive');
+    kpiCards += kpiCardPercent('Taxa Conversão', convRate, 4, convRate >= 10 ? 'positive' : convRate >= 5 ? '' : 'warning');
+    if (comments > 0) kpiCards += kpiCard('Comentários', comments, `${dmsStarted} DMs enviadas`, 5);
+    if (followUps > 0) kpiCards += kpiCard('Follow-ups', followUps, 'mensagens de acompanhamento', 6);
+  } else if (context === 'porteiro') {
+    // Lojinha Bebé: focus on "handled without human"
+    kpiCards += kpiCard('Resolvidas Sem Humano', aiOnly, `de ${total} conversas`, 3, aiRate >= 50 ? 'positive' : '');
+    kpiCards += kpiCardPercent('% Sem Intervenção', aiRate, 4, aiRate >= 50 ? 'positive' : 'warning');
+  } else if (context === 'leads') {
+    // EcoDrive: leads + platforms + response times + IA vs Equipa comparison
+    const leadsCount = data.leads_period || 0;
+    const respTime = data.response_time;
+    const humanResp = data.extended?.human_response_time;
+    // Count messages from extended.daily: IA vs Equipa
+    const dailyRaw = data.extended?.daily || [];
+    const totalAIMsgs = dailyRaw.reduce((s, d) => s + (parseInt(d.ai_msgs) || 0), 0);
+    const totalTeamMsgs = dailyRaw.reduce((s, d) => s + (parseInt(d.team_msgs) || 0), 0);
+    const multiplier = totalTeamMsgs > 0 ? (totalAIMsgs / totalTeamMsgs).toFixed(1) : null;
+
+    if (leadsCount > 0) kpiCards += kpiCard('Leads Recolhidos', leadsCount, periodLabel, 3, 'positive');
+    kpiCards += kpiCardPercent('Taxa Resolução IA', aiRate, 4, aiRate >= 70 ? 'positive' : aiRate >= 50 ? '' : 'warning');
+    if (totalAIMsgs > 0) {
+      kpiCards += kpiCard('Mensagens IA', totalAIMsgs, multiplier ? `${multiplier}× mais que a equipa` : 'automatizadas', 5, 'positive');
+    }
+    if (totalTeamMsgs > 0) {
+      kpiCards += kpiCard('Mensagens Equipa', totalTeamMsgs, 'respostas humanas', 6);
+    }
+    // IA response is near real-time (~40-60s in practice), not queryable from DB
+    // (DB only logs after AI processes, which creates artificially low 2s values)
+    kpiCards += kpiCard('Velocidade IA', '~1min', 'resposta quase imediata', 5, 'positive');
+    if (humanResp?.median_min) {
+      const medMin = parseFloat(humanResp.median_min);
+      const avgMin = parseFloat(humanResp.avg_min);
+      const medLabel = medMin < 60 ? `${medMin.toFixed(0)}min` : `${(medMin/60).toFixed(1)}h`;
+      const avgLabel = avgMin < 60 ? `${avgMin.toFixed(0)}min` : `${(avgMin/60).toFixed(1)}h`;
+      kpiCards += kpiCard('Velocidade Equipa', medLabel, `mediana resposta (média ${avgLabel})`, 6);
+    }
+  } else if (context === 'dual_agent') {
+    // Costura Urbana: 2 agentes IA distintos (Loja + Assistência Técnica), tabelas separadas
+    kpiCards += kpiCardPercent('Taxa Resolução IA', aiRate, 3, aiRate >= 70 ? 'positive' : aiRate >= 50 ? '' : 'warning');
+    kpiCards += kpiCard('Mensagens da IA', msgsAI, 'respostas automáticas', 4, 'positive');
+    kpiCards += kpiCard('Resolvidas sem Equipa', aiOnly, `de ${total} conversas`, 5, 'positive');
+  } else if (context === 'clinica') {
+    // Dr. Marco Rego (Íris): atendimento multi-canal + comentários + qualificações
+    const ext = data.extended || {};
+    const ht = ext.handoff_totals || {};
+    const qualif = parseInt(ht.qualificadas) || 0;
+    const escal = parseInt(ht.escaladas) || 0;
+    const comments = (ext.comments || []).reduce((s, c) => s + (parseInt(c.total) || 0), 0);
+    kpiCards += kpiCard('Respostas da IA', msgsAI, `${formatNumber(msgsHuman)} mensagens recebidas`, 3, 'positive');
+    if (comments > 0) kpiCards += kpiCard('Comentários Tratados', comments, 'Instagram + Facebook', 4);
+    kpiCards += kpiCard('Qualificações', qualif, 'encaminhadas para marcação', 5, 'positive');
+    if (escal > 0) kpiCards += kpiCard('Escaladas p/ Equipa', escal, 'passadas à assistente', 6);
+  } else if (context === 'clinica_nutri') {
+    // Isabel Pedroso (Maria): qualificação de leads + marcação 1ª consulta (nutrição clínica)
+    // Nota: `agendadas` inclui `confirmadas` — no GHL o current_stage move para "Cliente confirmado"
+    // após pagamento, e uma consulta paga continua a ser uma consulta agendada.
+    const ext = data.extended || {};
+    const fn = ext.funnel || {};
+    const contactados = parseInt(fn.contactados) || 0;
+    const confirmadas = parseInt(fn.confirmadas) || 0;
+    const agendadas = (parseInt(fn.agendadas) || 0) + confirmadas;
+    const pag = ext.pagamentos || {};
+    const pagas = parseInt(pag.pagas) || 0;
+    const valorPago = parseFloat(pag.valor_pago) || 0;
+    kpiCards += kpiCard('Mensagens IA', msgsAI, `${formatNumber(msgsHuman)} mensagens recebidas`, 3, 'positive');
+    kpiCards += kpiCard('Leads Contactados', contactados, 'qualificados pela IA', 4);
+    kpiCards += kpiCard('Consultas Agendadas', agendadas, contactados > 0 ? `${((agendadas / (contactados + agendadas)) * 100).toFixed(0)}% de conversão` : 'marcações confirmadas', 5, 'positive');
+    if (pagas > 0) kpiCards += kpiCard('Reservas Pagas', pagas, `${valorPago.toLocaleString('pt-PT', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}€ via link de pagamento`, 6, 'positive');
+  } else if (context === 'turismo_conversas') {
+    // Trans Serrano: faturação por conversa + comentários + pré-reservas
+    const ext = data.extended || {};
+    const preReservas = parseInt(ext.pre_reservas_total) || 0;
+    const comments = (ext.comments || []).reduce((s, c) => s + (parseInt(c.total) || 0), 0);
+    const custo = (total * (client.costPerConversation || 0));
+    const custoFmt = custo.toLocaleString('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    // Substitui o card "Conversas" genérico por "Conversas Faturáveis"
+    kpiCards = kpiCard('Conversas Faturáveis', total, `${periodLabel} · ${custoFmt}€ variável`, 2, 'positive');
+    kpiCards += kpiCard('Respostas da IA', msgsAI, `${formatNumber(msgsHuman)} mensagens recebidas`, 3);
+    if (comments > 0) kpiCards += kpiCard('Comentários Tratados', comments, 'Instagram + Facebook', 4);
+    if (preReservas > 0) kpiCards += kpiCard('Pré-reservas Capturadas', preReservas, 'nome, atividade, datas', 5, 'positive');
+    kpiCards += kpiCard('Sem Intervenção Humana', aiOnly, `de ${total} conversas`, 6);
+  } else if (context === 'lead_qualifier_solar') {
+    // Fundo Solar (Clara): qualificação de leads fotovoltaicos
+    const ext = data.extended || {};
+    const fn = ext.funnel || {};
+    const au = ext.autonomia || {};
+    const novo = parseInt(fn.novo) || 0;
+    const emConv = parseInt(fn.em_conversa) || 0;
+    const qual = parseInt(fn.qualificada) || 0;
+    const totalLeads = parseInt(fn.total) || (novo + emConv + qual);
+    const taxaQual = totalLeads > 0 ? (qual / totalLeads) * 100 : 0;
+    const auTotal = parseInt(au.total_leads) || 0;
+    const auSemHumano = parseInt(au.sem_humano) || 0;
+    const auPct = auTotal > 0 ? (auSemHumano / auTotal) * 100 : 0;
+    kpiCards += kpiCard('Mensagens IA', msgsAI, `${formatNumber(msgsHuman)} mensagens recebidas`, 3, 'positive');
+    kpiCards += kpiCard('Leads Qualificados', qual, `de ${totalLeads} leads no funil`, 4, 'positive');
+    kpiCards += kpiCardPercent('Taxa Qualificação', taxaQual.toFixed(1), 5, taxaQual >= 30 ? 'positive' : taxaQual >= 15 ? '' : 'warning');
+    if (auTotal > 0) kpiCards += kpiCard('Autonomia IA', auPct.toFixed(0), `${auSemHumano}/${auTotal} leads sem humano`, 6, auPct >= 60 ? 'positive' : '', '%');
+  } else if (context === 'qualificador_mudancas') {
+    // Translowcost (Bia): qualificação leads mudanças (2 instâncias WA)
+    const ext = data.extended || {};
+    const fn = ext.funnel || {};
+    const au = ext.autonomia || {};
+    const newLeads = parseInt(ext.new_leads) || 0;
+    const aguarda = parseInt(fn.aguarda_comercial) || 0;
+    const video = parseInt(ext.videocalls_booked) || parseInt(fn.videochamada_agendada) || 0;
+    const auTotal = parseInt(au.total_qualif) || 0;
+    const auSemH = parseInt(au.sem_humano) || 0;
+    const auPct = auTotal > 0 ? (auSemH / auTotal) * 100 : 0;
+    kpiCards += kpiCard('Mensagens IA', msgsAI, `${formatNumber(msgsHuman)} mensagens recebidas`, 3, 'positive');
+    kpiCards += kpiCard('Novos Leads', newLeads, 'entradas no funil', 4);
+    if (video > 0) kpiCards += kpiCard('Videochamadas', video, 'agendadas pela Bia', 5, 'positive');
+    kpiCards += kpiCard('Aguarda Comercial', aguarda, 'entregues à equipa', 6, 'positive');
+    // Autonomia Bia: só mostra se houver dados fiáveis (sem_humano > 0). Hoje `last_human_intervention_at`
+    // é preenchido em todas as interações, tornando a métrica sempre 0% — TODO v2 refinar semântica.
+    if (auTotal > 0 && auSemH > 0) kpiCards += kpiCard('Autonomia Bia', auPct.toFixed(0), `${auSemH}/${auTotal} sem intervenção`, 6, auPct >= 60 ? 'positive' : '', '%');
+  } else if (context === 'ecommerce_multicanal') {
+    // Núbia Essenciais: agente WA/IG/FB + comentários. As automáticas (carrinho, upsell, pagamentos) vivem na secção de mensagens.
+    const ext = data.extended || {};
+    const comm = ext.comments || [];
+    const commTotal = comm.reduce((s, c) => s + (parseInt(c.total) || 0), 0);
+    const commResp = comm.reduce((s, c) => s + (parseInt(c.respondidos) || 0), 0);
+    const commDms = comm.reduce((s, c) => s + (parseInt(c.dms) || 0), 0);
+    const fh = ext.fora_horario || {};
+    const pctFora = parseFloat(fh.pct_mensagens_cliente) || 0;
+    const iaFora = parseInt(fh.respostas_ia) || 0;
+    // Calculado a partir das contagens (o resolution_rate_pct já vem arredondado a 2 casas e arredondar outra vez desvia)
+    const rate1 = total > 0 ? Math.round((aiOnly / total) * 1000) / 10 : 0;
+    kpiCards += kpiCard('Mensagens da IA', msgsAI, `${formatNumber(msgsHuman)} mensagens de clientes`, 3, 'positive');
+    kpiCards += kpiCard('Sem Intervenção Humana', rate1, `${formatNumber(aiOnly)} de ${formatNumber(total)} conversas`, 4, rate1 >= 70 ? 'positive' : rate1 >= 50 ? '' : 'warning', '%');
+    if (commTotal > 0) kpiCards += kpiCard('Comentários Tratados', commTotal, `${formatNumber(commResp)} respondidos · ${formatNumber(commDms)} DMs abertas`, 5);
+    if (pctFora > 0) kpiCards += kpiCard('Fora de Horas', pctFora, `das mensagens de clientes · ${formatNumber(iaFora)} respostas da IA`, 6, 'positive', '%');
+  } else {
+    // Standard: RR, HCO, Teclas, OdiSeguros
+    kpiCards += kpiCardPercent('Taxa Resolução IA', aiRate, 3, aiRate >= 70 ? 'positive' : aiRate >= 50 ? '' : 'warning');
+    kpiCards += kpiCard('Mensagens IA', msgsAI, `${formatNumber(msgsHuman)} humanas`, 4);
+  }
+
+  if (kuttClicks > 0) {
+    kpiCards += kpiCard('Cliques em Links', kuttClicks, 'partilhados pelo agente', 5);
+  }
+  // Off-hours KPI (all chatbot clients that have this data)
+  const offHours = data.extended?.off_hours;
+  if (offHours && parseFloat(offHours.off_hours_pct) > 0) {
+    kpiCards += kpiCard('Fora de Horas', offHours.off_hours_pct, 'mensagens em fim-de-semana ou 18h-9h', 6, 'positive', '%');
+  }
+
+  // Charts
+  let chartsHtml = '';
+  // dual_agent rende um gráfico "por Agente" dedicado em vez do genérico "por Canal"
+  if (activeChannels.length > 1 && context !== 'dual_agent') {
+    chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Conversas por Canal</h3><div class="chart-container" id="chart-channels"></div></div>`;
+  }
+  // Platform breakdown (EcoDrive, Pura Rituals, RL Store, any with multiple Chatwoot inboxes)
+  if (data.platforms?.length > 1) {
+    chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Conversas por Plataforma</h3><div class="chart-container" id="chart-platforms"></div></div>`;
+  }
+
+  if (context === 'lead_gen') {
+    // Now Fitness: funnel chart only (leads table is rendered full-width at the end)
+    chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Funil de Conversão</h3><div class="chart-container" id="chart-funnel"></div></div>`;
+  } else if (context === 'driving_school') {
+    // Abadias: dual donut alunos vs leads + inboxes + categorias
+    const ext = data.extended || {};
+    if (ext.breakdown && ((parseInt(ext.breakdown.alunos_total) || 0) + (parseInt(ext.breakdown.leads_total) || 0)) > 0) {
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Alunos vs Leads</h3><div class="chart-container" id="chart-abadias-split"></div></div>`;
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Resolução IA por Tipo</h3><div class="chart-container" id="chart-abadias-resolucao"></div></div>`;
+    }
+    if (ext.inboxes?.length > 0) {
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Conversas por Inbox</h3><div class="chart-container" id="chart-abadias-inboxes"></div></div>`;
+    }
+    if (ext.leads_categorias?.length > 0) {
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Categorias de Interesse (Leads)</h3><div class="chart-container" id="chart-abadias-categorias"></div></div>`;
+    }
+  } else if (context === 'credit_qualifier') {
+    // Georgina Moura: Sources donut + Qualification rate by source + Objetivos
+    const ext = data.extended || {};
+    if (ext.leads_by_source?.length > 0) {
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Leads por Fonte</h3><div class="chart-container" id="chart-leads-sources"></div></div>`;
+    }
+    if (ext.qualification_by_source?.length > 0) {
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Taxa de Qualificação por Fonte</h3><div class="chart-container" id="chart-qualif-rate"></div></div>`;
+    }
+    if (ext.leads_objetivos?.length > 0) {
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Objetivos dos Leads</h3><div class="chart-container" id="chart-objetivos"></div></div>`;
+    }
+  } else if (context === 'qualificador') {
+    // OdiSeguros: Novos vs Existentes donut (real classification) + Ramos bar chart + Urgentes table
+    const ext = data.extended;
+    chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Classificação de Contactos</h3><div class="chart-container" id="chart-classification"></div></div>`;
+    if (ext?.ramos?.length > 0) {
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Ramos de Interesse</h3><div class="chart-container" id="chart-ramos"></div></div>`;
+    }
+    if (ext?.urgentes_detalhe?.length > 0) {
+      const RAMO_LABELS = { automovel_particular: 'Auto Particular', automovel_empresa: 'Auto Empresa', tvde: 'TVDE', saude_dental: 'Saúde Dental', multiriscos_habitacao: 'Multirriscos', acidentes_trabalho: 'AT', vida_credito: 'Vida', responsabilidade_civil: 'RC' };
+      const cleanPhone = (p) => p ? String(p).split('@')[0].replace(/^351/, '').replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3') : '—';
+      const rows = ext.urgentes_detalhe.map(u => `<tr><td>${cleanPhone(u.telefone)}</td><td>${RAMO_LABELS[u.ramo] || u.ramo || '—'}</td><td style="font-size:0.75rem">${(u.resumo_dados||'').substring(0,120)}${(u.resumo_dados||'').length>120?'…':''}</td></tr>`).join('');
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-6" style="grid-column: 1 / -1"><h3>Leads Urgentes (precisam seguro hoje)</h3><table class="data-table"><thead><tr><th>Contacto</th><th>Ramo</th><th>Detalhe</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    }
+  } else if (context === 'dual_agent') {
+    // Costura Urbana: comparação dos 2 agentes (resolução + volume de conversas)
+    chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Resolução IA por Agente</h3><div class="chart-container" id="chart-agent-resolution"></div></div>`;
+    chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Conversas por Agente</h3><div class="chart-container" id="chart-agent-split"></div></div>`;
+  } else if (context === 'clinica_nutri') {
+    // Isabel Pedroso: a resolução-por-conversa genérica não é a métrica-chave (o foco é o funil
+    // de leads + autonomia sobre leads). O donut por canal (chart-channels) mostra o volume.
+    // Sem radial genérico aqui.
+  } else if (context === 'turismo_conversas') {
+    // Trans Serrano: donut por canal (chart-channels) já sai automaticamente; sem radial genérico.
+  } else if (context === 'lead_qualifier_solar') {
+    // Fundo Solar: funil + donuts + bars distritos/comercial (via HTML abaixo)
+    const ext = data.extended || {};
+    if (ext.by_tipo?.length > 0) {
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Tipo de Instalação</h3><div class="chart-container" id="chart-solar-tipo"></div></div>`;
+    }
+    if (ext.by_origem?.length > 0) {
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Origem da Lead</h3><div class="chart-container" id="chart-solar-origem"></div></div>`;
+    }
+    if (ext.by_distrito?.length > 0) {
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-6"><h3>Leads por Distrito</h3><div class="chart-container" id="chart-solar-distritos"></div></div>`;
+    }
+    if (ext.by_comercial?.length > 0) {
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-6"><h3>Leads Qualificados por Comercial</h3><div class="chart-container" id="chart-solar-comercial"></div></div>`;
+    }
+  } else if (context === 'qualificador_mudancas') {
+    // Translowcost: donuts tipo/idioma/origem — bar horizontal com stages do funil
+    const ext = data.extended || {};
+    if (ext.by_service_type?.length > 0) {
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Tipo de Serviço</h3><div class="chart-container" id="chart-trans-service"></div></div>`;
+    }
+    if (ext.by_language?.length > 0) {
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Idioma</h3><div class="chart-container" id="chart-trans-lang"></div></div>`;
+    }
+    if (ext.by_lead_source?.length > 0) {
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-6"><h3>Origem da Lead</h3><div class="chart-container" id="chart-trans-source"></div></div>`;
+    }
+  } else if (context === 'ecommerce_multicanal') {
+    // Núbia: radial com a % de conversas sem intervenção humana (o donut por canal sai sozinho acima)
+    chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>Conversas sem Intervenção Humana</h3><div class="chart-container" id="chart-ai-human"></div></div>`;
+  } else {
+    chartsHtml += `<div class="chart-card glass fade-in fade-in-5"><h3>${context === 'porteiro' ? 'Sem Humano vs Com Humano' : 'Resolução IA'}</h3><div class="chart-container" id="chart-ai-human"></div></div>`;
+  }
+
+  const hasHourly = data.hourly_distribution?.some(h => h.count > 0);
+  if (hasHourly) {
+    chartsHtml += `<div class="chart-card glass fade-in fade-in-6"><h3>Distribuição Horária</h3><div class="chart-container" id="chart-hours"></div></div>`;
+  }
+
+  // Extended charts (EcoDrive daily, Lojinha weekly evolution)
+  const ext = data.extended;
+  if (ext?.daily?.length > 0) {
+    chartsHtml += `<div class="chart-card glass fade-in fade-in-6" style="grid-column: 1 / -1"><h3>Evolução Diária</h3><div class="chart-container" id="chart-daily" style="height:300px"></div></div>`;
+  }
+  if (ext?.conversationTypes?.length > 0) {
+    chartsHtml += `<div class="chart-card glass fade-in fade-in-6" style="grid-column: 1 / -1"><h3>Evolução Semanal — IA vs Humano</h3><div class="chart-container" id="chart-weekly-conv" style="height:300px"></div></div>`;
+  }
+  if (ext?.weekly?.length > 0 && !ext?.conversationTypes) {
+    chartsHtml += `<div class="chart-card glass fade-in fade-in-6" style="grid-column: 1 / -1"><h3>Mensagens por Semana</h3><div class="chart-container" id="chart-weekly-msgs" style="height:300px"></div></div>`;
+  }
+  // Agent breakdown (Lojinha Bebé)
+  if (ext?.agentBreakdown?.length > 0) {
+    // Build agent table
+    const agentTotals = {};
+    ext.agentBreakdown.forEach(r => {
+      const id = r.agent_id;
+      if (!agentTotals[id]) agentTotals[id] = { fb: 0, ig: 0, total: 0 };
+      agentTotals[id].total += parseInt(r.cnt) || 0;
+      if (r.platform === 'facebook') agentTotals[id].fb += parseInt(r.cnt) || 0;
+      if (r.platform === 'instagram') agentTotals[id].ig += parseInt(r.cnt) || 0;
+    });
+    const AGENT_NAMES = { '6': 'Ricardo Pinto', '7': 'Miriam Silva', '8': 'Andreia Pinto', '9': 'Cristina Pinto', '10': 'Inês Francisco' };
+    const sorted = Object.entries(agentTotals).sort((a, b) => b[1].total - a[1].total);
+    let agentRows = sorted.map(([id, d]) => `<tr><td>${AGENT_NAMES[id] || 'Agente ' + id}</td><td class="num">${formatNumber(d.fb)}</td><td class="num">${formatNumber(d.ig)}</td><td class="num"><strong>${formatNumber(d.total)}</strong></td></tr>`).join('');
+
+    chartsHtml += `<div class="chart-card glass fade-in fade-in-6"><h3>Equipa — Mensagens por Agente</h3><div class="chart-container" id="chart-agents"></div></div>`;
+    chartsHtml += `<div class="chart-card glass fade-in fade-in-6"><h3>Detalhe por Agente</h3><table class="data-table"><thead><tr><th>Agente</th><th>Facebook</th><th>Instagram</th><th>Total</th></tr></thead><tbody>${agentRows}</tbody></table></div>`;
+  }
+
+  if (ext?.leads_by_interest?.length > 0) {
+    const top10 = ext.leads_by_interest.slice(0, 10);
+    let rows = top10.map(l => `<tr><td>${l.interesse}</td><td class="num">${l.total}</td></tr>`).join('');
+    chartsHtml += `<div class="chart-card glass fade-in fade-in-6"><h3>Leads por Interesse</h3><table class="data-table"><thead><tr><th>Interesse</th><th>Total</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  }
+
+  // Now Fitness: leads table full-width at the bottom (after all charts)
+  if (context === 'lead_gen') {
+    const leadRecords = data.lead_records || [];
+    if (leadRecords.length > 0) {
+      const cleanPhone = (p) => p ? String(p).split('@')[0].replace(/^351/, '').replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3') : '—';
+      let leadsTableRows = leadRecords.map(l => `<tr><td>${l.nome || '—'}</td><td>${cleanPhone(l.telefone)}</td><td>${l.tipo_registo || '—'}</td><td style="font-size:0.813rem">${l.objetivo_cliente || '—'}</td><td>${l.criado_em?.substring(0,10) || '—'}</td></tr>`).join('');
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-6" style="grid-column: 1 / -1"><h3>Leads Registados (${leadRecords.length})</h3><table class="data-table"><thead><tr><th>Nome</th><th>Contacto</th><th>Tipo</th><th>Objetivo</th><th>Data</th></tr></thead><tbody>${leadsTableRows}</tbody></table></div>`;
+    }
+  }
+
+  // Abadias: leads recolhidos + handoffs full-width
+  if (context === 'driving_school') {
+    const extA = data.extended || {};
+    const leadsA = extA.leads_recent || [];
+    if (leadsA.length > 0) {
+      const cleanPhone = (p) => p ? String(p).split('@')[0].replace(/^351/, '').replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3') : '—';
+      let rows = leadsA.map(l => `<tr><td>${l.nome || '—'}</td><td>${cleanPhone(l.telefone)}</td><td>${l.categoria_interesse || '—'}</td><td>${l.escola_preferida || '—'}</td><td><span class="tag tag-mk">${l.status || '—'}</span></td><td>${l.created_at?.substring(0,10) || '—'}</td></tr>`).join('');
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-6" style="grid-column: 1 / -1"><h3>Leads Recolhidos pela IA (${leadsA.length})</h3><table class="data-table"><thead><tr><th>Nome</th><th>Contacto</th><th>Categoria</th><th>Escola</th><th>Estado</th><th>Data</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    }
+    const handoffs = extA.handoffs_recent || [];
+    if (handoffs.length > 0) {
+      let rows = handoffs.map(h => `<tr><td><span class="tag ${h.tag === 'aluno' ? 'tag-op' : 'tag-mk'}">${h.tag || '—'}</span></td><td style="font-size:0.813rem">${h.razao || '—'}</td><td>${h.created_at?.substring(0,16).replace('T',' ') || '—'}</td></tr>`).join('');
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-6" style="grid-column: 1 / -1"><h3>Escalações para Equipa (${handoffs.length})</h3><table class="data-table"><thead><tr><th>Tipo</th><th>Razão</th><th>Data</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    }
+  }
+
+  // Georgina Moura: leads recent table full-width
+  if (context === 'credit_qualifier') {
+    const ext2 = data.extended || {};
+    const leads = ext2.leads_recent || [];
+    if (leads.length > 0) {
+      const cleanPhone = (p) => p ? String(p).split('@')[0].replace(/^351/, '').replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3') : '—';
+      const stateBadge = (s) => s === 'encaminhada' ? `<span class="tag tag-mk">Encaminhada</span>` : s ? `<span class="tag tag-op">${s}</span>` : '—';
+      let rows = leads.map(l => `<tr><td>${l.nome || '—'}</td><td>${cleanPhone(l.telefone)}</td><td style="font-size:0.813rem">${l.objetivo_contacto || '—'}</td><td>${l.tem_credito_habitacao || '—'}</td><td>${stateBadge(l.estado)}</td><td>${l.created_at?.substring(0,10) || '—'}</td></tr>`).join('');
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-6" style="grid-column: 1 / -1"><h3>Leads Recolhidos (${leads.length})</h3><table class="data-table"><thead><tr><th>Nome</th><th>Contacto</th><th>Objetivo</th><th>Crédito Habitação</th><th>Estado</th><th>Data</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    }
+  }
+
+  // Costura Urbana: tabela comparativa por agente (Loja vs Assistência Técnica)
+  if (context === 'dual_agent') {
+    const meta = { wp_loja: 'Loja', wp_assistencia: 'Assistência Técnica' };
+    const ch = data.channels || {};
+    const keys = Object.keys(meta).filter(k => ch[k]);
+    if (keys.length > 0) {
+      const rows = keys.map(k => {
+        const d = ch[k];
+        const conv = d.conversations || 0;
+        const aiSolo = d.conversations_ai_only || 0;
+        const rate = d.resolution_rate || 0;
+        const rateColor = rate >= 70 ? '#00D4AA' : rate >= 50 ? '#e8e6f0' : '#FFB547';
+        return `<tr>
+          <td><strong>${meta[k]}</strong></td>
+          <td class="num">${formatNumber(conv)}</td>
+          <td class="num">${formatNumber(aiSolo)}</td>
+          <td class="num" style="color:${rateColor};font-weight:600;">${rate.toFixed(1)}%</td>
+          <td class="num">${formatNumber(d.messages_ai || 0)}</td>
+        </tr>`;
+      }).join('');
+      const tConv = keys.reduce((s, k) => s + (ch[k].conversations || 0), 0);
+      const tSolo = keys.reduce((s, k) => s + (ch[k].conversations_ai_only || 0), 0);
+      const tMsgs = keys.reduce((s, k) => s + (ch[k].messages_ai || 0), 0);
+      const tRate = tConv > 0 ? (tSolo / tConv) * 100 : 0;
+      const totalRow = `<tr style="border-top:2px solid rgba(255,255,255,0.12);">
+        <td><strong>Total</strong></td>
+        <td class="num"><strong>${formatNumber(tConv)}</strong></td>
+        <td class="num"><strong>${formatNumber(tSolo)}</strong></td>
+        <td class="num"><strong>${tRate.toFixed(1)}%</strong></td>
+        <td class="num"><strong>${formatNumber(tMsgs)}</strong></td>
+      </tr>`;
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-6" style="grid-column: 1 / -1">
+        <h3>Detalhe por Agente</h3>
+        <p style="color:#9b95b8;font-size:12px;margin:-4px 0 12px 0;">Cada agente tem o seu próprio fluxo e base de conhecimento · "Resolvidas só IA" = conversas fechadas sem qualquer intervenção da equipa</p>
+        <table class="data-table">
+          <thead><tr><th>Agente</th><th>Conversas</th><th>Resolvidas só IA</th><th>Taxa Resolução</th><th>Mensagens da IA</th></tr></thead>
+          <tbody>${rows}${totalRow}</tbody>
+        </table>
+      </div>`;
+    }
+  }
+
+  // Dr. Marco Rego (clinica): comentários por canal + qualificações/escalações por origem + leads de formulário
+  if (context === 'clinica') {
+    const extC = data.extended || {};
+    const CHLAB = { whatsapp: 'WhatsApp', instagram: 'Instagram', facebook: 'Facebook' };
+    const comm = extC.comments || [];
+    if (comm.length > 0) {
+      const rows = comm.map(c => `<tr><td>${CHLAB[c.channel] || c.channel}</td><td class="num">${formatNumber(c.total)}</td><td class="num">${formatNumber(c.people)}</td></tr>`).join('');
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-6"><h3>Comentários Tratados por Canal</h3><table class="data-table"><thead><tr><th>Canal</th><th>Comentários</th><th>Pessoas</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    }
+    const hos = extC.handoffs || [];
+    if (hos.length > 0) {
+      const MLAB = { qualificada: 'Qualificada', escalar_humano: 'Escalada' };
+      const rows = hos.map(h => `<tr><td>${h.channel || '—'}</td><td><span class="tag ${h.motivo === 'qualificada' ? 'tag-mk' : 'tag-op'}">${MLAB[h.motivo] || h.motivo}</span></td><td class="num">${formatNumber(h.total)}</td></tr>`).join('');
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-6"><h3>Qualificações & Escalações por Origem</h3><table class="data-table"><thead><tr><th>Origem</th><th>Tipo</th><th>Total</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    }
+    const lf = extC.leads_form || [];
+    if (lf.length > 0) {
+      const rows = lf.map(l => `<tr><td>${l.fonte || '—'}</td><td class="num">${formatNumber(l.total)}</td></tr>`).join('');
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-6"><h3>Leads de Formulário por Fonte</h3><table class="data-table"><thead><tr><th>Fonte</th><th>Entradas</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    }
+  }
+
+  // Isabel Pedroso (clinica_nutri): Funil de Leads + Origem das Leads + Autonomia + Mensagens Automáticas
+  if (context === 'clinica_nutri') {
+    const extN = data.extended || {};
+    const fn = extN.funnel || {};
+    const contactados = parseInt(fn.contactados) || 0;
+    const confirmadas = parseInt(fn.confirmadas) || 0;
+    const agendadas = (parseInt(fn.agendadas) || 0) + confirmadas;
+    const funnelTotal = contactados + agendadas;
+    const convRate = funnelTotal > 0 ? (agendadas / funnelTotal) * 100 : 0;
+
+    // Funil de Leads — Contactados → Agendadas → Confirmados (pagos) → conversão
+    const confirmadosBox = confirmadas > 0 ? `
+        <div style="display:flex;align-items:center;color:#6b6785;font-size:1.5rem;">→</div>
+        <div style="flex:1;min-width:150px;background:rgba(37,211,102,0.12);border-radius:12px;padding:18px;text-align:center;">
+          <div style="font-size:2rem;font-weight:700;color:#25D366;">${formatNumber(confirmadas)}</div>
+          <div style="color:#9b95b8;font-size:13px;margin-top:4px;">Clientes Confirmados</div>
+        </div>` : '';
+    chartsHtml += `<div class="chart-card glass fade-in fade-in-5" style="grid-column: 1 / -1">
+      <h3>Funil de Leads</h3>
+      <p style="color:#9b95b8;font-size:12px;margin:-4px 0 16px 0;">Do primeiro contacto pela IA à consulta agendada${confirmadas > 0 ? ' e confirmada com pagamento' : ''}</p>
+      <div style="display:flex;gap:16px;align-items:stretch;flex-wrap:wrap;">
+        <div style="flex:1;min-width:150px;background:rgba(112,102,168,0.12);border-radius:12px;padding:18px;text-align:center;">
+          <div style="font-size:2rem;font-weight:700;color:#9B8FD0;">${formatNumber(contactados)}</div>
+          <div style="color:#9b95b8;font-size:13px;margin-top:4px;">Contactados</div>
+        </div>
+        <div style="display:flex;align-items:center;color:#6b6785;font-size:1.5rem;">→</div>
+        <div style="flex:1;min-width:150px;background:rgba(0,212,170,0.12);border-radius:12px;padding:18px;text-align:center;">
+          <div style="font-size:2rem;font-weight:700;color:#00D4AA;">${formatNumber(agendadas)}</div>
+          <div style="color:#9b95b8;font-size:13px;margin-top:4px;">Consultas Agendadas</div>
+        </div>${confirmadosBox}
+        <div style="display:flex;align-items:center;color:#6b6785;font-size:1.5rem;">=</div>
+        <div style="flex:1;min-width:150px;background:rgba(255,181,71,0.12);border-radius:12px;padding:18px;text-align:center;">
+          <div style="font-size:2rem;font-weight:700;color:#FFB547;">${convRate.toFixed(1)}%</div>
+          <div style="color:#9b95b8;font-size:13px;margin-top:4px;">Taxa de Conversão</div>
+        </div>
+      </div>
+    </div>`;
+
+    // Origem das Leads — de onde chegam as conversas (1ª mensagem do cliente):
+    // quiz do site, mensagem padrão dos anúncios, ou mensagem escrita diretamente
+    const origens = extN.origens || [];
+    if (origens.length > 0) {
+      const ORIG_ORDER = ['anuncio', 'direto', 'quiz'];
+      const ORIG_LABELS = { anuncio: 'Anúncio (msg padrão)', direto: 'Mensagem direta', quiz: 'Quiz' };
+      const ordered = ORIG_ORDER.map(k => origens.find(o => o.origem === k)).filter(Boolean)
+        .concat(origens.filter(o => !ORIG_ORDER.includes(o.origem)));
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-6"><h3>Origem das Conversas</h3><div class="chart-container" id="chart-ips-origem"></div></div>`;
+      const rows = ordered.map(o => `<tr><td>${ORIG_LABELS[o.origem] || o.origem}</td><td class="num">${formatNumber(parseInt(o.conversas) || 0)}</td><td class="num">${formatNumber(parseInt(o.leads) || 0)}</td><td class="num">${formatNumber(parseInt(o.agendadas) || 0)}</td><td class="num">${formatNumber(parseInt(o.pagas) || 0)}</td></tr>`).join('');
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-6">
+        <h3>Resultados por Origem</h3>
+        <div style="overflow-x:auto"><table class="data-table" style="min-width:440px"><thead><tr><th>Origem</th><th>Conversas</th><th>Leads</th><th>Consultas</th><th>Pagas</th></tr></thead><tbody>${rows}</tbody></table></div>
+        <p style="color:#6b6785;font-size:11px;margin:10px 0 0 0;">Origem identificada pela primeira mensagem do cliente. "Leads" pode exceder "Conversas" quando a qualificação acontece depois do período da primeira conversa.</p>
+      </div>`;
+    }
+
+    // Autonomia da IA (sobre leads)
+    const au = extN.autonomia_leads || {};
+    const auTotal = parseInt(au.total) || 0;
+    const auSoIa = parseInt(au.so_ia) || 0;
+    const auPct = auTotal > 0 ? (auSoIa / auTotal) * 100 : 0;
+    const auColor = auPct >= 60 ? '#00D4AA' : auPct >= 40 ? '#FFB547' : '#FF6B6B';
+    if (auTotal > 0) {
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-6">
+        <h3>Autonomia da IA (sobre leads)</h3>
+        <div style="text-align:center;padding:12px 0;">
+          <div style="font-size:3rem;font-weight:700;color:${auColor};">${auPct.toFixed(0)}%</div>
+          <div style="color:#9b95b8;font-size:13px;margin-top:6px;">${formatNumber(auSoIa)} de ${formatNumber(auTotal)} leads geridos sem intervenção da equipa</div>
+        </div>
+        <p style="color:#6b6785;font-size:11px;margin:8px 0 0 0;text-align:center;">Percentagem de leads cujas conversas decorreram inteiramente com a IA, sem qualquer mensagem de atendente humano.</p>
+      </div>`;
+    }
+
+    // Mensagens Automáticas (labels amigáveis)
+    const AUTO_LABELS = {
+      auto_followup_ia_24h: 'Follow-up lead',
+      lembrete_prestacoes: 'Lembrete prestação',
+      auto_pos_consulta_avulsa: 'Pós-consulta',
+      auto_pos_acompanhamento: 'Pós-acompanhamento',
+      auto_followup_pagamento_avulsa: 'Follow-up pagamento',
+      aviso_prazo_pagamento: 'Aviso prazo (interno)'
+    };
+    const autos = (extN.automacao || []).slice().sort((a, b) => (parseInt(b.sends) || 0) - (parseInt(a.sends) || 0));
+    if (autos.length > 0) {
+      const totalAuto = autos.reduce((s, a) => s + (parseInt(a.sends) || 0), 0);
+      const rows = autos.map(a => `<tr><td>${AUTO_LABELS[a.workflow_name] || a.workflow_name}</td><td class="num">${formatNumber(parseInt(a.sends) || 0)}</td></tr>`).join('');
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-6">
+        <h3>Mensagens Automáticas</h3>
+        <p style="color:#9b95b8;font-size:12px;margin:-4px 0 12px 0;">${formatNumber(totalAuto)} envios · follow-ups, lembretes e pós-consulta</p>
+        <table class="data-table"><thead><tr><th>Tipo</th><th>Enviadas</th></tr></thead><tbody>${rows}</tbody></table>
+      </div>`;
+    }
+  }
+
+  // Trans Serrano (turismo_conversas): comentários por canal + pré-reservas por atividade
+  if (context === 'turismo_conversas') {
+    const extT = data.extended || {};
+    const CHLAB = { whatsapp: 'WhatsApp', instagram: 'Instagram', facebook: 'Facebook' };
+    const comm = extT.comments || [];
+    if (comm.length > 0) {
+      const rows = comm.map(c => `<tr><td>${CHLAB[c.channel] || c.channel}</td><td class="num">${formatNumber(c.total)}</td><td class="num">${formatNumber(c.people)}</td></tr>`).join('');
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-6"><h3>Comentários Tratados por Canal</h3><table class="data-table"><thead><tr><th>Canal</th><th>Comentários</th><th>Pessoas</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    }
+    const pr = extT.pre_reservas || [];
+    if (pr.length > 0) {
+      const top = pr.slice(0, 15);
+      const rows = top.map(p => `<tr><td>${CHLAB[p.canal] || p.canal || '—'}</td><td>${p.atividade || '—'}</td><td class="num">${formatNumber(p.total)}</td></tr>`).join('');
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-6" style="grid-column: 1 / -1"><h3>Pré-reservas por Atividade</h3><table class="data-table"><thead><tr><th>Canal</th><th>Atividade</th><th>Total</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    }
+  }
+
+  // Fundo Solar (lead_qualifier_solar): funil visual com contagens por estado
+  if (context === 'lead_qualifier_solar') {
+    const extF = data.extended || {};
+    const fn = extF.funnel || {};
+    const novo = parseInt(fn.novo) || 0;
+    const emConv = parseInt(fn.em_conversa) || 0;
+    const qual = parseInt(fn.qualificada) || 0;
+    const totalLeads = parseInt(fn.total) || 0;
+    if (totalLeads > 0) {
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-5" style="grid-column: 1 / -1">
+        <h3>Funil de Leads</h3>
+        <p style="color:#9b95b8;font-size:12px;margin:-4px 0 16px 0;">Do primeiro contacto da Clara ao lead qualificado e entregue ao comercial</p>
+        <div style="display:flex;gap:16px;align-items:stretch;flex-wrap:wrap;">
+          <div style="flex:1;min-width:150px;background:rgba(112,102,168,0.12);border-radius:12px;padding:18px;text-align:center;">
+            <div style="font-size:2rem;font-weight:700;color:#9B8FD0;">${formatNumber(novo)}</div>
+            <div style="color:#9b95b8;font-size:13px;margin-top:4px;">Novo</div>
+          </div>
+          <div style="display:flex;align-items:center;color:#6b6785;font-size:1.5rem;">→</div>
+          <div style="flex:1;min-width:150px;background:rgba(255,181,71,0.12);border-radius:12px;padding:18px;text-align:center;">
+            <div style="font-size:2rem;font-weight:700;color:#FFB547;">${formatNumber(emConv)}</div>
+            <div style="color:#9b95b8;font-size:13px;margin-top:4px;">Em Conversa</div>
+          </div>
+          <div style="display:flex;align-items:center;color:#6b6785;font-size:1.5rem;">→</div>
+          <div style="flex:1;min-width:150px;background:rgba(0,212,170,0.12);border-radius:12px;padding:18px;text-align:center;">
+            <div style="font-size:2rem;font-weight:700;color:#00D4AA;">${formatNumber(qual)}</div>
+            <div style="color:#9b95b8;font-size:13px;margin-top:4px;">Qualificada</div>
+          </div>
+        </div>
+      </div>`;
+    }
+  }
+
+  // Translowcost (qualificador_mudancas): funil visual 5 stages
+  if (context === 'qualificador_mudancas') {
+    const extTL = data.extended || {};
+    const fn = extTL.funnel || {};
+    const stages = [
+      ['lead_recebida', 'Lead Recebida', '#9B8FD0'],
+      ['em_qualificacao', 'Em Qualificação', '#FFB547'],
+      ['aguarda_comercial', 'Aguarda Comercial', '#00D4AA'],
+      ['videochamada_agendada', 'Videochamada', '#7066A8']
+    ];
+    const totalStages = stages.reduce((s, [k]) => s + (parseInt(fn[k]) || 0), 0);
+    if (totalStages > 0) {
+      const boxes = stages.map(([k, label, color], i) => {
+        const val = parseInt(fn[k]) || 0;
+        return `<div style="flex:1;min-width:140px;background:${color}22;border-radius:12px;padding:18px;text-align:center;">
+          <div style="font-size:1.75rem;font-weight:700;color:${color};">${formatNumber(val)}</div>
+          <div style="color:#9b95b8;font-size:12px;margin-top:4px;">${label}</div>
+        </div>${i < stages.length - 1 ? '<div style="display:flex;align-items:center;color:#6b6785;font-size:1.3rem;">→</div>' : ''}`;
+      }).join('');
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-5" style="grid-column: 1 / -1">
+        <h3>Funil de Qualificação</h3>
+        <p style="color:#9b95b8;font-size:12px;margin:-4px 0 16px 0;">Estado das leads no PipeDrive no período selecionado</p>
+        <div style="display:flex;gap:12px;align-items:stretch;flex-wrap:wrap;">${boxes}</div>
+      </div>`;
+    }
+  }
+
+  // Núbia (ecommerce_multicanal): comentários por canal + temas dos comentários
+  if (context === 'ecommerce_multicanal') {
+    const extE = data.extended || {};
+    const CHLAB = { whatsapp: 'WhatsApp', instagram: 'Instagram', facebook: 'Facebook' };
+    const comm = extE.comments || [];
+    if (comm.length > 0) {
+      const dmResp = parseInt(extE.comments_dm_respondidas) || 0;
+      const ocultados = comm.reduce((s, c) => s + (parseInt(c.ocultados) || 0), 0);
+      const notas = [];
+      if (dmResp > 0) notas.push(`${formatNumber(dmResp)} pessoas responderam à mensagem privada e seguiram a conversa com a IA.`);
+      if (ocultados > 0) notas.push(`${formatNumber(ocultados)} comentários hostis ou spam foram ocultados.`);
+      const rows = comm.map(c => `<tr><td>${CHLAB[c.channel] || c.channel}</td><td class="num">${formatNumber(parseInt(c.total) || 0)}</td><td class="num">${formatNumber(parseInt(c.respondidos) || 0)}</td><td class="num">${formatNumber(parseInt(c.dms) || 0)}</td></tr>`).join('');
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-6">
+        <h3>Comentários por Canal</h3>
+        <p style="color:#9b95b8;font-size:12px;margin:-4px 0 12px 0;">Resposta pública e, quando há pergunta ou interesse, uma mensagem privada para continuar a conversa</p>
+        <div style="overflow-x:auto"><table class="data-table"><thead><tr><th>Canal</th><th>Tratados</th><th>Respondidos</th><th>DMs</th></tr></thead><tbody>${rows}</tbody></table></div>
+        ${notas.length ? `<p style="color:#6b6785;font-size:11px;margin:10px 0 0 0;">${notas.join(' ')}</p>` : ''}
+      </div>`;
+    }
+    const temas = extE.comments_temas || [];
+    if (temas.length > 0) {
+      const TEMA = {
+        pergunta_preco: 'Pergunta de preço', interesse_compra: 'Interesse em comprar', pergunta_produto: 'Pergunta sobre produto',
+        pergunta_encomenda: 'Pergunta sobre encomenda', pergunta_envio: 'Pergunta sobre envio', elogio: 'Elogio', critica: 'Crítica',
+        marcacao_amigo: 'Marcação de amigo', hostil: 'Hostil', spam: 'Spam', outro: 'Outro'
+      };
+      const rows = temas.map(t => `<tr><td>${TEMA[t.categoria] || t.categoria}</td><td class="num">${formatNumber(parseInt(t.total) || 0)}</td></tr>`).join('');
+      chartsHtml += `<div class="chart-card glass fade-in fade-in-6"><h3>Temas dos Comentários</h3><table class="data-table"><thead><tr><th>Tema</th><th>Comentários</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    }
+  }
+
+  return `
+    <div class="section-title fade-in fade-in-1">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7066A8" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+      Agente IA
+    </div>
+    <div class="kpi-grid">${kpiCards}</div>
+    <div class="charts-grid">${chartsHtml}</div>
+  `;
+}
+
+// ---- Content Section (Memo.ria — geração de blog posts SEO) ----
+function renderContentSection(client, data) {
+  const t = data.totals || {};
+  const posts = parseInt(t.posts_gerados) || 0;
+  const publicados = parseInt(t.publicados) || 0;
+  const taxaPub = parseFloat(t.taxa_publicacao) || 0;
+  const pilares = parseInt(t.pilares_cobertos) || 0;
+  const photoBank = data.photo_bank || {};
+  const livres = parseInt(photoBank.livres) || 0;
+  const totalPhotos = parseInt(photoBank.total) || 0;
+  const usadas = parseInt(photoBank.usadas) || 0;
+  const photoColorClass = livres > 30 ? 'positive' : livres >= 10 ? '' : 'warning';
+
+  const periodLabel = { '7d': '7 dias', '15d': '15 dias', '30d': '30 dias', 'this-month': 'este mês', 'last-month': 'mês anterior', 'custom': 'personalizado' }[currentPeriod] || '30 dias';
+
+  let kpiCards = '';
+  kpiCards += kpiCard('Posts Gerados', posts, periodLabel, 2);
+  kpiCards += kpiCard('Publicados', publicados, `${taxaPub.toFixed(0)}% taxa de publicação`, 3, publicados > 0 ? 'positive' : '');
+  kpiCards += kpiCard('Pilares Cobertos', pilares, 'de 7 áreas clínicas', 4);
+  kpiCards += kpiCard('Fotos Disponíveis', livres, `de ${formatNumber(totalPhotos)} · ${formatNumber(usadas)} usadas`, 5, photoColorClass);
+  if (data.last_run) {
+    const lastRun = String(data.last_run).substring(0, 16).replace('T', ' ');
+    kpiCards += kpiCard('Última Execução', lastRun, 'último post gerado', 6);
+  }
+
+  let chartsHtml = '';
+  if ((data.posts_by_day || []).length > 0) {
+    chartsHtml += `<div class="chart-card glass fade-in fade-in-5" style="grid-column: 1 / -1"><h3>Produção Diária</h3><div class="chart-container" id="chart-content-daily" style="height:280px"></div></div>`;
+  }
+  if ((data.posts_by_pillar || []).length > 0) {
+    chartsHtml += `<div class="chart-card glass fade-in fade-in-6"><h3>Distribuição por Pilar</h3><div class="chart-container" id="chart-content-pillars"></div></div>`;
+  }
+  if ((data.posts_by_status || []).length > 0) {
+    chartsHtml += `<div class="chart-card glass fade-in fade-in-6"><h3>Status Pipeline</h3><div class="chart-container" id="chart-content-status"></div></div>`;
+  }
+
+  // Latest posts table
+  const PILLAR_LAB = {
+    estimulacao_cognitiva: 'Estimulação Cognitiva',
+    reabilitacao_avc: 'Reabilitação AVC',
+    demencia_alzheimer: 'Demência / Alzheimer',
+    terapia_ocupacional: 'Terapia Ocupacional',
+    neurodesenvolvimento: 'Neurodesenvolvimento',
+    psicologia_clinica: 'Psicologia Clínica',
+    psicogerontologia: 'Psicogerontologia'
+  };
+  const STATUS_LAB = {
+    pending_review: '<span class="tag tag-op">Aguarda Revisão</span>',
+    manually_published: '<span class="tag tag-mk">Publicado</span>',
+    archived: '<span class="tag" style="background:#333;color:#999;">Arquivado</span>'
+  };
+  const latest = data.latest_posts || [];
+  if (latest.length > 0) {
+    const rows = latest.slice(0, 10).map(p => {
+      const dateStr = (p.created_at || '').substring(0, 10);
+      const status = STATUS_LAB[p.status] || `<span class="tag">${p.status || '—'}</span>`;
+      const title = p.webflow_url ? `<a href="${p.webflow_url}" target="_blank" rel="noopener" style="color:#9B8FD0;text-decoration:none;">${p.title}</a>` : p.title;
+      return `<tr><td style="max-width:400px;">${title}</td><td>${PILLAR_LAB[p.pillar] || p.pillar || '—'}</td><td>${status}</td><td class="num">${dateStr}</td></tr>`;
+    }).join('');
+    chartsHtml += `<div class="chart-card glass fade-in fade-in-6" style="grid-column: 1 / -1"><h3>Últimos Posts</h3><table class="data-table"><thead><tr><th>Título</th><th>Pilar</th><th>Estado</th><th>Data</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  }
+
+  // Keyword coverage
+  const kws = data.keyword_coverage || [];
+  if (kws.length > 0) {
+    const zeroKw = kws.filter(k => (parseInt(k.uses) || 0) === 0).length;
+    const rows = kws.slice(0, 20).map(k => {
+      const uses = parseInt(k.uses) || 0;
+      const usesCell = uses === 0 ? `<span style="color:#FF6B6B;">0</span>` : String(uses);
+      return `<tr><td>${k.keyword}</td><td>${PILLAR_LAB[k.pillar] || k.pillar || '—'}</td><td class="num">${usesCell}</td></tr>`;
+    }).join('');
+    chartsHtml += `<div class="chart-card glass fade-in fade-in-6" style="grid-column: 1 / -1"><h3>Cobertura de Keywords <span style="font-size:12px;color:#9b95b8;font-weight:400;">(${kws.length} keywords ativas · ${zeroKw} nunca usadas no período)</span></h3><table class="data-table"><thead><tr><th>Keyword</th><th>Pilar</th><th>Posts no período</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  }
+
+  return `
+    <div class="section-title fade-in fade-in-1">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7066A8" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+      Geração de Conteúdo
+    </div>
+    <div class="kpi-grid">${kpiCards}</div>
+    <div class="charts-grid">${chartsHtml}</div>
+  `;
+}
+
+// ---- Messaging Section ----
+function renderMessagingSection(client, data) {
+  const totalOp = data.total_operacionais;
+  const totalMkt = data.total_marketing || data.total_automaticas;
+  const totalMsgs = data.messages_sent;
+  const totalOrders = data.total_orders;
+  const totalRevenue = data.total_revenue;
+  const totalClicked = data.total_clicked || 0;
+  const clickRate = data.click_rate || 0;
+  const cost = client.costPerMessage || 0; // €/msg
+
+  // ===== Top KPIs =====
+  let kpiCards = kpiCard('Total Mensagens', totalMsgs, '', 2);
+  if (totalOp > 0) kpiCards += kpiCard('Operacionais', totalOp, client.opSubLabel || 'morada, MB, MBWay', 3);
+  if (totalMkt > 0) kpiCards += kpiCard('Marketing', totalMkt, client.mktSubLabel || 'carrinhos, upsell, recuperação', 4);
+  if (totalClicked > 0) kpiCards += kpiCard('Cliques', totalClicked, `${clickRate.toFixed(1)}% taxa de clique`, 5);
+  if (totalOrders > 0) kpiCards += kpiCard('Encomendas', totalOrders, `${formatNumber(totalRevenue)}€ receita`, 6);
+
+  // ===== Cost & ROI Section — ROI calculado SÓ sobre marketing =====
+  // (operacionais são transacionais e não geram receita atribuída → fora do ROI)
+  const costOp = client.costPerMessageOp || 0; // €/msg operacionais
+  let costRoiSection = '';
+  if (cost > 0 && totalMkt > 0) {
+    const mktCost = totalMkt * cost;            // custo só das mensagens marketing
+    const netMargin = totalRevenue - mktCost;
+    const roiPct = mktCost > 0 ? (netMargin / mktCost) * 100 : 0;
+    const roasMult = mktCost > 0 ? totalRevenue / mktCost : 0;
+    const positive = netMargin >= 0;
+    const marginColor = positive ? '#00D4AA' : '#FF6B6B';
+    const costFmt = cost.toFixed(2).replace('.', ',');
+    const opCostTotal = (costOp > 0 && totalOp > 0) ? totalOp * costOp : 0;
+    const opCostFmt = costOp.toFixed(2).replace('.', ',');
+
+    // Card de custo operacionais (informativo — separado, fora do ROI)
+    const opCostCard = opCostTotal > 0 ? `
+        <div class="kpi-card glass fade-in fade-in-6">
+          <div class="kpi-label">Custo Operacionais</div>
+          <div class="kpi-value" data-count="${Math.round(opCostTotal)}" data-suffix="€">0</div>
+          <div class="kpi-sub">${formatNumber(totalOp)} × ${opCostFmt}€/msg · fora do ROI</div>
+        </div>` : '';
+
+    costRoiSection = `
+      <div class="section-title fade-in fade-in-1" style="margin-top:24px;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7066A8" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+        ROI Marketing
+      </div>
+      <div class="kpi-grid">
+        <div class="kpi-card glass fade-in fade-in-2">
+          <div class="kpi-label">Custo Marketing</div>
+          <div class="kpi-value" data-count="${Math.round(mktCost)}" data-suffix="€">0</div>
+          <div class="kpi-sub">${formatNumber(totalMkt)} × ${costFmt}€/msg</div>
+        </div>
+        <div class="kpi-card glass fade-in fade-in-3">
+          <div class="kpi-label">Receita Atribuída</div>
+          <div class="kpi-value" data-count="${Math.round(totalRevenue)}" data-suffix="€">0</div>
+          <div class="kpi-sub">${totalOrders} encomendas</div>
+        </div>
+        <div class="kpi-card glass fade-in fade-in-4">
+          <div class="kpi-label">Margem Líquida</div>
+          <div class="kpi-value" style="color:${marginColor};" data-count="${Math.round(netMargin)}" data-suffix="€">0</div>
+          <div class="kpi-sub">receita − custo marketing</div>
+        </div>
+        <div class="kpi-card glass fade-in fade-in-5">
+          <div class="kpi-label">ROI</div>
+          <div class="kpi-value" style="color:${marginColor};" data-count="${Math.round(roiPct)}" data-suffix="%">0</div>
+          <div class="kpi-sub">${roasMult.toFixed(2)}x ROAS</div>
+        </div>
+        ${opCostCard}
+      </div>
+    `;
+  }
+
+  // ===== Operacionais table =====
+  let opSection = '';
+  if (totalOp > 0) {
+    const opRows = (data.operacionais || []).slice().sort((a,b)=>b.total-a.total).map(r =>
+      `<tr><td>${prettyMsgType(r.tipo)}</td><td class="num">${formatNumber(r.total)}</td></tr>`
+    ).join('');
+    opSection = `
+      <div class="chart-card glass fade-in fade-in-5">
+        <h3>Mensagens Operacionais</h3>
+        <p style="color:#9b95b8;font-size:12px;margin:-4px 0 12px 0;">Confirmações transacionais, sem receita atribuída</p>
+        <table class="data-table"><thead><tr><th>Tipo</th><th>Enviadas</th></tr></thead><tbody>${opRows}</tbody></table>
+      </div>
+    `;
+  }
+
+  // ===== Marketing ROI table =====
+  let mkSection = '';
+  if (totalMkt > 0 && (data.marketing || []).length > 0) {
+    const bestByCat = {};
+    data.marketing.forEach(m => {
+      if (m.revenue > 0 && (!bestByCat[m.categoria] || m.revenue > bestByCat[m.categoria].revenue)) {
+        bestByCat[m.categoria] = m;
+      }
+    });
+
+    const slug = getClientSlug();
+    const mkRows = data.marketing.map(m => {
+      const seqLabel = msgSeqLabel(slug, m.campaign_type, m.sequence);
+      const isBest = bestByCat[m.categoria] === m;
+      const trophy = isBest ? ' 🥇' : '';
+      const rowCost = cost > 0 ? m.sends * cost : 0;
+      const rowMargin = m.revenue - rowCost;
+      let roiCell = '<td class="num" style="color:#9b95b8;">—</td>';
+      if (cost > 0 && rowCost > 0) {
+        const rowRoi = (rowMargin / rowCost) * 100;
+        const color = rowMargin >= 0 ? '#00D4AA' : '#FF6B6B';
+        roiCell = `<td class="num" style="color:${color};font-weight:600;">${rowRoi.toFixed(0)}%</td>`;
+      } else if (m.revenue > 0) {
+        roiCell = `<td class="num">${m.revenue_per_msg.toFixed(2)}€/msg</td>`;
+      }
+      return `<tr>
+        <td>${prettyMsgType(m.categoria)}${trophy}</td>
+        <td class="num">${seqLabel}</td>
+        <td class="num">${formatNumber(m.sends)}</td>
+        <td class="num">${formatNumber(m.clicks)}</td>
+        <td class="num">${m.click_rate.toFixed(1)}%</td>
+        <td class="num">${formatNumber(m.orders)}</td>
+        <td class="num">${formatNumber(m.revenue)}€</td>
+        ${roiCell}
+      </tr>`;
+    }).join('');
+    const roiHeader = cost > 0 ? 'ROI' : '€/msg';
+    const costNote = cost > 0 ? ` · Custo ${cost.toFixed(2).replace('.', ',')}€/msg` : '';
+    mkSection = `
+      <div class="chart-card glass fade-in fade-in-6">
+        <h3>Marketing: Performance por Tipo & Sequência</h3>
+        <p style="color:#9b95b8;font-size:12px;margin:-4px 0 12px 0;">Receita atribuída a cada mensagem · 🥇 melhor performer por tipo${costNote}</p>
+        <div style="overflow-x:auto;">
+          <table class="data-table" style="font-size:13px;min-width:680px;">
+            <thead><tr><th>Tipo</th><th>Msg</th><th>Enviadas</th><th>Cliques</th><th>CTR</th><th>Encom.</th><th>Receita</th><th>${roiHeader}</th></tr></thead>
+            <tbody>${mkRows}</tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="section-title fade-in fade-in-1">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7066A8" stroke-width="2"><path d="M22 2L11 13"></path><path d="M22 2L15 22L11 13L2 9L22 2Z"></path></svg>
+      Mensagens Automáticas
+    </div>
+    <div class="kpi-grid">${kpiCards}</div>
+    ${costRoiSection}
+    <div class="charts-grid" style="margin-top:24px;">
+      <div class="chart-card glass fade-in fade-in-4"><h3>Distribuição por Tipo</h3><div class="chart-container" id="chart-msg-types"></div></div>
+      ${opSection}
+    </div>
+    ${mkSection ? `<div style="margin-top:24px;">${mkSection}</div>` : ''}
+  `;
+}
+
+function prettyMsgType(t) {
+  const map = {
+    MBWAY: 'MBWay',
+    MULTIBANCO: 'Multibanco',
+    MORADA: 'Morada',
+    UNBOXING: 'Unboxing',
+    'CÓDIGO POSTAL': 'Código Postal',
+    winback_21d: 'Recuperação 21d',
+    winback_45d: 'Recuperação 45d',
+    winback_60d: 'Recuperação 60d',
+    winback_90d: 'Recuperação 90d',
+    recovery: 'Carrinho Abandonado',
+    upsell: 'Upsell',
+    // Núbia: operacionais de pagamento (segment em mensagens_automaticas)
+    PAGAMENTO_EXPIRADO: 'Pagamento pendente (24h)',
+    ANULADA_ALTERNATIVA: 'Pagamento anulado (alternativa)',
+    MULTIBANCO_REF: 'Referência Multibanco',
+    MBWAY_NAO_CONCLUIDO: 'MB Way não concluído'
+  };
+  return map[t] || t;
+}
+
+// Custom labels for marketing message sequence (per client + campaign_type)
+const MSG_SEQ_LABELS = {
+  fbeauty: {
+    recovery: {
+      1: '30min · cliente novo',
+      2: '24h · cliente novo',
+      3: '48h · cliente novo',
+      4: '30min · cliente atual',
+      5: '24h · cliente atual'
+    }
+  },
+  nubia: {
+    recovery: {
+      1: '20 min',
+      2: '24h',
+      3: '48h · cupão 5%'
+    },
+    upsell: {
+      1: 'pós-compra'
+    }
+  }
+};
+
+function msgSeqLabel(slug, campaignType, sequence) {
+  if (sequence == null) return '—';
+  const label = MSG_SEQ_LABELS[slug]?.[campaignType]?.[sequence];
+  return label || `Msg ${sequence}`;
+}
+
+// ---- Insights Section ----
+function renderInsightsSection(insight) {
+  return `
+    <div class="section-title fade-in fade-in-1">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00D4AA" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+      Insights
+    </div>
+    <div class="insights-card glass fade-in fade-in-2">
+      <div class="insights-header"><span class="insights-badge">AI Analysis</span></div>
+      <div class="insights-content">${insight.text}</div>
+      <div class="insights-date">Análise de ${insight.month}</div>
+    </div>
+  `;
+}
+
+// ---- KPI Card Helpers ----
+function kpiCard(label, value, sub, fadeN, colorClass, suffix) {
+  const suffixAttr = suffix ? ` data-suffix="${suffix}"` : '';
+  return `
+    <div class="kpi-card glass fade-in fade-in-${fadeN}">
+      <div class="kpi-label">${label}</div>
+      <div class="kpi-value ${colorClass || ''}" data-count="${value}"${suffixAttr}>0</div>
+      ${sub ? `<div class="kpi-sub">${sub}</div>` : ''}
+    </div>`;
+}
+
+function kpiCardPercent(label, value, fadeN, colorClass) {
+  return `
+    <div class="kpi-card glass fade-in fade-in-${fadeN}">
+      <div class="kpi-label">${label}</div>
+      <div class="kpi-value ${colorClass || ''}" data-count="${value}" data-suffix="%">0</div>
+      <div class="kpi-sub">sem intervenção humana</div>
+    </div>`;
+}
+
+// ============================================================
+// Dynamic insight generation based on real data
+// ============================================================
+function generateInsight(slug, client, chatbot, messaging, clicks, content) {
+  if (!chatbot && !messaging && !content) return null;
+
+  const periodLabel = currentPeriod === 'this-month' ? 'este mês' : currentPeriod === 'last-month' ? 'no mês anterior' : currentPeriod === 'custom' ? 'no período selecionado' : `nos últimos ${currentPeriod.replace('d', ' dias')}`;
+  const bits = [];
+
+  // ---- Chatbot insights ----
+  if (chatbot) {
+    const total = chatbot.total_conversations || 0;
+    const aiRate = chatbot.ai_resolution_rate || 0;
+    const aiMsgs = chatbot.messages_ai || 0;
+    const offHours = chatbot.extended?.off_hours;
+    const context = client.context;
+
+    if (total > 0) {
+      // Opening line
+      if (context === 'porteiro') {
+        bits.push(`O agente processou <strong>${total.toLocaleString('pt-PT')} conversas</strong>, resolvendo <strong>${Math.round(aiRate)}% sem intervenção humana</strong>.`);
+      } else if (context === 'qualificador') {
+        const cls = chatbot.extended?.classification;
+        const novos = parseInt(cls?.novos_leads) || 0;
+        const existentes = parseInt(cls?.clientes_existentes) || 0;
+        bits.push(`A IA processou <strong>${total.toLocaleString('pt-PT')} conversas</strong>, identificando <strong>${existentes} clientes existentes</strong> e qualificando <strong>${novos} novos leads</strong> com recolha de dados completa.`);
+      } else if (context === 'leads') {
+        const leadsCount = chatbot.leads_period || 0;
+        bits.push(`O agente processou <strong>${total.toLocaleString('pt-PT')} conversas</strong> ${periodLabel}, com taxa de resolução de <strong>${Math.round(aiRate)}%</strong>${leadsCount > 0 ? ` e <strong>${leadsCount} leads recolhidos</strong>` : ''}.`);
+      } else if (context === 'lead_gen') {
+        const leads = chatbot.total_leads || 0;
+        const convRate = chatbot.conversion_rate || 0;
+        bits.push(`O sistema de lead gen Instagram gerou <strong>${leads} leads registados</strong> de ${chatbot.unique_users || total} utilizadores únicos (${convRate.toFixed(1)}% conversão).`);
+      } else if (context === 'dual_agent') {
+        // Costura Urbana: 2 agentes — destacar o de melhor desempenho
+        const meta = { wp_loja: 'Loja', wp_assistencia: 'Assistência Técnica' };
+        const ch = chatbot.channels || {};
+        const ranked = Object.keys(meta).filter(k => ch[k] && ch[k].conversations > 0)
+          .sort((a, b) => (ch[b].resolution_rate || 0) - (ch[a].resolution_rate || 0));
+        bits.push(`Os <strong>dois agentes IA</strong> (Loja e Assistência Técnica) processaram <strong>${total.toLocaleString('pt-PT')} conversas</strong> ${periodLabel}, resolvendo <strong>${Math.round(aiRate)}%</strong> sem qualquer intervenção da equipa.`);
+        if (ranked.length > 0) {
+          const top = ranked[0];
+          bits.push(`O agente de <strong>${meta[top]}</strong> destacou-se com <strong>${(ch[top].resolution_rate || 0).toFixed(0)}% de resolução autónoma</strong>.`);
+        }
+      } else if (context === 'clinica') {
+        const ext = chatbot.extended || {};
+        const ht = ext.handoff_totals || {};
+        const qualif = parseInt(ht.qualificadas) || 0;
+        const escal = parseInt(ht.escaladas) || 0;
+        const comments = (ext.comments || []).reduce((s, c) => s + (parseInt(c.total) || 0), 0);
+        bits.push(`A assistente Íris processou <strong>${total.toLocaleString('pt-PT')} conversas</strong> nos 3 canais (WhatsApp, Instagram e Facebook) ${periodLabel}, com <strong>${aiMsgs.toLocaleString('pt-PT')} respostas automáticas</strong> e uma taxa de resolução de <strong>${Math.round(aiRate)}%</strong>.`);
+        if (comments > 0) bits.push(`Foram ainda tratados <strong>${comments.toLocaleString('pt-PT')} comentários</strong> em Instagram e Facebook.`);
+        bits.push(`No total, <strong>${qualif} leads qualificados</strong> foram encaminhados para marcação${escal > 0 ? ` e <strong>${escal}</strong> casos escalados para a equipa` : ''}.`);
+      } else if (context === 'clinica_nutri') {
+        const ext = chatbot.extended || {};
+        const fn = ext.funnel || {};
+        const contactados = parseInt(fn.contactados) || 0;
+        const confirmadas = parseInt(fn.confirmadas) || 0;
+        const agendadas = (parseInt(fn.agendadas) || 0) + confirmadas;
+        const pag = ext.pagamentos || {};
+        const pagas = parseInt(pag.pagas) || 0;
+        const valorPago = parseFloat(pag.valor_pago) || 0;
+        const au = ext.autonomia_leads || {};
+        const auTotal = parseInt(au.total) || 0;
+        const auSoIa = parseInt(au.so_ia) || 0;
+        const auPct = auTotal > 0 ? Math.round((auSoIa / auTotal) * 100) : 0;
+        bits.push(`A assistente Maria processou <strong>${total.toLocaleString('pt-PT')} conversas</strong> ${periodLabel} (WhatsApp e Facebook), com <strong>${aiMsgs.toLocaleString('pt-PT')} respostas automáticas</strong>.`);
+        if (contactados > 0) bits.push(`Foram qualificados e contactados <strong>${contactados} leads</strong>, dos quais <strong>${agendadas} avançaram para consulta agendada</strong>.`);
+        if (pagas > 0) bits.push(`Deste percurso resultaram <strong>${pagas} reservas pagas</strong>, num total de <strong>${valorPago.toLocaleString('pt-PT')}€</strong> cobrados via link de pagamento.`);
+        const origs = ext.origens || [];
+        if (origs.length > 0) {
+          const ORIG_LAB = { anuncio: 'a mensagem padrão dos anúncios', direto: 'mensagens escritas diretamente', quiz: 'o quiz' };
+          const top = origs.slice().sort((a, b) => (parseInt(b.conversas) || 0) - (parseInt(a.conversas) || 0))[0];
+          const totalConv = origs.reduce((s, o) => s + (parseInt(o.conversas) || 0), 0);
+          if (top && totalConv > 0) bits.push(`A principal porta de entrada foi <strong>${ORIG_LAB[top.origem] || top.origem}</strong> (${Math.round(((parseInt(top.conversas) || 0) / totalConv) * 100)}% das conversas novas).`);
+        }
+        if (auTotal > 0) bits.push(`<strong>${auPct}% dos leads</strong> foram geridos inteiramente pela IA, sem intervenção da equipa.`);
+      } else if (context === 'turismo_conversas') {
+        const ext = chatbot.extended || {};
+        const preReservas = parseInt(ext.pre_reservas_total) || 0;
+        const comments = (ext.comments || []).reduce((s, c) => s + (parseInt(c.total) || 0), 0);
+        const cost = client.costPerConversation || 0;
+        const custo = total * cost;
+        const custoFmt = custo.toLocaleString('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        bits.push(`A IA processou <strong>${total.toLocaleString('pt-PT')} conversas faturáveis</strong> ${periodLabel} em WhatsApp, Instagram e Facebook, correspondendo a <strong>${custoFmt}€ de custo variável</strong>.`);
+        if (comments > 0) bits.push(`Foram tratados <strong>${comments.toLocaleString('pt-PT')} comentários</strong> em posts Meta com resposta pública e abertura automática de DM.`);
+        if (preReservas > 0) bits.push(`A IA capturou <strong>${preReservas} pré-reservas</strong> diretamente na conversa (nome, atividade, datas, nº pessoas).`);
+      } else if (context === 'lead_qualifier_solar') {
+        const ext = chatbot.extended || {};
+        const fn = ext.funnel || {};
+        const qual = parseInt(fn.qualificada) || 0;
+        const totalLeads = parseInt(fn.total) || 0;
+        const taxa = totalLeads > 0 ? Math.round((qual / totalLeads) * 100) : 0;
+        bits.push(`A <strong>Clara</strong> processou <strong>${total.toLocaleString('pt-PT')} conversas</strong> ${periodLabel} em anúncios Facebook, Instagram e tráfego direto de WhatsApp.`);
+        if (totalLeads > 0) bits.push(`Foram abertos <strong>${totalLeads} leads</strong> na base, dos quais <strong>${qual} já qualificados</strong> (${taxa}%).`);
+      } else if (context === 'qualificador_mudancas') {
+        const ext = chatbot.extended || {};
+        const fn = ext.funnel || {};
+        const newLeads = parseInt(ext.new_leads) || 0;
+        const aguarda = parseInt(fn.aguarda_comercial) || 0;
+        const video = parseInt(ext.videocalls_booked) || 0;
+        bits.push(`A <strong>Bia</strong> processou <strong>${total.toLocaleString('pt-PT')} conversas</strong> ${periodLabel} nas duas instâncias WhatsApp, com <strong>${aiMsgs.toLocaleString('pt-PT')} respostas automáticas</strong>.`);
+        if (newLeads > 0) bits.push(`Entraram <strong>${newLeads} novos leads</strong> no funil de qualificação${aguarda > 0 ? `, com <strong>${aguarda}</strong> já em "Aguarda Comercial"` : ''}${video > 0 ? ` e <strong>${video} videochamadas agendadas</strong>` : ''}.`);
+      } else if (context === 'ecommerce_multicanal') {
+        // Núbia Essenciais
+        const ext = chatbot.extended || {};
+        const fh = ext.fora_horario || {};
+        const pctFora = parseFloat(fh.pct_mensagens_cliente) || 0;
+        const iaFora = parseInt(fh.respostas_ia) || 0;
+        const comm = ext.comments || [];
+        const commResp = comm.reduce((s, c) => s + (parseInt(c.respondidos) || 0), 0);
+        const commDms = comm.reduce((s, c) => s + (parseInt(c.dms) || 0), 0);
+        const dmResp = parseInt(ext.comments_dm_respondidas) || 0;
+        const pct = (Math.round(((chatbot.conversations_ai_only || 0) / total) * 1000) / 10).toLocaleString('pt-PT');
+        bits.push(`A assistente Núbia atendeu <strong>${total.toLocaleString('pt-PT')} conversas</strong> ${periodLabel} entre WhatsApp, Instagram e Facebook e enviou <strong>${aiMsgs.toLocaleString('pt-PT')} mensagens</strong>. Em <strong>${pct}%</strong> das conversas ninguém da equipa precisou de intervir.`);
+        if (pctFora > 0) bits.push(`${pctFora.toLocaleString('pt-PT')}% das mensagens de clientes chegaram fora do horário comercial (dias úteis, 9h às 19h), e a IA deu ${iaFora.toLocaleString('pt-PT')} respostas nesse período.`);
+        if (commResp > 0) bits.push(`Nos comentários, a IA respondeu a <strong>${commResp.toLocaleString('pt-PT')}</strong> e abriu ${commDms.toLocaleString('pt-PT')} conversas privadas${dmResp > 0 ? `, das quais ${dmResp.toLocaleString('pt-PT')} tiveram resposta do cliente` : ''}.`);
+      } else {
+        bits.push(`O agente processou <strong>${total.toLocaleString('pt-PT')} conversas</strong> ${periodLabel}, resolvendo <strong>${Math.round(aiRate)}%</strong> sem intervenção humana.`);
+      }
+
+      // Off-hours insight
+      if (offHours && parseFloat(offHours.off_hours_pct) > 20) {
+        const pct = Math.round(parseFloat(offHours.off_hours_pct));
+        bits.push(`<strong>${pct}% das mensagens</strong> chegam fora de horário comercial (fim-de-semana ou depois das 18h) — o valor do atendimento 24/7 é visível aqui.`);
+      }
+
+      // Multi-platform insight
+      if (chatbot.platforms?.length > 1) {
+        const top = [...chatbot.platforms].sort((a, b) => (b.total_conversations || 0) - (a.total_conversations || 0))[0];
+        const topPct = total > 0 ? Math.round((top.total_conversations / total) * 100) : 0;
+        bits.push(`O canal principal é <strong>${top.plataforma}</strong> com ${topPct}% das conversas.`);
+      }
+
+      // IA vs team multiplier (EcoDrive-style)
+      if (context === 'leads' && chatbot.extended?.daily?.[0]?.team_msgs !== undefined) {
+        const aiTotal = chatbot.extended.daily.reduce((s, d) => s + (parseInt(d.ai_msgs) || 0), 0);
+        const teamTotal = chatbot.extended.daily.reduce((s, d) => s + (parseInt(d.team_msgs) || 0), 0);
+        if (teamTotal > 0 && aiTotal > 0) {
+          const mult = (aiTotal / teamTotal).toFixed(1);
+          bits.push(`A IA respondeu <strong>${mult}× mais mensagens</strong> que a equipa humana no período.`);
+        }
+      }
+
+      // Clicks
+      const kuttClicks = clicks?.total_clicks || 0;
+      if (kuttClicks > 0) {
+        bits.push(`O agente gerou <strong>${kuttClicks.toLocaleString('pt-PT')} cliques</strong> em links partilhados com clientes.`);
+      }
+    }
+  }
+
+  // ---- Messaging insights ----
+  if (messaging) {
+    const totalMsgs = messaging.messages_sent || 0;
+    const totalOrders = messaging.total_orders || 0;
+    const totalRevenue = messaging.total_revenue || 0;
+    const clickRate = messaging.click_rate || 0;
+
+    if (totalMsgs > 0) {
+      let msgBit = `No lado das mensagens automáticas, foram enviadas <strong>${totalMsgs.toLocaleString('pt-PT')} mensagens</strong>`;
+      if (clickRate > 0) msgBit += ` (${clickRate.toFixed(1)}% taxa de clique)`;
+      msgBit += '.';
+      bits.push(msgBit);
+
+      if (totalOrders > 0) {
+        bits.push(`Estas campanhas geraram <strong>${totalOrders} encomendas atribuídas</strong> (${totalRevenue.toLocaleString('pt-PT', { minimumFractionDigits: 2 })}€ em receita).`);
+      }
+    }
+  }
+
+  // ---- Content insights (Memo.ria) ----
+  if (content) {
+    const t = content.totals || {};
+    const posts = parseInt(t.posts_gerados) || 0;
+    const publicados = parseInt(t.publicados) || 0;
+    const pilares = parseInt(t.pilares_cobertos) || 0;
+    const livres = parseInt(content.photo_bank?.livres) || 0;
+    if (posts > 0) {
+      bits.push(`O sistema gerou <strong>${posts.toLocaleString('pt-PT')} blog posts</strong> ${periodLabel}, cobrindo <strong>${pilares} áreas clínicas</strong>${publicados > 0 ? ` — <strong>${publicados}</strong> já publicados manualmente` : ''}.`);
+      if (livres > 0) bits.push(`Banco de fotos com <strong>${livres} imagens livres</strong>${livres < 30 ? ' — atenção: nível baixo' : ''}.`);
+    }
+  }
+
+  if (bits.length === 0) return null;
+
+  // Pick a period label
+  const today = new Date();
+  const monthNames = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  const monthLabel = `${monthNames[today.getMonth()]} ${today.getFullYear()}`;
+
+  return {
+    month: monthLabel,
+    text: bits.join(' ')
+  };
+}

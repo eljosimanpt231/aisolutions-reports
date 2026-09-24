@@ -1,0 +1,38 @@
+{
+  "generated_at": "2026-08-11T12:34:14.168Z",
+  "model": "anthropic/claude-haiku-4.5",
+  "period_days": 30,
+  "sample_size": 34,
+  "topicos": [
+    {
+      "titulo": "Inscrições ano letivo 2026-2027",
+      "count": 8,
+      "exemplo": "Quero saber mais sobre inscrições 2026-2027, ainda aceitam?",
+      "prioridade": "high"
+    },
+    {
+      "titulo": "Problemas técnicos plataforma",
+      "count": 4,
+      "exemplo": "Separador pré-escolar não funciona na plataforma EduGEP",
+      "prioridade": "high"
+    },
+    {
+      "titulo": "Confirmação inscrição realizada",
+      "count": 3,
+      "exemplo": "Como confirmo se fiz inscrição corretamente da minha filha?",
+      "prioridade": "medium"
+    },
+    {
+      "titulo": "Informações sobre programas específicos",
+      "count": 3,
+      "exemplo": "Curso Educar com Valores ainda está aberto?",
+      "prioridade": "medium"
+    },
+    {
+      "titulo": "Acesso a links e documentos",
+      "count": 2,
+      "exemplo": "Recebi link mas não encontro no email",
+      "prioridade": "low"
+    }
+  ]
+}

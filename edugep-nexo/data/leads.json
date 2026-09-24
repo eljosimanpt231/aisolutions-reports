@@ -1,0 +1,257 @@
+{
+  "generated_at": "2026-08-11T12:34:01.631Z",
+  "leads": [
+    {
+      "id": "435",
+      "telefone": "351 9•• ••• 229",
+      "nome": "Vera S.",
+      "campanha_origem": "inscricoes-2026-27",
+      "status": "em_conversa",
+      "ultima_interacao": "2026-08-10T20:43:07.715Z",
+      "primeira_msg": "Olá, quero saber mais sobre as inscrições para o ano letivo 2026-2027"
+    },
+    {
+      "id": "422",
+      "telefone": "351 9•• ••• 679",
+      "nome": "Cintia",
+      "campanha_origem": "inscricoes-2026-27",
+      "status": "em_conversa",
+      "ultima_interacao": "2026-08-10T18:30:59.573Z",
+      "primeira_msg": "Olá, quero saber mais sobre as inscrições para o ano letivo 2026-2027"
+    },
+    {
+      "id": "328",
+      "telefone": "351 9•• ••• 508",
+      "nome": "Joana B.",
+      "campanha_origem": null,
+      "status": "em_conversa",
+      "ultima_interacao": "2026-08-10T16:03:19.388Z",
+      "primeira_msg": "[Cliente enviou imagem] A imagem mostra um espaço de treino com trampolins. Há três pessoas, uma em cada trampolim, enquanto uma delas parece estar a orientar os outros. O ambiente é bem iluminado, com paredes de betão e janelas cobertas por cortinas verdes."
+    },
+    {
+      "id": "410",
+      "telefone": "351 9•• ••• 917",
+      "nome": "Nana",
+      "campanha_origem": "inscricoes-2026-27",
+      "status": "em_conversa",
+      "ultima_interacao": "2026-08-10T15:39:27.358Z",
+      "primeira_msg": "Olá, quero saber mais sobre as inscrições para o ano letivo 2026-2027 se ainda aceitam"
+    },
+    {
+      "id": "407",
+      "telefone": "351 9•• ••• 908",
+      "nome": "Andreia",
+      "campanha_origem": "inscricoes-2026-27",
+      "status": "em_conversa",
+      "ultima_interacao": "2026-08-10T11:18:38.183Z",
+      "primeira_msg": "Olá, quero saber mais sobre as inscrições para o ano letivo 2026-2027"
+    },
+    {
+      "id": "179",
+      "telefone": "351 9•• ••• 741",
+      "nome": "Josias P.",
+      "campanha_origem": "educar-com-valores",
+      "status": "em_conversa",
+      "ultima_interacao": "2026-08-10T11:05:37.448Z",
+      "primeira_msg": "Que dia é hoje e ainda dá para inscrever nos bootcamps de julho?"
+    },
+    {
+      "id": "404",
+      "telefone": "351 9•• ••• 833",
+      "nome": "Ana T.",
+      "campanha_origem": null,
+      "status": "em_conversa",
+      "ultima_interacao": "2026-08-10T08:06:09.658Z",
+      "primeira_msg": "Bom dia, estou a tentar inscrever o meu educando nas ferias escolares na plataforma da edugepbmas, o separador do pre escolar e primeiro ciclo não está a funcionar. podem ajudar por favor?"
+    },
+    {
+      "id": "396",
+      "telefone": "351 9•• ••• 914",
+      "nome": "Mirna",
+      "campanha_origem": "inscricoes-2026-27",
+      "status": "em_conversa",
+      "ultima_interacao": "2026-08-09T17:38:04.133Z",
+      "primeira_msg": "Olá, quero saber mais sobre as inscrições para o ano letivo 2026-2027"
+    },
+    {
+      "id": "392",
+      "telefone": "351 9•• ••• 241",
+      "nome": "Sviat",
+      "campanha_origem": null,
+      "status": "em_conversa",
+      "ultima_interacao": "2026-08-09T13:15:20.058Z",
+      "primeira_msg": "Olá, quero saber mais sobre o VF Camp.\nTem lugar para menino 9 anos?"
+    },
+    {
+      "id": "388",
+      "telefone": "351 9•• ••• 223",
+      "nome": "Eddu N.",
+      "campanha_origem": "inscricoes-2026-27",
+      "status": "em_conversa",
+      "ultima_interacao": "2026-08-08T04:39:55.710Z",
+      "primeira_msg": "Olá, quero saber mais sobre as inscrições para o ano letivo 2026-2027"
+    },
+    {
+      "id": "333",
+      "telefone": "351 9•• ••• 956",
+      "nome": "Cláudia",
+      "campanha_origem": null,
+      "status": "novo",
+      "ultima_interacao": "2026-08-07T07:45:46.349Z",
+      "primeira_msg": "[Cliente enviou documento: Agosto - Ementa.pdf]"
+    },
+    {
+      "id": "290",
+      "telefone": "351 9•• ••• 303",
+      "nome": "Lídia R.",
+      "campanha_origem": null,
+      "status": "novo",
+      "ultima_interacao": "2026-08-05T09:49:49.634Z",
+      "primeira_msg": "[Cliente enviou imagem] A imagem mostra um grupo de crianças alinhadas numa sala de ginástica, com uma instrutora na frente. As crianças estão a praticar movimentos, algumas estão de meias. O espaço é preenchido com aparelhos de ginástica e há tapetes coloridos no chão."
+    },
+    {
+      "id": "370",
+      "telefone": "351 9•• ••• 516",
+      "nome": "Carolina G.",
+      "campanha_origem": null,
+      "status": "em_conversa",
+      "ultima_interacao": "2026-08-04T12:34:29.652Z",
+      "primeira_msg": "Olá!"
+    },
+    {
+      "id": "376",
+      "telefone": "351 9•• ••• 566",
+      "nome": "Sónia \ud83c.",
+      "campanha_origem": null,
+      "status": "novo",
+      "ultima_interacao": "2026-08-03T14:27:13.464Z",
+      "primeira_msg": "Boa tarde. Aguardo a vossa resposta. Obrigada."
+    },
+    {
+      "id": "367",
+      "telefone": "351 9•• ••• 194",
+      "nome": "Rita",
+      "campanha_origem": null,
+      "status": "novo",
+      "ultima_interacao": "2026-08-03T12:20:02.660Z",
+      "primeira_msg": "Boa tarde, sou a mãe do Isaac Santos que está convosco no campo de férias do Vitória. Hoje foi o primeiro dia e ficou a chorar. Acho que foi apenas um choro de chamar atenção e quando virei costas parou de chorar 😊"
+    },
+    {
+      "id": "363",
+      "telefone": "351 9•• ••• 967",
+      "nome": "Saphy",
+      "campanha_origem": null,
+      "status": "novo",
+      "ultima_interacao": "2026-07-31T13:00:03.182Z",
+      "primeira_msg": "Hello"
+    },
+    {
+      "id": "362",
+      "telefone": "351 9•• ••• 567",
+      "nome": "Ekaterina",
+      "campanha_origem": null,
+      "status": "novo",
+      "ultima_interacao": "2026-07-31T10:24:50.903Z",
+      "primeira_msg": "Bom dia.\nGostaria de reservar o almoço para a Alisa Moldovanova nos dias 3 e 5 de agosto, por favor.\nMuito obrigada."
+    },
+    {
+      "id": "361",
+      "telefone": "351 9•• ••• 116",
+      "nome": "Teresa F.",
+      "campanha_origem": null,
+      "status": "novo",
+      "ultima_interacao": "2026-07-31T08:00:49.506Z",
+      "primeira_msg": "Olá, quero inscrever-me no curso de Inteligência artificial."
+    },
+    {
+      "id": "228",
+      "telefone": "351 9•• ••• 434",
+      "nome": "António G.",
+      "campanha_origem": null,
+      "status": "em_conversa",
+      "ultima_interacao": "2026-07-31T04:34:33.235Z",
+      "primeira_msg": "boa noite, Nexo, já estás ativo?"
+    },
+    {
+      "id": "338",
+      "telefone": "351 9•• ••• 018",
+      "nome": "Tiago O.",
+      "campanha_origem": null,
+      "status": "em_conversa",
+      "ultima_interacao": "2026-07-30T23:22:35.291Z",
+      "primeira_msg": "Olá"
+    },
+    {
+      "id": "286",
+      "telefone": "351 9•• ••• 636",
+      "nome": "Óscar S.",
+      "campanha_origem": null,
+      "status": "em_conversa",
+      "ultima_interacao": "2026-07-30T15:19:13.496Z",
+      "primeira_msg": "Boa tarde"
+    },
+    {
+      "id": "332",
+      "telefone": "351 9•• ••• 109",
+      "nome": "Cátia S.",
+      "campanha_origem": null,
+      "status": "novo",
+      "ultima_interacao": "2026-07-30T10:49:46.990Z",
+      "primeira_msg": "Exmo. Sr. Gaspar,\n\nEspero que se encontre bem.\n\nConforme combinado, venho por este meio solicitar a pré-reserva das seguintes atividades:\n\nData: 13 de agosto\nHora: 14h30\nAtividade: Laser Tag\nGrupo: 15 a 20 crianças\n\nData: 20 de agosto\nHora: 14h30\nAtividade: Bowling\nGrupo: 15 a 20 crianças\n\nA pré-reserva deverá ficar em nome da EDUGEP.\n\nFico a aguardar a sua confirmação para que possamos proceder ao pagamento de 50% do valor correspondente a cada uma das reservas, conforme acordado.\n\nDesde já, muito obrigada pela atenção e disponibilidade.\n\nCom os melhores cumprimentos,\n\nProf. Cátia Pita\nEDUGEP"
+    },
+    {
+      "id": "331",
+      "telefone": "351 9•• ••• 730",
+      "nome": "Isabel C.",
+      "campanha_origem": null,
+      "status": "novo",
+      "ultima_interacao": "2026-07-29T15:05:20.193Z",
+      "primeira_msg": "[Cliente enviou imagem] A imagem apresenta um pedido registrado pelo banco Santander, com um total de pagamento de 45,00€. O destinatário é a empresa \"EDUGEP CDGPFNASC LDA\", e o pagamento foi realizado com um cartão de débito Santander. A data do pagamento é 29 de julho de 2026."
+    },
+    {
+      "id": "285",
+      "telefone": "351 9•• ••• 934",
+      "nome": "Mel E.",
+      "campanha_origem": null,
+      "status": "novo",
+      "ultima_interacao": "2026-07-27T15:30:14.435Z",
+      "primeira_msg": "Acabei agora de receber claudia"
+    },
+    {
+      "id": "162",
+      "telefone": "351 9•• ••• 205",
+      "nome": "Joao G.",
+      "campanha_origem": null,
+      "status": "novo",
+      "ultima_interacao": "2026-07-27T15:22:54.305Z",
+      "primeira_msg": "[Cliente enviou imagem] Na imagem vê-se um campo de futebol com várias crianças a jogar. As crianças estão vestidas principalmente de roupa rosa e estão a interagir umas com as outras. Ao fundo, há edifícios e um céu parcialmente nublado."
+    },
+    {
+      "id": "191",
+      "telefone": "351 9•• ••• 821",
+      "nome": "Joana F.",
+      "campanha_origem": null,
+      "status": "novo",
+      "ultima_interacao": "2026-07-26T14:02:44.095Z",
+      "primeira_msg": "Boa tarde Prof. Cristina"
+    },
+    {
+      "id": "178",
+      "telefone": "351 9•• ••• 673",
+      "nome": "Soniarlopes",
+      "campanha_origem": null,
+      "status": "novo",
+      "ultima_interacao": "2026-07-23T15:31:17.352Z",
+      "primeira_msg": "[Cliente enviou imagem] A imagem mostra uma conversa no Instagram com uma parte de uma animação em crochê, destacando duas formas arredondadas. Abaixo, há um texto que diz: \"Temos de observar como a língua está a desempenhar a\". A interface do Instagram é visível na parte superior da imagem."
+    },
+    {
+      "id": "31",
+      "telefone": "351 9•• ••• 732",
+      "nome": "Cris P.",
+      "campanha_origem": null,
+      "status": "novo",
+      "ultima_interacao": "2026-07-21T19:40:59.367Z",
+      "primeira_msg": "[Cliente enviou vídeo]"
+    }
+  ]
+}
